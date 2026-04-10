@@ -1,184 +1,145 @@
-# PHP Countries Data Provider Class
+# PHP Countries Data
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XDCFPNTKUC4TU)
+Service de consultation des pays basé sur SQLite, refactoré pour un usage orienté entreprise, tout en conservant une API rétrocompatible avec la classe historique `WorldCountriesDatas` issue du dataset embarqué d'origine.
 
-All useful information about every country packaged as convenient little country objects. It includes data from ISO 3166 (countries and states/subdivisions ), ISO 4217 (currency), and E.164 (phone numbers). 
-* Initialisation
-<code>
+## Pré-requis
 
-           $myObject = new \Iriven\WorldCountriesDatas();    
-</code>
-* Retrieve datas for given country ISO-3166-2 , ISO-3166-3 or numeric code.
- <code>
- 
-          Example:  For France.
-          $myObject->getCountryInfos('fr');
-          $myObject->getCountryInfos('fr', true);
-          $myObject->getCountryInfos('FR');
-          $myObject->getCountryInfos('fra');
-          $myObject->getCountryInfos('FRA');
-          $myObject->getCountryInfos('FRA', true);
-          $myObject->getCountryInfos('250');
-          $myObject->getCountryInfos('250', true);       
- </code>
-* Get country ISO-3166-2 code for given ISO-3166-3 or numeric code
-<code>
+- PHP 8.2+
+- extension PDO
+- extension SQLite3
 
-         Example:  For France
-         $myObject->getCountryAlpha2Code('fra');
-         $myObject->getCountryAlpha2Code('FRA');
-         $myObject->getCountryAlpha2Code('250');   
-</code>
-* Get country ISO-3166-3 code for given ISO-3166-2 or numeric code
-<code>
+## Installation
 
-         Example:  For France
-         $myObject->getCountryAlpha3Code('fr');
-         $myObject->getCountryAlpha3Code('FR');
-         $myObject->getCountryAlpha3Code('250');     
-</code>
-* Get country numeric code for given ISO-3166-2 or ISO-3166-3 code
-<code>
+```bash
+composer install
+php bin/import_countries.php
+php bin/validate_countries.php
+composer test
+```
 
-         Example:  For France
-         $myObject->getCountryNumericCode('fra');
-         $myObject->getCountryNumericCode('FRA');
-         $myObject->getCountryNumericCode('fr');
-         $myObject->getCountryNumericCode('FR');   
-</code>
-* Get country Currency Code from given alpha-2, alpha-3 or numeric code
-<code>
+## Ce que le package propose
 
-      	Example:  For France
-      	$myObject->getCountryCurrencyCode('fra');
-      	$myObject->getCountryCurrencyCode('fr');
-      	$myObject->getCountryCurrencyCode('250');        
-</code>
-* Get country Currency Name from given alpha-2, alpha-3 or numeric code
-<code>
+- façade rétrocompatible `WorldCountriesDatas`
+- API fluide moderne avec `getCountry()`
+- recherche par nom, région, devise, indicatif téléphonique et TLD
+- repository SQLite injectable
+- cache compatible PSR-16
+- logger PSR-3
+- factory de bootstrap
+- normalisation des codes pays
+- validation et sanitation des données à l'import
+- tests PHPUnit
+- configuration PHPStan
 
-          Example:  For France
-          $myObject->getCountryCurrencyName('fra');
-          $myObject->getCountryCurrencyName('fr');
-          $myObject->getCountryCurrencyName('250');       
-</code>
-* Get country Phone Code (ISD) from given alpha-2, alpha-3 or numeric code
-<code>
+## Structure
 
-          Example:  For France
-          $myObject->getCountryPhoneCode('fra');
-          $myObject->getCountryPhoneCode('fr');
-          $myObject->getCountryPhoneCode('250');          
-</code>
-* Get country Name from given alpha-2, alpha-3 or numeric code
-<code>
+- `legacy/cdata.php` : fichier historique
+- `bin/import_countries.php` : import du dataset historique vers SQLite
+- `bin/validate_countries.php` : contrôle qualité des données
+- `src/` : domaine, repository, cache, factory, façade
+- `tests/` : tests PHPUnit
 
-          Example:  For France
-          $myObject->getCountryName('fra');
-          $myObject->getCountryName('fr');
-          $myObject->getCountryName('250');
-</code>
-* Get Country Capital name from given alpha-2, alpha-3 or numeric code
-<code>
+## Usage simple
 
-          Example:  For France
-          $myObject->getCountryCapitalName('fra');
-          $myObject->getCountryCapitalName('fr');
-          $myObject->getCountryCapitalName('250');     
-</code>
-* Get the Top Level Domain(TLD) of a Country  from given alpha-2, alpha-3 or numeric code
-<code>
+```php
+<?php
 
-          Example:  For France
-          $myObject->getCountryDomain('fra');
-          $myObject->getCountryDomain('fr');
-          $myObject->getCountryDomain('250');    
-</code>
-* Get Country two letters Continent code from given alpha-2, alpha-3 or numeric code
-<code>
+use Iriven\Factory\CountriesServiceFactory;
 
-          Example:  For France
-          $myObject->getCountryRegionAlphaCode('fra');
-          $myObject->getCountryRegionAlphaCode('fr');
-          $myObject->getCountryRegionAlphaCode('250');       
-</code>
-* Get Country Continent ISO code from given alpha-2, alpha-3 or numeric code
-<code>
+require_once __DIR__ . '/vendor/autoload.php';
 
-          Example:  For France
-          $myObject->getCountryRegionNumCode('fra');
-          $myObject->getCountryRegionNumCode('fr');
-          $myObject->getCountryRegionNumCode('250');     
-</code>
-* Get Country Continent Name from given alpha-2, alpha-3 or numeric code
-<code>
+$countries = CountriesServiceFactory::createFromSqlite(
+    __DIR__ . '/data/countries.sqlite'
+);
 
-          Example:  For France
-          $myObject->getCountryRegionName('fra');
-          $myObject->getCountryRegionName('fr');
-          $myObject->getCountryRegionName('250');
-</code>
-* Get Country Sub-region ISO code from given alpha-2, alpha-3 or numeric code
-<code>
+echo $countries->getCountryName('FR') . PHP_EOL;
+echo $countries->getCountryAlpha3Code('FR') . PHP_EOL;
+echo $countries->getCountryNumericCode('FRA') . PHP_EOL;
 
-     	Example:  For France
-     	$myObject->getCountrySubRegionCode('fra');
-     	$myObject->getCountrySubRegionCode('fr');
-     	$myObject->getCountrySubRegionCode('250');          
-</code>
-* Get Country Sub-region name from given alpha-2, alpha-3 or numeric code
-<code>
+print_r($countries->getCountryInfos('250'));
+```
 
-     	Example:  For France
-     	$myObject->getCountrySubRegionName('fra');
-     	$myObject->getCountrySubRegionName('fr');
-     	$myObject->getCountrySubRegionName('250');
-</code>
-* Get Languages (code) spoken in a Country  from given alpha-2, alpha-3 or numeric code
-<code>
+## API fluide
 
-     	Example:  For France
-     	$myObject->getCountryLanguage('fra');
-     	$myObject->getCountryLanguage('fr');
-     	$myObject->getCountryLanguage('250');       
-</code>
-* Get a Country postal code Regex  from given alpha-2, alpha-3 or numeric code
-<code>
+```php
+$country = $countries->getCountry('FR');
 
-     	Example:  For France
-     	$myObject->getCountryPostalCodePattern('fra');
-     	$myObject->getCountryPostalCodePattern('fr');
-     	$myObject->getCountryPostalCodePattern('250');
-           
-</code>
-* Get an associative array of ISO-2, ISO-3 or numeric list of countries
-<code>
+echo $country->name();
+echo $country->tld();
+echo $country->currency()->code();
+echo $country->region()->name();
+echo $country->phone()->pattern();
+print_r($country->toArray());
+```
 
-         Example:  
-         $myObject->getAllCountriesCodeAndName($CodeFormat='alpha-2');
-         $myObject->getAllCountriesCodeAndName($CodeFormat='alpha-3');
-         $myObject->getAllCountriesCodeAndName($CodeFormat='numeric');
-         $myObject->getAllCountriesCodeAndName(); //same as alpha-2 code format
-</code>
-* Get associative [$code=>$name] array of all Currencies (useful for forms)
-<code>
+Alias disponibles :
 
-     	$myObject->getAllCurrenciesCodeAndName();
-</code>
-* Get associative [$isocode=>$name] array of all Regions (useful for forms)
-<code>
+```php
+$countries->country('FR')->name();
+$countries->findCountry('ZZZ'); // null
+```
 
-     	$myObject->getAllRegionsCodeAndName();
-</code>
-* Get associative array of all countries grouped by region
-<code>
+## Recherche métier
 
-     	$myObject->getAllCountriesGroupedByRegions();
-</code>
+```php
+$countries->findByName('France');
+$countries->searchCountries('euro');
+$countries->findByCurrencyCode('EUR');
+$countries->findByRegion('Europe');
+$countries->findByPhoneCode('33');
+$countries->findByTld('.fr');
+```
 
-## Donation
+## Rétrocompatibilité conservée
 
-If this project help you reduce time to develop, you can give me a cup of coffee :)
+Les méthodes historiques restent disponibles :
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XDCFPNTKUC4TU)
+- `getCountryInfos()`
+- `getCountryName()`
+- `getCountryAlpha2Code()`
+- `getCountryAlpha3Code()`
+- `getCountryNumericCode()`
+- `getAllCountriesCodeAndName()`
+- `getAllRegionsCodeAndName()`
 
+Des alias modernes ont été ajoutés :
+
+- `getCountryData()`
+- `getCountryTld()`
+- `getCountryLanguages()`
+- `Country::toArray()` en plus de `Country::all()`
+
+## Qualité et validation
+
+```bash
+php bin/validate_countries.php
+composer analyse
+composer test
+```
+
+## Étapes d’intégration recommandées
+
+1. copier le fichier historique dans `legacy/cdata.php`
+2. lancer l’import
+3. lancer la validation
+4. lancer les tests
+5. intégrer la nouvelle façade ou la factory dans l’application
+
+## Exemple de bootstrap bas niveau
+
+```php
+use Iriven\Infrastructure\Cache\ArrayCache;
+use Iriven\Infrastructure\Persistence\SqliteCountryRepository;
+use Iriven\Support\CountryCodeNormalizer;
+use Iriven\Support\NullLogger;
+use Iriven\WorldCountriesDatas;
+
+$repository = SqliteCountryRepository::fromSqliteFile(
+    __DIR__ . '/data/countries.sqlite',
+    new ArrayCache(),
+    new NullLogger(),
+    new CountryCodeNormalizer()
+);
+
+$countries = new WorldCountriesDatas($repository);
+```
