@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
-use Iriven\Exception\DatasetValidationException;
+use Iriven\WorldDatasets\Exception\DatasetValidationException;
 
 final class DatasetValidator
 {
     /**
-     * @param list<Country> $countries
+     * @param list<Country> $worldDatasets
      */
-    public function validate(array $countries, bool $strict = true): DatasetValidationReport
+    public function validate(array $worldDatasets, bool $strict = true): DatasetValidationReport
     {
         $alpha2 = [];
         $alpha3 = [];
@@ -20,7 +20,7 @@ final class DatasetValidator
         $invalid = [];
         $warnings = [];
 
-        foreach ($countries as $country) {
+        foreach ($worldDatasets as $country) {
             if (!preg_match('/^[A-Z]{2}$/', $country->alpha2())) {
                 $invalid[] = ['field' => 'alpha2', 'value' => $country->alpha2(), 'country' => $country->name()];
             }

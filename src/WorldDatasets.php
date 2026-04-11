@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
 use Countable;
 use Generator;
 use InvalidArgumentException;
-use Iriven\Contract\CountriesDataInterface;
-use Iriven\Contract\CountryRepositoryInterface;
-use Iriven\Contract\ReadonlyCountriesServiceInterface;
-use Iriven\Exception\CountryNotFoundException;
-use Iriven\Exception\InvalidCountryCodeException;
-use Iriven\Exception\InvalidFormatException;
+use Iriven\WorldDatasets\Contract\CountriesDataInterface;
+use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
+use Iriven\WorldDatasets\Contract\ReadonlyWorldDatasetsServiceInterface;
+use Iriven\WorldDatasets\Exception\CountryNotFoundException;
+use Iriven\WorldDatasets\Exception\InvalidCountryCodeException;
+use Iriven\WorldDatasets\Exception\InvalidFormatException;
 use IteratorAggregate;
 use Traversable;
 
-class WorldDatasets implements CountriesDataInterface, ReadonlyCountriesServiceInterface, Countable, IteratorAggregate
+class WorldDatasets implements CountriesDataInterface, ReadonlyWorldDatasetsServiceInterface, Countable, IteratorAggregate
 {
     public const ALPHA2 = 0;
     public const ALPHA3 = 1;
@@ -103,14 +103,14 @@ class WorldDatasets implements CountriesDataInterface, ReadonlyCountriesServiceI
         return new CountriesCollection($this->repository->findAll(), $this->normalizeFormat($format));
     }
 
-    public function currencies(): CurrenciesCollection
+    public function currencies(): CurrencyCollection
     {
-        return new CurrenciesCollection($this->repository->findAll());
+        return new CurrencyCollection($this->repository->findAll());
     }
 
-    public function regions(): RegionsCollection
+    public function regions(): RegionCollection
     {
-        return new RegionsCollection($this->repository->findAll());
+        return new RegionCollection($this->repository->findAll());
     }
 
     public function meta(): MetaInfo
@@ -127,9 +127,9 @@ class WorldDatasets implements CountriesDataInterface, ReadonlyCountriesServiceI
         );
     }
 
-    public function query(): CountriesQuery
+    public function query(): WorldDatasetsQuery
     {
-        return new CountriesQuery($this->countries());
+        return new WorldDatasetsQuery($this->countries());
     }
 
     public function findByName(string $name): array

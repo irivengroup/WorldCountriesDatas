@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iriven\Contract;
+namespace Iriven\WorldDatasets\Contract;
 
 /**
  * Minimal PSR-16 compatible surface for optional runtime cache integration.

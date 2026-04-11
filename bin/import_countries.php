@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-use Iriven\CountriesServiceFactory;
-use Iriven\DataSource;
+use Iriven\WorldDatasets\WorldDatasetsFactory;
+use Iriven\WorldDatasets\DataSource;
 use PDO;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$sourceFile = CountriesServiceFactory::defaultSqlitePath();
+$sourceFile = WorldDatasetsFactory::defaultSqlitePath();
 if (!is_file($sourceFile)) {
     throw new RuntimeException(sprintf('Source file not found: %s', $sourceFile));
 }
 
-$service = CountriesServiceFactory::make($sourceFile);
+$service = WorldDatasetsFactory::make($sourceFile);
 $records = $service->countries()->sortByCode()->exportArray();
 
 $headers = [

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
-use Iriven\Contract\CountryRepositoryInterface;
+use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
 use RuntimeException;
 
 final class JsonCountryRepository implements CountryRepositoryInterface
@@ -24,14 +24,14 @@ final class JsonCountryRepository implements CountryRepositoryInterface
             throw new RuntimeException('Invalid JSON dataset.');
         }
 
-        $countries = [];
+        $worldDatasets = [];
         foreach ($decoded as $row) {
             if (is_array($row)) {
-                $countries[] = Country::fromDatabaseRow($row);
+                $worldDatasets[] = Country::fromDatabaseRow($row);
             }
         }
 
-        $this->inner = new ArrayCountryRepository($countries);
+        $this->inner = new ArrayCountryRepository($worldDatasets);
     }
 
     public function count(): int { return $this->inner->count(); }

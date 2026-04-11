@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iriven\Exporter;
+namespace Iriven\WorldDatasets\Exporter;
 
-use Iriven\Exception\ExportException;
+use Iriven\WorldDatasets\Exception\ExportException;
 
 final class JsonExporter
 {

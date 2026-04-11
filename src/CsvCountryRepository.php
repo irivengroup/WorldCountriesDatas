@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
-use Iriven\Contract\CountryRepositoryInterface;
+use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
 use RuntimeException;
 
 final class CsvCountryRepository implements CountryRepositoryInterface
@@ -28,16 +28,16 @@ final class CsvCountryRepository implements CountryRepositoryInterface
             throw new RuntimeException('Invalid CSV header.');
         }
 
-        $countries = [];
+        $worldDatasets = [];
         while (($row = fgetcsv($handle)) !== false) {
             $assoc = array_combine($headers, array_pad($row, count($headers), ''));
             if (is_array($assoc)) {
-                $countries[] = Country::fromDatabaseRow($assoc);
+                $worldDatasets[] = Country::fromDatabaseRow($assoc);
             }
         }
         fclose($handle);
 
-        $this->inner = new ArrayCountryRepository($countries);
+        $this->inner = new ArrayCountryRepository($worldDatasets);
     }
 
     public function count(): int { return $this->inner->count(); }

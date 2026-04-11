@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
-use Iriven\Contract\Arrayable;
+use Iriven\WorldDatasets\Contract\Arrayable;
 
 final class SubRegionInfo implements Arrayable, \JsonSerializable
 {

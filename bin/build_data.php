@@ -3,15 +3,15 @@
 
 declare(strict_types=1);
 
-use Iriven\CountriesServiceFactory;
-use Iriven\DataSource;
-use Iriven\DatasetValidator;
+use Iriven\WorldDatasets\WorldDatasetsFactory;
+use Iriven\WorldDatasets\DataSource;
+use Iriven\WorldDatasets\DatasetValidator;
 use PDO;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$sourceFile = CountriesServiceFactory::defaultSqlitePath();
-$service = CountriesServiceFactory::make($sourceFile);
+$sourceFile = WorldDatasetsFactory::defaultSqlitePath();
+$service = WorldDatasetsFactory::make($sourceFile);
 $records = $service->countries()->sortByCode()->exportArray();
 
 $headers = [

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
-final class CountriesQuery
+final class WorldDatasetsQuery
 {
     public function __construct(
         private readonly CountriesCollection $collection,

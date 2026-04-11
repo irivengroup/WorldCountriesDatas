@@ -1,16 +1,16 @@
 {
-  "name": "iriven/php-countries-data",
-  "description": "Enterprise-ready countries dataset service backed by SQLite",
+  "name": "iriven/php-world-datasets",
+  "description": "Enterprise-ready PHP world datasets library with harmonized public API, SQLite/JSON/CSV sources, fluent collections, value objects, validation and export tools.",
   "type": "library",
-  "license": "proprietary",
+  "license": "MIT",
   "autoload": {
     "psr-4": {
-      "Iriven\\": "src/"
+      "Iriven\\WorldDatasets\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Iriven\\Tests\\": "tests/"
+      "Iriven\\WorldDatasets\\Tests\\": "tests/"
     }
   },
   "require": {
@@ -36,5 +36,25 @@
     "build-data": "php bin/build_data.php",
     "check-data": "php bin/check_data.php",
     "doctor": "php bin/countries-doctor"
-  }
+  },
+  "keywords": [
+    "php",
+    "world",
+    "datasets",
+    "countries",
+    "iso3166",
+    "sqlite",
+    "json",
+    "csv",
+    "symfony",
+    "laravel"
+  ],
+  "homepage": "https://github.com/iriven/php-world-datasets",
+  "support": {
+    "issues": "https://github.com/iriven/php-world-datasets/issues",
+    "source": "https://github.com/iriven/php-world-datasets"
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "version": "1.0.0"
 }

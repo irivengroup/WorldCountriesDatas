@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
-final class CountriesRuntimeConfig
+final class WorldDatasetsRuntimeConfig
 {
     public function __construct(
         private readonly ?string $sourcePath = null,

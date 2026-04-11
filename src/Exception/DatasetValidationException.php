@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iriven\Exception;
+namespace Iriven\WorldDatasets\Exception;
 
 final class DatasetValidationException extends CountriesDataException
 {

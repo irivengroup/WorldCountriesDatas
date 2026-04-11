@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
-use Iriven\Contract\Arrayable;
-use Iriven\Exporter\CsvExporter;
-use Iriven\Exporter\JsonExporter;
+use Iriven\WorldDatasets\Contract\Arrayable;
+use Iriven\WorldDatasets\Exporter\CsvExporter;
+use Iriven\WorldDatasets\Exporter\JsonExporter;
 
-final class RegionsCollection implements Arrayable, \JsonSerializable
+final class RegionCollection implements Arrayable, \JsonSerializable
 {
     private ?array $cachedValues = null;
     private ?array $cachedList = null;
@@ -16,7 +16,7 @@ final class RegionsCollection implements Arrayable, \JsonSerializable
     private ?array $cachedExportArray = null;
 
     public function __construct(
-        private readonly array $countries,
+        private readonly array $worldDatasets,
     ) {
     }
 

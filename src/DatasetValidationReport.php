@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
 final class DatasetValidationReport implements \JsonSerializable
 {

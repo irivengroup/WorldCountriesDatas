@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
-use Iriven\Contract\CountryRepositoryInterface;
-use Iriven\Contract\SimpleCacheInterface;
-use Iriven\Infrastructure\Cache\ArrayCache;
-use Iriven\Infrastructure\Persistence\SqliteCountryRepository;
-use Iriven\Support\NullLogger;
+use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
+use Iriven\WorldDatasets\Contract\SimpleCacheInterface;
+use Iriven\WorldDatasets\Infrastructure\Cache\ArrayCache;
+use Iriven\WorldDatasets\Infrastructure\Persistence\SqliteCountryRepository;
+use Iriven\WorldDatasets\Support\NullLogger;
 use InvalidArgumentException;
 use RuntimeException;
 
-final class CountriesServiceFactory
+final class WorldDatasetsFactory
 {
     private static ?array $metaCache = null;
 
-    public static function make(?string $sourcePath = null): Countries
+    public static function make(?string $sourcePath = null): WorldDatasetsService
     {
-        return self::fromConfig(new CountriesRuntimeConfig(sourcePath: $sourcePath));
+        return self::fromConfig(new WorldDatasetsRuntimeConfig(sourcePath: $sourcePath));
     }
 
-    public static function fromConfig(CountriesRuntimeConfig $config, ?SimpleCacheInterface $cache = null): Countries
+    public static function fromConfig(WorldDatasetsRuntimeConfig $config, ?SimpleCacheInterface $cache = null): WorldDatasetsService
     {
         $path = $config->sourcePath() ?? self::defaultSqlitePath();
 
@@ -31,7 +31,7 @@ final class CountriesServiceFactory
 
         $repository = self::makeRepository($path, $cache);
 
-        $service = new Countries(
+        $service = new WorldDatasetsService(
             $repository,
             datasetSource: self::detectSourceName($path),
             datasetVersion: self::datasetVersion(),
@@ -46,9 +46,9 @@ final class CountriesServiceFactory
         return $service;
     }
 
-    public static function makeWithValidation(?string $sourcePath = null): Countries
+    public static function makeWithValidation(?string $sourcePath = null): WorldDatasetsService
     {
-        return self::fromConfig(new CountriesRuntimeConfig(
+        return self::fromConfig(new WorldDatasetsRuntimeConfig(
             sourcePath: $sourcePath,
             verifyChecksum: true,
             strictValidation: true,

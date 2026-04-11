@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
-use Iriven\Contract\CountryRepositoryInterface;
+use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
 
 final class ArrayCountryRepository implements CountryRepositoryInterface
 {
     /** @var list<Country> */
-    private array $countries;
+    private array $worldDatasets;
 
     /** @var array<string,Country> */
     private array $byAlpha2 = [];
@@ -24,11 +24,11 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
     private array $byName = [];
 
     /**
-     * @param list<Country> $countries
+     * @param list<Country> $worldDatasets
      */
-    public function __construct(array $countries)
+    public function __construct(array $worldDatasets)
     {
-        $this->countries = array_values($countries);
+        $this->countries = array_values($worldDatasets);
 
         foreach ($this->countries as $country) {
             $this->byAlpha2[$country->alpha2()] = $country;
@@ -155,21 +155,21 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
 
     public function getAllCurrenciesCodeAndName(): array
     {
-        return (new CurrenciesCollection($this->countries))->list();
+        return (new CurrencyCollection($this->countries))->list();
     }
 
     public function getAllRegionsCodeAndName(): array
     {
-        return (new RegionsCollection($this->countries))->list();
+        return (new RegionCollection($this->countries))->list();
     }
 
     public function getAllCountriesGroupedByRegions(): array
     {
-        return (new RegionsCollection($this->countries))->countries();
+        return (new RegionCollection($this->countries))->countries();
     }
 
     public function getAllCountriesGroupedByCurrencies(): array
     {
-        return (new CurrenciesCollection($this->countries))->countries();
+        return (new CurrencyCollection($this->countries))->countries();
     }
 }

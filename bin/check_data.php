@@ -3,12 +3,12 @@
 
 declare(strict_types=1);
 
-use Iriven\CountriesServiceFactory;
-use Iriven\DatasetValidator;
+use Iriven\WorldDatasets\WorldDatasetsFactory;
+use Iriven\WorldDatasets\DatasetValidator;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$service = CountriesServiceFactory::make();
+$service = WorldDatasetsFactory::make();
 $validator = new DatasetValidator();
 $report = $validator->validate($service->countries()->values(), false);
 

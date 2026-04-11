@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
-use Iriven\Contract\SimpleCacheInterface;
+use Iriven\WorldDatasets\Contract\SimpleCacheInterface;
 
 final class Psr16FilesystemCache implements SimpleCacheInterface
 {

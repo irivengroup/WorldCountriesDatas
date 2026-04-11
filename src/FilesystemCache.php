@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
-use Iriven\Infrastructure\Cache\CacheInterface;
+use Iriven\WorldDatasets\Infrastructure\Cache\CacheInterface;
 
 final class FilesystemCache implements CacheInterface
 {

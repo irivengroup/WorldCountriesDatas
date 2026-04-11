@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Iriven\Infrastructure\Persistence;
+namespace Iriven\WorldDatasets\Infrastructure\Persistence;
 
-use Iriven\Contract\CountryRepositoryInterface;
-use Iriven\Country;
-use Iriven\CountryCodeNormalizer;
-use Iriven\Exception\RepositoryException;
-use Iriven\Infrastructure\Cache\CacheInterface;
+use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
+use Iriven\WorldDatasets\Country;
+use Iriven\WorldDatasets\CountryCodeNormalizer;
+use Iriven\WorldDatasets\Exception\RepositoryException;
+use Iriven\WorldDatasets\Infrastructure\Cache\CacheInterface;
 use PDO;
 use PDOException;
 use Psr\Log\LoggerInterface;

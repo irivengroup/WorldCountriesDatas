@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
-final class CountriesStats implements \JsonSerializable
+final class WorldDatasetsStats implements \JsonSerializable
 {
     public function __construct(
         private readonly int $total,
@@ -13,20 +13,9 @@ final class CountriesStats implements \JsonSerializable
     ) {
     }
 
-    public function total(): int
-    {
-        return $this->total;
-    }
-
-    public function regions(): int
-    {
-        return $this->regions;
-    }
-
-    public function currencies(): int
-    {
-        return $this->currencies;
-    }
+    public function total(): int { return $this->total; }
+    public function regions(): int { return $this->regions; }
+    public function currencies(): int { return $this->currencies; }
 
     public function toArray(): array
     {

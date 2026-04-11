@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iriven\Tests;
+namespace Iriven\WorldDatasets\Tests;
 
-use Iriven\JsonCountryRepository;
+use Iriven\WorldDatasets\WorldDatasets\JsonCountryRepository;
 use PHPUnit\Framework\TestCase;
 
 final class JsonCountryRepositoryTest extends TestCase

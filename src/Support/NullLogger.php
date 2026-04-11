@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iriven\Support;
+namespace Iriven\WorldDatasets\Support;
 
 use Psr\Log\AbstractLogger;
 

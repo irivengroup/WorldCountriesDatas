@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Iriven;
+namespace Iriven\WorldDatasets;
 
-use Iriven\Contract\Arrayable;
-use Iriven\Exporter\CsvExporter;
-use Iriven\Exporter\JsonExporter;
+use Iriven\WorldDatasets\Contract\Arrayable;
+use Iriven\WorldDatasets\Exporter\CsvExporter;
+use Iriven\WorldDatasets\Exporter\JsonExporter;
 
 final class CountriesCollection implements Arrayable, \JsonSerializable
 {
@@ -16,12 +16,12 @@ final class CountriesCollection implements Arrayable, \JsonSerializable
     private ?array $cachedApiArray = null;
     private ?array $cachedCodes = null;
     private ?array $cachedNames = null;
-    private ?CountriesStats $cachedStats = null;
+    private ?WorldDatasetsStats $cachedStats = null;
     private ?array $cachedGroupByRegion = null;
     private ?array $cachedGroupByCurrency = null;
 
     public function __construct(
-        private readonly array $countries,
+        private readonly array $worldDatasets,
         private CountryCodeFormat $format = CountryCodeFormat::ALPHA2,
     ) {
     }
@@ -123,16 +123,16 @@ final class CountriesCollection implements Arrayable, \JsonSerializable
 
     public function sortByName(): self
     {
-        $countries = $this->countries;
-        usort($countries, static fn(Country $a, Country $b): int => strcmp($a->name(), $b->name()));
-        return new self($countries, $this->format);
+        $worldDatasets = $this->countries;
+        usort($worldDatasets, static fn(Country $a, Country $b): int => strcmp($a->name(), $b->name()));
+        return new self($worldDatasets, $this->format);
     }
 
     public function sortByCode(): self
     {
-        $countries = $this->countries;
+        $worldDatasets = $this->countries;
         $format = $this->format;
-        usort($countries, static function (Country $a, Country $b) use ($format): int {
+        usort($worldDatasets, static function (Country $a, Country $b) use ($format): int {
             $left = match ($format) {
                 CountryCodeFormat::ALPHA2 => $a->alpha2(),
                 CountryCodeFormat::ALPHA3 => $a->alpha3(),
@@ -145,14 +145,14 @@ final class CountriesCollection implements Arrayable, \JsonSerializable
             };
             return strcmp($left, $right);
         });
-        return new self($countries, $this->format);
+        return new self($worldDatasets, $this->format);
     }
 
     public function sortByNumeric(): self
     {
-        $countries = $this->countries;
-        usort($countries, static fn(Country $a, Country $b): int => strcmp($a->numeric(), $b->numeric()));
-        return new self($countries, $this->format);
+        $worldDatasets = $this->countries;
+        usort($worldDatasets, static fn(Country $a, Country $b): int => strcmp($a->numeric(), $b->numeric()));
+        return new self($worldDatasets, $this->format);
     }
 
     public function paginate(int $offset, int $limit): self
@@ -207,7 +207,7 @@ final class CountriesCollection implements Arrayable, \JsonSerializable
         );
     }
 
-    public function stats(): CountriesStats
+    public function stats(): WorldDatasetsStats
     {
         if ($this->cachedStats !== null) {
             return $this->cachedStats;
@@ -224,7 +224,7 @@ final class CountriesCollection implements Arrayable, \JsonSerializable
             }
         }
 
-        return $this->cachedStats = new CountriesStats(count($this->countries), count($regions), count($currencies));
+        return $this->cachedStats = new WorldDatasetsStats(count($this->countries), count($regions), count($currencies));
     }
 
     public function groupByRegion(): array

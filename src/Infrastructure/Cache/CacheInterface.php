@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iriven\Infrastructure\Cache;
+namespace Iriven\WorldDatasets\Infrastructure\Cache;
 
 use Psr\SimpleCache\CacheInterface as Psr16CacheInterface;
 

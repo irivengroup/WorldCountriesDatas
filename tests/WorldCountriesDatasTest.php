@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Iriven\Tests;
+namespace Iriven\WorldDatasets\Tests;
 
-use Iriven\CountriesServiceFactory;
-use Iriven\CountryCodeFormat;
-use Iriven\DatasetValidator;
+use Iriven\WorldDatasets\WorldDatasets\WorldDatasetsFactory;
+use Iriven\WorldDatasets\WorldDatasets\CountryCodeFormat;
+use Iriven\WorldDatasets\WorldDatasets\DatasetValidator;
 use PHPUnit\Framework\TestCase;
 
 final class WorldDatasetsTest extends TestCase
@@ -15,7 +15,7 @@ final class WorldDatasetsTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->service = CountriesServiceFactory::make(__DIR__ . '/../src/data/.countriesRepository.sqlite');
+        $this->service = WorldDatasetsFactory::make(__DIR__ . '/../src/data/.countriesRepository.sqlite');
     }
 
     public function testCanResolveFranceFromAlpha2(): void
@@ -39,7 +39,7 @@ final class WorldDatasetsTest extends TestCase
         self::assertArrayHasKey('FRA', $this->service->countries(CountryCodeFormat::ALPHA3)->list());
     }
 
-    public function testCurrenciesAndRegionsCollections(): void
+    public function testCurrenciesAndRegionCollections(): void
     {
         self::assertArrayHasKey('EUR', $this->service->currencies()->list());
         self::assertNotEmpty($this->service->regions()->list());
