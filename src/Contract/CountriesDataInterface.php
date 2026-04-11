@@ -19,7 +19,7 @@ interface CountriesDataInterface extends Countable, IteratorAggregate
 
     public function findCountry(string $code): ?Country;
 
-    public function countries(int|string|\Iriven\CountryCodeFormat $format = \Iriven\CountryCodeFormat::ALPHA2): CountriesCollection;
+    public function countries(int|string|\Iriven\WorldDatasets\CountryCodeFormat $format = \Iriven\WorldDatasets\CountryCodeFormat::ALPHA2): CountriesCollection;
 
     public function currencies(): CurrencyCollection;
 
