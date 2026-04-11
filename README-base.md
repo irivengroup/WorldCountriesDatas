@@ -79,7 +79,7 @@ use Iriven\CountriesServiceFactory;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$countries = CountriesServiceFactory::make();
+$worldDatasets = CountriesServiceFactory::make();
 ```
 
 Cela charge :
@@ -108,13 +108,13 @@ $config = new CountriesRuntimeConfig(
     strictValidation: true,
 );
 
-$countries = CountriesServiceFactory::fromConfig($config);
+$worldDatasets = CountriesServiceFactory::fromConfig($config);
 ```
 
 ## 3.4 Vérification stricte au bootstrap
 
 ```php
-$countries = CountriesServiceFactory::makeWithValidation();
+$worldDatasets = CountriesServiceFactory::makeWithValidation();
 ```
 
 ---
@@ -137,15 +137,15 @@ composer test
 ```php
 use Iriven\CountriesServiceFactory;
 
-$countries = CountriesServiceFactory::make();
+$worldDatasets = CountriesServiceFactory::make();
 
-echo $countries->country('FR')->name();
-echo $countries->country('250')->tld();
-echo $countries->country('FRA')->currency()->code();
+echo $worldDatasets->country('FR')->name();
+echo $worldDatasets->country('250')->tld();
+echo $worldDatasets->country('FRA')->currency()->code();
 
-print_r($countries->country('FRA')->data());
-print_r($countries->currencies()->list());
-print_r($countries->countries()->alpha3()->list());
+print_r($worldDatasets->country('FRA')->data());
+print_r($worldDatasets->currencies()->list());
+print_r($worldDatasets->countries()->alpha3()->list());
 ```
 
 ---
@@ -373,7 +373,7 @@ print_r($countries->countries()->alpha3()->list());
 ## 6.9 Validation et configuration
 
 ### `Iriven\DatasetValidator`
-- `validate(array $countries, bool $strict = true): DatasetValidationReport`
+- `validate(array $worldDatasets, bool $strict = true): DatasetValidationReport`
 
 ### `Iriven\DatasetValidationReport`
 - `duplicates(): array`
@@ -410,11 +410,11 @@ print_r($countries->countries()->alpha3()->list());
 ## 7.1 Exemples de collections
 
 ```php
-$countries->countries()->alpha2()->list();
-$countries->countries()->alpha3()->list();
-$countries->countries()->numeric()->list();
+$worldDatasets->countries()->alpha2()->list();
+$worldDatasets->countries()->alpha3()->list();
+$worldDatasets->countries()->numeric()->list();
 
-$countries->countries()
+$worldDatasets->countries()
     ->inRegion('Europe')
     ->withCurrency('EUR')
     ->sortByName()
@@ -425,7 +425,7 @@ $countries->countries()
 ## 7.2 Exemples query builder
 
 ```php
-$result = $countries->query()
+$result = $worldDatasets->query()
     ->inRegion('Europe')
     ->withCurrency('EUR')
     ->sortByName()
@@ -436,13 +436,13 @@ $result = $countries->query()
 ## 7.3 Exemples fonctionnels
 
 ```php
-$names = $countries->countries()->map(fn (Iriven\Country $country) => $country->name());
+$names = $worldDatasets->countries()->map(fn (Iriven\Country $country) => $country->name());
 
-$eurCountries = $countries->countries()->filter(
+$eurCountries = $worldDatasets->countries()->filter(
     fn (Iriven\Country $country) => $country->hasCurrency('EUR')
 );
 
-$total = $countries->countries()->reduce(
+$total = $worldDatasets->countries()->reduce(
     fn (int $carry, Iriven\Country $country) => $carry + 1,
     0
 );
@@ -456,7 +456,7 @@ Cette section complète le README avec un inventaire explicite des enchaînement
 
 > Convention utilisée ci-dessous :
 >
-> - `$countries` est une instance de `Iriven\Countries`
+> - `$worldDatasets` est une instance de `Iriven\Countries`
 > - `country()` retourne un `Country`
 > - `countries()` retourne une `CountriesCollection`
 > - `currencies()` retourne une `CurrenciesCollection`
@@ -468,22 +468,22 @@ Cette section complète le README avec un inventaire explicite des enchaînement
 ### Point d’entrée pays
 
 ```php
-$countries->country('FR');
-$countries->findCountry('FR');
+$worldDatasets->country('FR');
+$worldDatasets->findCountry('FR');
 ```
 
 ### Point d’entrée collections
 
 ```php
-$countries->countries();
-$countries->countries('alpha2');
-$countries->countries('alpha3');
-$countries->countries('numeric');
+$worldDatasets->countries();
+$worldDatasets->countries('alpha2');
+$worldDatasets->countries('alpha3');
+$worldDatasets->countries('numeric');
 
-$countries->currencies();
-$countries->regions();
-$countries->query();
-$countries->meta();
+$worldDatasets->currencies();
+$worldDatasets->regions();
+$worldDatasets->query();
+$worldDatasets->meta();
 ```
 
 ---
@@ -493,36 +493,36 @@ $countries->meta();
 ### 7.4.2.1 Accès direct aux propriétés scalaires
 
 ```php
-$countries->country('FR')->alpha2();
-$countries->country('FR')->alpha3();
-$countries->country('FR')->numeric();
-$countries->country('FR')->name();
-$countries->country('FR')->capital();
-$countries->country('FR')->tld();
-$countries->country('FR')->language();
-$countries->country('FR')->languages();
-$countries->country('FR')->postalCodePattern();
-$countries->country('FR')->exists();
-$countries->country('FR')->data();
-$countries->country('FR')->all();
-$countries->country('FR')->toArray();
-$countries->country('FR')->toIndexedArray();
-$countries->country('FR')->jsonSerialize();
+$worldDatasets->country('FR')->alpha2();
+$worldDatasets->country('FR')->alpha3();
+$worldDatasets->country('FR')->numeric();
+$worldDatasets->country('FR')->name();
+$worldDatasets->country('FR')->capital();
+$worldDatasets->country('FR')->tld();
+$worldDatasets->country('FR')->language();
+$worldDatasets->country('FR')->languages();
+$worldDatasets->country('FR')->postalCodePattern();
+$worldDatasets->country('FR')->exists();
+$worldDatasets->country('FR')->data();
+$worldDatasets->country('FR')->all();
+$worldDatasets->country('FR')->toArray();
+$worldDatasets->country('FR')->toIndexedArray();
+$worldDatasets->country('FR')->jsonSerialize();
 ```
 
 ### 7.4.2.2 Chainages vers les value objects
 
 ```php
-$countries->country('FR')->currency();
-$countries->country('FR')->region();
-$countries->country('FR')->phone();
+$worldDatasets->country('FR')->currency();
+$worldDatasets->country('FR')->region();
+$worldDatasets->country('FR')->phone();
 ```
 
 ### 7.4.2.3 Chainages métier
 
 ```php
-$countries->country('FR')->hasCurrency('EUR');
-$countries->country('FR')->isInRegion('Europe');
+$worldDatasets->country('FR')->hasCurrency('EUR');
+$worldDatasets->country('FR')->isInRegion('Europe');
 ```
 
 ---
@@ -532,7 +532,7 @@ $countries->country('FR')->isInRegion('Europe');
 Point d’entrée :
 
 ```php
-$currency = $countries->country('FR')->currency();
+$currency = $worldDatasets->country('FR')->currency();
 ```
 
 #### Méthodes publiques
@@ -548,9 +548,9 @@ $currency->jsonSerialize();
 #### Exemples
 
 ```php
-$countries->country('FR')->currency()->code();
-$countries->country('FR')->currency()->name();
-$countries->country('FR')->currency()->toArray();
+$worldDatasets->country('FR')->currency()->code();
+$worldDatasets->country('FR')->currency()->name();
+$worldDatasets->country('FR')->currency()->toArray();
 ```
 
 ---
@@ -560,7 +560,7 @@ $countries->country('FR')->currency()->toArray();
 Point d’entrée :
 
 ```php
-$region = $countries->country('FR')->region();
+$region = $worldDatasets->country('FR')->region();
 ```
 
 #### Méthodes publiques
@@ -578,23 +578,23 @@ $region->jsonSerialize();
 #### Chainages complets
 
 ```php
-$countries->country('FR')->region()->alphaCode();
-$countries->country('FR')->region()->numericCode();
-$countries->country('FR')->region()->name();
-$countries->country('FR')->region()->toArray();
-$countries->country('FR')->region()->jsonSerialize();
+$worldDatasets->country('FR')->region()->alphaCode();
+$worldDatasets->country('FR')->region()->numericCode();
+$worldDatasets->country('FR')->region()->name();
+$worldDatasets->country('FR')->region()->toArray();
+$worldDatasets->country('FR')->region()->jsonSerialize();
 ```
 
 #### Passage vers `SubRegionInfo`
 
 ```php
-$countries->country('FR')->region()->subRegion();
-$countries->country('FR')->region()->subRegion()->code();
-$countries->country('FR')->region()->subRegion()->Code();
-$countries->country('FR')->region()->subRegion()->name();
-$countries->country('FR')->region()->subRegion()->Name();
-$countries->country('FR')->region()->subRegion()->toArray();
-$countries->country('FR')->region()->subRegion()->jsonSerialize();
+$worldDatasets->country('FR')->region()->subRegion();
+$worldDatasets->country('FR')->region()->subRegion()->code();
+$worldDatasets->country('FR')->region()->subRegion()->Code();
+$worldDatasets->country('FR')->region()->subRegion()->name();
+$worldDatasets->country('FR')->region()->subRegion()->Name();
+$worldDatasets->country('FR')->region()->subRegion()->toArray();
+$worldDatasets->country('FR')->region()->subRegion()->jsonSerialize();
 ```
 
 ---
@@ -604,7 +604,7 @@ $countries->country('FR')->region()->subRegion()->jsonSerialize();
 Point d’entrée :
 
 ```php
-$subRegion = $countries->country('FR')->region()->subRegion();
+$subRegion = $worldDatasets->country('FR')->region()->subRegion();
 ```
 
 #### Méthodes publiques
@@ -626,7 +626,7 @@ $subRegion->jsonSerialize();
 Point d’entrée :
 
 ```php
-$phone = $countries->country('FR')->phone();
+$phone = $worldDatasets->country('FR')->phone();
 ```
 
 #### Méthodes publiques
@@ -645,12 +645,12 @@ $phone->jsonSerialize();
 #### Exemples détaillés
 
 ```php
-$countries->country('FR')->phone()->code();
-$countries->country('FR')->phone()->internationalPrefix();
-$countries->country('FR')->phone()->nationalPrefix();
-$countries->country('FR')->phone()->subscriberPattern();
-$countries->country('FR')->phone()->pattern();
-$countries->country('FR')->phone()->toArray();
+$worldDatasets->country('FR')->phone()->code();
+$worldDatasets->country('FR')->phone()->internationalPrefix();
+$worldDatasets->country('FR')->phone()->nationalPrefix();
+$worldDatasets->country('FR')->phone()->subscriberPattern();
+$worldDatasets->country('FR')->phone()->pattern();
+$worldDatasets->country('FR')->phone()->toArray();
 ```
 
 ---
@@ -660,27 +660,27 @@ $countries->country('FR')->phone()->toArray();
 Point d’entrée :
 
 ```php
-$collection = $countries->countries();
+$collection = $worldDatasets->countries();
 ```
 
 #### 7.4.7.1 Sélection du format de code
 
 ```php
-$countries->countries()->alpha2();
-$countries->countries()->alpha3();
-$countries->countries()->numeric();
+$worldDatasets->countries()->alpha2();
+$worldDatasets->countries()->alpha3();
+$worldDatasets->countries()->numeric();
 ```
 
 Chainages usuels :
 
 ```php
-$countries->countries()->alpha2()->list();
-$countries->countries()->alpha3()->list();
-$countries->countries()->numeric()->list();
+$worldDatasets->countries()->alpha2()->list();
+$worldDatasets->countries()->alpha3()->list();
+$worldDatasets->countries()->numeric()->list();
 
-$countries->countries()->alpha2()->codes();
-$countries->countries()->alpha3()->codes();
-$countries->countries()->numeric()->codes();
+$worldDatasets->countries()->alpha2()->codes();
+$worldDatasets->countries()->alpha3()->codes();
+$worldDatasets->countries()->numeric()->codes();
 ```
 
 #### 7.4.7.2 Filtres chaînables
@@ -688,78 +688,78 @@ $countries->countries()->numeric()->codes();
 Tous ces filtres peuvent s’enchaîner librement entre eux, puis avec les méthodes de tri, pagination, extraction ou export.
 
 ```php
-$countries->countries()->inRegion('Europe');
-$countries->countries()->inSubRegion('Western Europe');
-$countries->countries()->withCurrency('EUR');
-$countries->countries()->withPhoneCode('+33');
-$countries->countries()->withTld('.fr');
-$countries->countries()->named('France');
-$countries->countries()->matching('fr');
+$worldDatasets->countries()->inRegion('Europe');
+$worldDatasets->countries()->inSubRegion('Western Europe');
+$worldDatasets->countries()->withCurrency('EUR');
+$worldDatasets->countries()->withPhoneCode('+33');
+$worldDatasets->countries()->withTld('.fr');
+$worldDatasets->countries()->named('France');
+$worldDatasets->countries()->matching('fr');
 ```
 
 #### 7.4.7.3 Tri et pagination
 
 ```php
-$countries->countries()->sortByName();
-$countries->countries()->sortByCode();
-$countries->countries()->sortByNumeric();
-$countries->countries()->paginate(0, 10);
+$worldDatasets->countries()->sortByName();
+$worldDatasets->countries()->sortByCode();
+$worldDatasets->countries()->sortByNumeric();
+$worldDatasets->countries()->paginate(0, 10);
 ```
 
 #### 7.4.7.4 Accès ponctuel
 
 ```php
-$countries->countries()->first();
-$countries->countries()->last();
-$countries->countries()->count();
-$countries->countries()->isEmpty();
-$countries->countries()->isNotEmpty();
-$countries->countries()->contains('FR');
-$countries->countries()->containsCountry('FR');
-$countries->countries()->containsCountry($countries->country('FR'));
-$countries->countries()->containsCountry(fn ($country) => $country->hasCurrency('EUR'));
-$countries->countries()->chunk(50);
+$worldDatasets->countries()->first();
+$worldDatasets->countries()->last();
+$worldDatasets->countries()->count();
+$worldDatasets->countries()->isEmpty();
+$worldDatasets->countries()->isNotEmpty();
+$worldDatasets->countries()->contains('FR');
+$worldDatasets->countries()->containsCountry('FR');
+$worldDatasets->countries()->containsCountry($worldDatasets->country('FR'));
+$worldDatasets->countries()->containsCountry(fn ($country) => $country->hasCurrency('EUR'));
+$worldDatasets->countries()->chunk(50);
 ```
 
 #### 7.4.7.5 Extraction / restitution
 
 ```php
-$countries->countries()->values();
-$countries->countries()->names();
-$countries->countries()->codes();
-$countries->countries()->list();
-$countries->countries()->exportArray();
-$countries->countries()->toStorageArray();
-$countries->countries()->toApiArray();
-$countries->countries()->toArray();
-$countries->countries()->jsonSerialize();
+$worldDatasets->countries()->values();
+$worldDatasets->countries()->names();
+$worldDatasets->countries()->codes();
+$worldDatasets->countries()->list();
+$worldDatasets->countries()->exportArray();
+$worldDatasets->countries()->toStorageArray();
+$worldDatasets->countries()->toApiArray();
+$worldDatasets->countries()->toArray();
+$worldDatasets->countries()->jsonSerialize();
 ```
 
 #### 7.4.7.6 Agrégations
 
 ```php
-$countries->countries()->stats();
-$countries->countries()->groupByRegion();
-$countries->countries()->groupByCurrency();
-$countries->countries()->pluckNames();
-$countries->countries()->pluckCodes();
+$worldDatasets->countries()->stats();
+$worldDatasets->countries()->groupByRegion();
+$worldDatasets->countries()->groupByCurrency();
+$worldDatasets->countries()->pluckNames();
+$worldDatasets->countries()->pluckCodes();
 ```
 
 #### 7.4.7.7 Fonctionnel
 
 ```php
-$countries->countries()->map(fn ($country) => $country->name());
-$countries->countries()->filter(fn ($country) => $country->hasCurrency('EUR'));
-$countries->countries()->reduce(fn ($carry, $country) => $carry + 1, 0);
+$worldDatasets->countries()->map(fn ($country) => $country->name());
+$worldDatasets->countries()->filter(fn ($country) => $country->hasCurrency('EUR'));
+$worldDatasets->countries()->reduce(fn ($carry, $country) => $carry + 1, 0);
 ```
 
 #### 7.4.7.8 Export
 
 ```php
-$countries->countries()->toJson();
-$countries->countries()->toCsv();
-$countries->countries()->exportJsonFile('/tmp/countries.json');
-$countries->countries()->exportCsvFile('/tmp/countries.csv');
+$worldDatasets->countries()->toJson();
+$worldDatasets->countries()->toCsv();
+$worldDatasets->countries()->exportJsonFile('/tmp/countries.json');
+$worldDatasets->countries()->exportCsvFile('/tmp/countries.csv');
 ```
 
 #### 7.4.7.9 Exemples de chainages libres
@@ -767,7 +767,7 @@ $countries->countries()->exportCsvFile('/tmp/countries.csv');
 ##### Exemple 1
 
 ```php
-$countries->countries()
+$worldDatasets->countries()
     ->inRegion('Europe')
     ->withCurrency('EUR')
     ->alpha2()
@@ -778,7 +778,7 @@ $countries->countries()
 ##### Exemple 2
 
 ```php
-$countries->countries()
+$worldDatasets->countries()
     ->inRegion('Europe')
     ->inSubRegion('Western Europe')
     ->withCurrency('EUR')
@@ -791,7 +791,7 @@ $countries->countries()
 ##### Exemple 3
 
 ```php
-$countries->countries()
+$worldDatasets->countries()
     ->withTld('.fr')
     ->withPhoneCode('+33')
     ->alpha3()
@@ -801,7 +801,7 @@ $countries->countries()
 ##### Exemple 4
 
 ```php
-$countries->countries()
+$worldDatasets->countries()
     ->matching('united')
     ->sortByNumeric()
     ->pluckNames();
@@ -810,7 +810,7 @@ $countries->countries()
 ##### Exemple 5
 
 ```php
-$countries->countries()
+$worldDatasets->countries()
     ->filter(fn ($country) => $country->region()->name() === 'Europe')
     ->map(fn ($country) => [
         'code' => $country->alpha2(),
@@ -822,7 +822,7 @@ $countries->countries()
 ##### Exemple 6
 
 ```php
-$countries->countries()
+$worldDatasets->countries()
     ->inRegion('Asia')
     ->sortByName()
     ->exportJsonFile('/tmp/asia.json');
@@ -831,7 +831,7 @@ $countries->countries()
 ##### Exemple 7
 
 ```php
-$countries->countries()
+$worldDatasets->countries()
     ->inRegion('Americas')
     ->groupByCurrency();
 ```
@@ -843,7 +843,7 @@ $countries->countries()
 Point d’entrée :
 
 ```php
-$currencies = $countries->currencies();
+$currencies = $worldDatasets->currencies();
 ```
 
 ##### Méthodes publiques
@@ -864,11 +864,11 @@ $currencies->jsonSerialize();
 ##### Exemples
 
 ```php
-$countries->currencies()->list();
-$countries->currencies()->values();
-$countries->currencies()->countries();
-$countries->currencies()->toJson();
-$countries->currencies()->exportCsvFile('/tmp/currencies.csv');
+$worldDatasets->currencies()->list();
+$worldDatasets->currencies()->values();
+$worldDatasets->currencies()->countries();
+$worldDatasets->currencies()->toJson();
+$worldDatasets->currencies()->exportCsvFile('/tmp/currencies.csv');
 ```
 
 ---
@@ -878,7 +878,7 @@ $countries->currencies()->exportCsvFile('/tmp/currencies.csv');
 Point d’entrée :
 
 ```php
-$regions = $countries->regions();
+$regions = $worldDatasets->regions();
 ```
 
 ##### Méthodes publiques
@@ -899,11 +899,11 @@ $regions->jsonSerialize();
 ##### Exemples
 
 ```php
-$countries->regions()->list();
-$countries->regions()->values();
-$countries->regions()->countries();
-$countries->regions()->toJson();
-$countries->regions()->exportCsvFile('/tmp/regions.csv');
+$worldDatasets->regions()->list();
+$worldDatasets->regions()->values();
+$worldDatasets->regions()->countries();
+$worldDatasets->regions()->toJson();
+$worldDatasets->regions()->exportCsvFile('/tmp/regions.csv');
 ```
 
 ---
@@ -913,7 +913,7 @@ $countries->regions()->exportCsvFile('/tmp/regions.csv');
 Point d’entrée :
 
 ```php
-$query = $countries->query();
+$query = $worldDatasets->query();
 ```
 
 ##### Filtres / tri / pagination
@@ -942,7 +942,7 @@ $query->list();
 ##### Exemples complets
 
 ```php
-$countries->query()
+$worldDatasets->query()
     ->inRegion('Europe')
     ->withCurrency('EUR')
     ->sortByName()
@@ -951,7 +951,7 @@ $countries->query()
 ```
 
 ```php
-$countries->query()
+$worldDatasets->query()
     ->inRegion('Europe')
     ->inSubRegion('Western Europe')
     ->matching('fr')
@@ -961,7 +961,7 @@ $countries->query()
 ```
 
 ```php
-$countries->query()
+$worldDatasets->query()
     ->withTld('.fr')
     ->withPhoneCode('+33')
     ->get();
@@ -974,7 +974,7 @@ $countries->query()
 Point d’entrée :
 
 ```php
-$meta = $countries->meta();
+$meta = $worldDatasets->meta();
 ```
 
 ##### Méthodes publiques
@@ -995,11 +995,11 @@ $meta->jsonSerialize();
 ##### Exemples
 
 ```php
-$countries->meta()->source();
-$countries->meta()->datasetVersion();
-$countries->meta()->checksum();
-$countries->meta()->builtAt();
-$countries->meta()->toArray();
+$worldDatasets->meta()->source();
+$worldDatasets->meta()->datasetVersion();
+$worldDatasets->meta()->checksum();
+$worldDatasets->meta()->builtAt();
+$worldDatasets->meta()->toArray();
 ```
 
 ---
@@ -1024,7 +1024,7 @@ $config = new Iriven\CountriesRuntimeConfig(
     strictValidation: true,
 );
 
-$countries = Iriven\CountriesServiceFactory::fromConfig($config);
+$worldDatasets = Iriven\CountriesServiceFactory::fromConfig($config);
 ```
 
 ##### Validation stricte
@@ -1048,15 +1048,15 @@ Iriven\CountriesServiceFactory::assertChecksum(
 ##### 7.4.13.1 Service -> Country -> Value Object -> propriété
 
 ```php
-$countries->country('FR')->region()->subRegion()->name();
-$countries->country('FR')->currency()->code();
-$countries->country('FR')->phone()->pattern();
+$worldDatasets->country('FR')->region()->subRegion()->name();
+$worldDatasets->country('FR')->currency()->code();
+$worldDatasets->country('FR')->phone()->pattern();
 ```
 
 ##### 7.4.13.2 Service -> CountriesCollection -> filtres -> tri -> sortie
 
 ```php
-$countries->countries()
+$worldDatasets->countries()
     ->inRegion('Europe')
     ->withCurrency('EUR')
     ->sortByName()
@@ -1066,7 +1066,7 @@ $countries->countries()
 ##### 7.4.13.3 Service -> CountriesCollection -> fonctionnel -> sortie
 
 ```php
-$countries->countries()
+$worldDatasets->countries()
     ->filter(fn ($country) => $country->hasCurrency('EUR'))
     ->map(fn ($country) => $country->name());
 ```
@@ -1074,7 +1074,7 @@ $countries->countries()
 ##### 7.4.13.4 Service -> Query -> résultat
 
 ```php
-$countries->query()
+$worldDatasets->query()
     ->matching('fr')
     ->limit(10)
     ->get();
@@ -1083,8 +1083,8 @@ $countries->query()
 ##### 7.4.13.5 Service -> collection spécialisée -> export
 
 ```php
-$countries->currencies()->exportJsonFile('/tmp/currencies.json');
-$countries->regions()->exportCsvFile('/tmp/regions.csv');
+$worldDatasets->currencies()->exportJsonFile('/tmp/currencies.json');
+$worldDatasets->regions()->exportCsvFile('/tmp/regions.csv');
 ```
 
 ##### 7.4.14. Important
@@ -1105,14 +1105,14 @@ En pratique :
 # 8. Exports
 
 ```php
-$json = $countries->countries()->toJson();
-$csv = $countries->countries()->toCsv();
+$json = $worldDatasets->countries()->toJson();
+$csv = $worldDatasets->countries()->toCsv();
 
-$countries->countries()->exportJsonFile('/tmp/countries.json');
-$countries->countries()->exportCsvFile('/tmp/countries.csv');
+$worldDatasets->countries()->exportJsonFile('/tmp/countries.json');
+$worldDatasets->countries()->exportCsvFile('/tmp/countries.csv');
 
-$countries->currencies()->exportJsonFile('/tmp/currencies.json');
-$countries->regions()->exportCsvFile('/tmp/regions.csv');
+$worldDatasets->currencies()->exportJsonFile('/tmp/currencies.json');
+$worldDatasets->regions()->exportCsvFile('/tmp/regions.csv');
 ```
 
 ---
@@ -1143,7 +1143,7 @@ composer run validate-data -- --strict
 ## 9.3 Checksum
 
 ```php
-$countries = Iriven\CountriesServiceFactory::makeWithValidation();
+$worldDatasets = Iriven\CountriesServiceFactory::makeWithValidation();
 ```
 
 ou
@@ -1154,7 +1154,7 @@ $config = new Iriven\CountriesRuntimeConfig(
     strictValidation: true,
 );
 
-$countries = Iriven\CountriesServiceFactory::fromConfig($config);
+$worldDatasets = Iriven\CountriesServiceFactory::fromConfig($config);
 ```
 
 ---
@@ -1226,9 +1226,9 @@ use Symfony\Component\Routing\Annotation\Route;
 final class CountryController extends AbstractController
 {
     #[Route('/countries/{code}', methods: ['GET'])]
-    public function show(Countries $countries, string $code): JsonResponse
+    public function show(Countries $worldDatasets, string $code): JsonResponse
     {
-        $country = $countries->country($code);
+        $country = $worldDatasets->country($code);
 
         return $this->json([
             'country' => $country->toArray(),
@@ -1239,10 +1239,10 @@ final class CountryController extends AbstractController
     }
 
     #[Route('/countries/europe/eur', methods: ['GET'])]
-    public function euroCountries(Countries $countries): JsonResponse
+    public function euroCountries(Countries $worldDatasets): JsonResponse
     {
         return $this->json(
-            $countries->countries()
+            $worldDatasets->countries()
                 ->inRegion('Europe')
                 ->withCurrency('EUR')
                 ->alpha2()
@@ -1269,7 +1269,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class CountriesDoctorCommand extends Command
 {
     public function __construct(
-        private readonly Countries $countries,
+        private readonly Countries $worldDatasets,
     ) {
         parent::__construct();
     }
@@ -1316,9 +1316,9 @@ use Iriven\Countries;
 
 final class CountryController
 {
-    public function show(Countries $countries, string $code): JsonResponse
+    public function show(Countries $worldDatasets, string $code): JsonResponse
     {
-        $country = $countries->country($code);
+        $country = $worldDatasets->country($code);
 
         return response()->json([
             'country' => $country->toArray(),
@@ -1328,10 +1328,10 @@ final class CountryController
         ]);
     }
 
-    public function euroCountries(Countries $countries): JsonResponse
+    public function euroCountries(Countries $worldDatasets): JsonResponse
     {
         return response()->json(
-            $countries->countries()
+            $worldDatasets->countries()
                 ->inRegion('Europe')
                 ->withCurrency('EUR')
                 ->alpha3()
@@ -1353,7 +1353,7 @@ use Iriven\Countries;
 final class ShippingService
 {
     public function __construct(
-        private readonly Countries $countries,
+        private readonly Countries $worldDatasets,
     ) {
     }
 
@@ -1370,10 +1370,10 @@ final class ShippingService
 ## 12.5 Utilisation directe via le container
 
 ```php
-$countries = app(Iriven\Countries::class);
+$worldDatasets = app(Iriven\Countries::class);
 
-$france = $countries->country('FR');
-$list = $countries->countries()->alpha2()->list();
+$france = $worldDatasets->country('FR');
+$list = $worldDatasets->countries()->alpha2()->list();
 ```
 
 ---
@@ -1442,7 +1442,7 @@ composer test
 ## Exemple complet
 
 ```php
-$countries->countries()
+$worldDatasets->countries()
     ->inRegion('Europe')
     ->inSubRegion('Western Europe')
     ->withCurrency('EUR')
