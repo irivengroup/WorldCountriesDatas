@@ -1,5 +1,7 @@
 # PHP Countries Data
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XDCFPNTKUC4TU)
+
 Service de consultation des pays basé sur SQLite, avec une API moderne centrée sur `country()` et le chaînage fluide.
 
 ## Pré-requis
