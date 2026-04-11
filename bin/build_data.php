@@ -6,7 +6,6 @@ declare(strict_types=1);
 use Iriven\WorldDatasets\WorldDatasetsFactory;
 use Iriven\WorldDatasets\DataSource;
 use Iriven\WorldDatasets\DatasetValidator;
-use PDO;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -65,8 +64,8 @@ if (is_file($sqliteFile)) {
     unlink($sqliteFile);
 }
 
-$pdo = new PDO('sqlite:' . $sqliteFile);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo = new \PDO('sqlite:' . $sqliteFile);
+$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 $pdo->exec('CREATE TABLE countries (
     alpha2 TEXT PRIMARY KEY,
     alpha3 TEXT NOT NULL UNIQUE,

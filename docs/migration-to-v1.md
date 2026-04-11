@@ -5,11 +5,11 @@ La v1 publique stabilise les noms suivants :
 | Ancien nom | Nouveau nom |
 |---|---|
 | `Countries` | `WorldDatasetsService` |
-| `CountriesServiceFactory` | `WorldDatasetsFactory` |
-| `CountriesRuntimeConfig` | `WorldDatasetsRuntimeConfig` |
-| `CountriesQuery` | `WorldDatasetsQuery` |
-| `CountriesStats` | `WorldDatasetsStats` |
-| `CountriesServiceProvider` | `WorldDatasetsServiceProvider` |
+| `WorldDatasetsFactory` | `WorldDatasetsFactory` |
+| `WorldDatasetsRuntimeConfig` | `WorldDatasetsRuntimeConfig` |
+| `WorldDatasetsQuery` | `WorldDatasetsQuery` |
+| `WorldDatasetsStats` | `WorldDatasetsStats` |
+| `WorldDatasetsServiceProvider` | `WorldDatasetsServiceProvider` |
 
 ## Important
 

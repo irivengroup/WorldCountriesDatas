@@ -1,4 +1,64 @@
-# PHP World Countries Datasets
+# Convention retenue
+
+Cette version conserve volontairement :
+
+- `WorldDatasetsService` comme service principal
+- `WorldDatasetsFactory` comme factory principale
+- `countries()` comme point d’entrée de collection
+- `CountriesCollection` comme nom officiel de la collection de pays
+- la variable d’exemple `$worldDatasets` dans toute la documentation
+
+Autrement dit :
+- on **ne migre pas** `CountriesCollection` vers `DatasetsCollection`
+- on garde `countries()` → `CountriesCollection`
+
+---
+
+# Version publique stabilisée v1
+
+Cette archive ne contient plus d’alias de transition.  
+L’API publique officielle repose uniquement sur :
+
+- `Iriven\WorldDatasets\WorldDatasetsService`
+- `Iriven\WorldDatasets\WorldDatasetsFactory`
+- `Iriven\WorldDatasets\WorldDatasetsRuntimeConfig`
+- `Iriven\WorldDatasets\CountriesCollection`
+- `Iriven\WorldDatasets\CurrencyCollection`
+- `Iriven\WorldDatasets\RegionCollection`
+- `Iriven\WorldDatasets\WorldDatasetsQuery`
+- `Iriven\WorldDatasets\WorldDatasetsStats`
+
+---
+
+# Public API harmonisée
+
+Le package est maintenant aligné de bout en bout :
+
+- package Composer : `iriven/php-world-datasets`
+- namespace principal : `Iriven\WorldDatasets\`
+- service principal : `WorldDatasetsService`
+- factory principale : `WorldDatasetsFactory`
+- collection principale : `CountriesCollection`
+- query builder : `WorldDatasetsQuery`
+
+---
+
+# Installation
+
+```bash
+composer require iriven/php-world-datasets
+```
+
+Namespace principal :
+
+```php
+use Iriven\WorldDatasets\WorldDatasetsService;
+use Iriven\WorldDatasets\WorldDatasetsFactory;
+```
+
+---
+
+# PHP Countries Data
 
 Bibliothèque PHP orientée entreprise pour consulter, filtrer, exporter et valider des données pays avec source principale SQLite, sources dérivées JSON/CSV, collections fluentes, value objects, pipeline de build et intégrations Symfony/Laravel.
 
@@ -48,11 +108,11 @@ L’alias de compatibilité historique `WorldDatasets` est conservé, mais dépr
 
 - `WorldDatasets` : service central
 - `Countries` : alias concret prêt à l’emploi
-- `CountriesServiceFactory` : point d’entrée canonique
+- `WorldDatasetsFactory` : point d’entrée canonique
 - `Country` : représentation d’un pays
 - `CurrencyInfo`, `RegionInfo`, `SubRegionInfo`, `PhoneInfo` : value objects
-- `CountriesCollection`, `CurrenciesCollection`, `RegionsCollection`
-- `CountriesQuery`
+- `CountriesCollection`, `CurrencyCollection`, `RegionCollection`
+- `WorldDatasetsQuery`
 - `DatasetValidator`
 - `JsonCountryRepository`, `CsvCountryRepository`, `SqliteCountryRepository`, `ArrayCountryRepository`
 
@@ -75,11 +135,11 @@ Les fichiers présents dans `src/data` sont la seule source de vérité du proje
 ## 3.1 Chargement par défaut
 
 ```php
-use Iriven\CountriesServiceFactory;
+use Iriven\WorldDatasets\WorldDatasetsFactory;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$countries = CountriesServiceFactory::make();
+$worldDatasets = WorldDatasetsFactory::make();
 ```
 
 Cela charge :
@@ -91,30 +151,30 @@ src/data/.countriesRepository.sqlite
 ## 3.2 Chargement explicite
 
 ```php
-CountriesServiceFactory::make(Iriven\CountriesServiceFactory::defaultSqlitePath());
-CountriesServiceFactory::make(Iriven\CountriesServiceFactory::defaultJsonPath());
-CountriesServiceFactory::make(Iriven\CountriesServiceFactory::defaultCsvPath());
+WorldDatasetsFactory::make(Iriven\WorldDatasets\WorldDatasetsFactory::defaultSqlitePath());
+WorldDatasetsFactory::make(Iriven\WorldDatasets\WorldDatasetsFactory::defaultJsonPath());
+WorldDatasetsFactory::make(Iriven\WorldDatasets\WorldDatasetsFactory::defaultCsvPath());
 ```
 
 ## 3.3 Configuration runtime
 
 ```php
-use Iriven\CountriesRuntimeConfig;
-use Iriven\CountriesServiceFactory;
+use Iriven\WorldDatasets\WorldDatasetsRuntimeConfig;
+use Iriven\WorldDatasets\WorldDatasetsFactory;
 
-$config = new CountriesRuntimeConfig(
-    sourcePath: Iriven\CountriesServiceFactory::defaultSqlitePath(),
+$config = new WorldDatasetsRuntimeConfig(
+    sourcePath: Iriven\WorldDatasets\WorldDatasetsFactory::defaultSqlitePath(),
     verifyChecksum: true,
     strictValidation: true,
 );
 
-$countries = CountriesServiceFactory::fromConfig($config);
+$worldDatasets = WorldDatasetsFactory::fromConfig($config);
 ```
 
 ## 3.4 Vérification stricte au bootstrap
 
 ```php
-$countries = CountriesServiceFactory::makeWithValidation();
+$worldDatasets = WorldDatasetsFactory::makeWithValidation();
 ```
 
 ---
@@ -135,29 +195,29 @@ composer test
 # 5. Démarrage rapide
 
 ```php
-use Iriven\CountriesServiceFactory;
+use Iriven\WorldDatasets\WorldDatasetsFactory;
 
-$countries = CountriesServiceFactory::make();
+$worldDatasets = WorldDatasetsFactory::make();
 
-echo $countries->country('FR')->name();
-echo $countries->country('250')->tld();
-echo $countries->country('FRA')->currency()->code();
+echo $worldDatasets->country('FR')->name();
+echo $worldDatasets->country('250')->tld();
+echo $worldDatasets->country('FRA')->currency()->code();
 
-print_r($countries->country('FRA')->data());
-print_r($countries->currencies()->list());
-print_r($countries->countries()->alpha3()->list());
+print_r($worldDatasets->country('FRA')->data());
+print_r($worldDatasets->currencies()->list());
+print_r($worldDatasets->countries()->alpha3()->list());
 ```
 
 ---
 
 # 6. Inventaire complet des méthodes publiques
 
-## 6.1 `Iriven\CountriesServiceFactory`
+## 6.1 `Iriven\WorldDatasets\WorldDatasetsFactory`
 
 | Méthode | Retour | Description |
 |---|---:|---|
 | `make(?string $sourcePath = null)` | `Countries` | Construit le service principal |
-| `fromConfig(CountriesRuntimeConfig $config, ?SimpleCacheInterface $cache = null)` | `Countries` | Construit depuis une config runtime |
+| `fromConfig(WorldDatasetsRuntimeConfig $config, ?SimpleCacheInterface $cache = null)` | `Countries` | Construit depuis une config runtime |
 | `makeWithValidation(?string $sourcePath = null)` | `Countries` | Construit avec checksum + validation stricte |
 | `makeRepository(string $path, ?SimpleCacheInterface $cache = null)` | `CountryRepositoryInterface` | Résout le repository selon la source |
 | `defaultSqlitePath()` | `string` | Chemin SQLite par défaut |
@@ -181,10 +241,10 @@ print_r($countries->countries()->alpha3()->list());
 | `country(string $code)` | `Country` | Résolution stricte d’un pays |
 | `findCountry(string $code)` | `?Country` | Résolution tolérante |
 | `countries(int|string|CountryCodeFormat $format = CountryCodeFormat::ALPHA2)` | `CountriesCollection` | Collection de pays |
-| `currencies()` | `CurrenciesCollection` | Collection de devises |
-| `regions()` | `RegionsCollection` | Collection de régions |
+| `currencies()` | `CurrencyCollection` | Collection de devises |
+| `regions()` | `RegionCollection` | Collection de régions |
 | `meta()` | `MetaInfo` | Métadonnées package/dataset |
-| `query()` | `CountriesQuery` | Query builder fluide |
+| `query()` | `WorldDatasetsQuery` | Query builder fluide |
 | `findByName(string $name)` | `array<Country>` | Recherche exacte par nom |
 | `searchCountries(string $term)` | `array<Country>` | Recherche partielle |
 | `findByCurrencyCode(string $currencyCode)` | `array<Country>` | Filtre par devise |
@@ -192,7 +252,7 @@ print_r($countries->countries()->alpha3()->list());
 | `findByPhoneCode(string $phoneCode)` | `array<Country>` | Filtre par indicatif |
 | `findByTld(string $tld)` | `array<Country>` | Filtre par TLD |
 
-## 6.3 `Iriven\Country`
+## 6.3 `Iriven\WorldDatasets\Country`
 
 | Méthode | Retour |
 |---|---:|
@@ -218,7 +278,7 @@ print_r($countries->countries()->alpha3()->list());
 | `jsonSerialize()` | `array` |
 | `__toString()` | `string` |
 
-## 6.4 `Iriven\CountriesCollection`
+## 6.4 `Iriven\WorldDatasets\CountriesCollection`
 
 | Méthode | Retour | Description |
 |---|---:|---|
@@ -247,7 +307,7 @@ print_r($countries->countries()->alpha3()->list());
 | `contains(string $code)` | `bool` | Contient un pays par code |
 | `containsCountry(callable|Country|string $value)` | `bool` | Vérification avancée |
 | `chunk(int $size)` | `array<CountriesCollection>` | Découpage par paquets |
-| `stats()` | `CountriesStats` | Statistiques |
+| `stats()` | `WorldDatasetsStats` | Statistiques |
 | `groupByRegion()` | `array` | Groupement région |
 | `groupByCurrency()` | `array` | Groupement devise |
 | `pluckNames()` | `array` | Liste simple des noms |
@@ -266,7 +326,7 @@ print_r($countries->countries()->alpha3()->list());
 | `toArray()` | `array` | Alias export |
 | `jsonSerialize()` | `array` | JSON serializable |
 
-## 6.5 `Iriven\CurrenciesCollection`
+## 6.5 `Iriven\CurrencyCollection`
 
 | Méthode | Retour |
 |---|---:|
@@ -281,7 +341,7 @@ print_r($countries->countries()->alpha3()->list());
 | `toArray()` | `array` |
 | `jsonSerialize()` | `array` |
 
-## 6.6 `Iriven\RegionsCollection`
+## 6.6 `Iriven\RegionCollection`
 
 | Méthode | Retour |
 |---|---:|
@@ -296,21 +356,21 @@ print_r($countries->countries()->alpha3()->list());
 | `toArray()` | `array` |
 | `jsonSerialize()` | `array` |
 
-## 6.7 `Iriven\CountriesQuery`
+## 6.7 `Iriven\WorldDatasets\WorldDatasetsQuery`
 
 | Méthode | Retour |
 |---|---:|
-| `inRegion(string $name)` | `CountriesQuery` |
-| `inSubRegion(string $name)` | `CountriesQuery` |
-| `withCurrency(string $code)` | `CountriesQuery` |
-| `withPhoneCode(string $code)` | `CountriesQuery` |
-| `withTld(string $tld)` | `CountriesQuery` |
-| `matching(string $term)` | `CountriesQuery` |
-| `sortByName()` | `CountriesQuery` |
-| `sortByCode()` | `CountriesQuery` |
-| `sortByNumeric()` | `CountriesQuery` |
-| `limit(int $limit)` | `CountriesQuery` |
-| `offset(int $offset, int $limit = PHP_INT_MAX)` | `CountriesQuery` |
+| `inRegion(string $name)` | `WorldDatasetsQuery` |
+| `inSubRegion(string $name)` | `WorldDatasetsQuery` |
+| `withCurrency(string $code)` | `WorldDatasetsQuery` |
+| `withPhoneCode(string $code)` | `WorldDatasetsQuery` |
+| `withTld(string $tld)` | `WorldDatasetsQuery` |
+| `matching(string $term)` | `WorldDatasetsQuery` |
+| `sortByName()` | `WorldDatasetsQuery` |
+| `sortByCode()` | `WorldDatasetsQuery` |
+| `sortByNumeric()` | `WorldDatasetsQuery` |
+| `limit(int $limit)` | `WorldDatasetsQuery` |
+| `offset(int $offset, int $limit = PHP_INT_MAX)` | `WorldDatasetsQuery` |
 | `get()` | `array<Country>` |
 | `list()` | `array<string,string>` |
 
@@ -363,7 +423,7 @@ print_r($countries->countries()->alpha3()->list());
 - `toArray(): array`
 - `jsonSerialize(): array`
 
-### `Iriven\CountriesStats`
+### `Iriven\WorldDatasets\WorldDatasetsStats`
 - `total(): int`
 - `regions(): int`
 - `currencies(): int`
@@ -373,7 +433,7 @@ print_r($countries->countries()->alpha3()->list());
 ## 6.9 Validation et configuration
 
 ### `Iriven\DatasetValidator`
-- `validate(array $countries, bool $strict = true): DatasetValidationReport`
+- `validate(array $worldDatasets, bool $strict = true): DatasetValidationReport`
 
 ### `Iriven\DatasetValidationReport`
 - `duplicates(): array`
@@ -384,13 +444,13 @@ print_r($countries->countries()->alpha3()->list());
 - `toArray(): array`
 - `jsonSerialize(): array`
 
-### `Iriven\CountriesRuntimeConfig`
+### `Iriven\WorldDatasets\WorldDatasetsRuntimeConfig`
 - `sourcePath(): ?string`
 - `verifyChecksum(): bool`
 - `strictValidation(): bool`
 - `usePsr16Cache(): bool`
 
-### `Iriven\CountryCodeNormalizer`
+### `Iriven\WorldDatasets\CountryCodeNormalizer`
 - `normalize(string $code): string`
 - `normalizeAlpha(string $code): string`
 - `normalizeNumeric(string $code): string`
@@ -410,11 +470,11 @@ print_r($countries->countries()->alpha3()->list());
 ## 7.1 Exemples de collections
 
 ```php
-$countries->countries()->alpha2()->list();
-$countries->countries()->alpha3()->list();
-$countries->countries()->numeric()->list();
+$worldDatasets->countries()->alpha2()->list();
+$worldDatasets->countries()->alpha3()->list();
+$worldDatasets->countries()->numeric()->list();
 
-$countries->countries()
+$worldDatasets->countries()
     ->inRegion('Europe')
     ->withCurrency('EUR')
     ->sortByName()
@@ -425,7 +485,7 @@ $countries->countries()
 ## 7.2 Exemples query builder
 
 ```php
-$result = $countries->query()
+$result = $worldDatasets->query()
     ->inRegion('Europe')
     ->withCurrency('EUR')
     ->sortByName()
@@ -436,683 +496,31 @@ $result = $countries->query()
 ## 7.3 Exemples fonctionnels
 
 ```php
-$names = $countries->countries()->map(fn (Iriven\Country $country) => $country->name());
+$names = $worldDatasets->countries()->map(fn (Iriven\WorldDatasets\Country $country) => $country->name());
 
-$eurCountries = $countries->countries()->filter(
-    fn (Iriven\Country $country) => $country->hasCurrency('EUR')
+$eurCountries = $worldDatasets->countries()->filter(
+    fn (Iriven\WorldDatasets\Country $country) => $country->hasCurrency('EUR')
 );
 
-$total = $countries->countries()->reduce(
-    fn (int $carry, Iriven\Country $country) => $carry + 1,
+$total = $worldDatasets->countries()->reduce(
+    fn (int $carry, Iriven\WorldDatasets\Country $country) => $carry + 1,
     0
 );
 ```
-
-
-
-## 7.4 inventaire des chainages possibles
-
-Cette section complète le README avec un inventaire explicite des enchaînements autorisés sur les **value objects**, les **filtres**, les **collections** et le **query builder**.
-
-> Convention utilisée ci-dessous :
->
-> - `$countries` est une instance de `Iriven\Countries`
-> - `country()` retourne un `Country`
-> - `countries()` retourne une `CountriesCollection`
-> - `currencies()` retourne une `CurrenciesCollection`
-> - `regions()` retourne une `RegionsCollection`
-> - `query()` retourne une `CountriesQuery`
-
-## 7.4.1. Chainages depuis le service principal
-
-### Point d’entrée pays
-
-```php
-$countries->country('FR');
-$countries->findCountry('FR');
-```
-
-### Point d’entrée collections
-
-```php
-$countries->countries();
-$countries->countries('alpha2');
-$countries->countries('alpha3');
-$countries->countries('numeric');
-
-$countries->currencies();
-$countries->regions();
-$countries->query();
-$countries->meta();
-```
-
----
-
-## 7.4.2. Chainages possibles depuis `Country`
-
-### 7.4.2.1 Accès direct aux propriétés scalaires
-
-```php
-$countries->country('FR')->alpha2();
-$countries->country('FR')->alpha3();
-$countries->country('FR')->numeric();
-$countries->country('FR')->name();
-$countries->country('FR')->capital();
-$countries->country('FR')->tld();
-$countries->country('FR')->language();
-$countries->country('FR')->languages();
-$countries->country('FR')->postalCodePattern();
-$countries->country('FR')->exists();
-$countries->country('FR')->data();
-$countries->country('FR')->all();
-$countries->country('FR')->toArray();
-$countries->country('FR')->toIndexedArray();
-$countries->country('FR')->jsonSerialize();
-```
-
-### 7.4.2.2 Chainages vers les value objects
-
-```php
-$countries->country('FR')->currency();
-$countries->country('FR')->region();
-$countries->country('FR')->phone();
-```
-
-### 7.4.2.3 Chainages métier
-
-```php
-$countries->country('FR')->hasCurrency('EUR');
-$countries->country('FR')->isInRegion('Europe');
-```
-
----
-
-### 7.4.3. Chainages possibles depuis `CurrencyInfo`
-
-Point d’entrée :
-
-```php
-$currency = $countries->country('FR')->currency();
-```
-
-#### Méthodes publiques
-
-```php
-$currency->code();
-$currency->name();
-$currency->toArray();
-$currency->jsonSerialize();
-(string) $currency;
-```
-
-#### Exemples
-
-```php
-$countries->country('FR')->currency()->code();
-$countries->country('FR')->currency()->name();
-$countries->country('FR')->currency()->toArray();
-```
-
----
-
-### 7.4.4. Chainages possibles depuis `RegionInfo`
-
-Point d’entrée :
-
-```php
-$region = $countries->country('FR')->region();
-```
-
-#### Méthodes publiques
-
-```php
-$region->alphaCode();
-$region->numericCode();
-$region->name();
-$region->subRegion();
-$region->toArray();
-$region->jsonSerialize();
-(string) $region;
-```
-
-#### Chainages complets
-
-```php
-$countries->country('FR')->region()->alphaCode();
-$countries->country('FR')->region()->numericCode();
-$countries->country('FR')->region()->name();
-$countries->country('FR')->region()->toArray();
-$countries->country('FR')->region()->jsonSerialize();
-```
-
-#### Passage vers `SubRegionInfo`
-
-```php
-$countries->country('FR')->region()->subRegion();
-$countries->country('FR')->region()->subRegion()->code();
-$countries->country('FR')->region()->subRegion()->Code();
-$countries->country('FR')->region()->subRegion()->name();
-$countries->country('FR')->region()->subRegion()->Name();
-$countries->country('FR')->region()->subRegion()->toArray();
-$countries->country('FR')->region()->subRegion()->jsonSerialize();
-```
-
----
-
-### 7.4.5. Chainages possibles depuis `SubRegionInfo`
-
-Point d’entrée :
-
-```php
-$subRegion = $countries->country('FR')->region()->subRegion();
-```
-
-#### Méthodes publiques
-
-```php
-$subRegion->code();
-$subRegion->Code();
-$subRegion->name();
-$subRegion->Name();
-$subRegion->toArray();
-$subRegion->jsonSerialize();
-(string) $subRegion;
-```
-
----
-
-### 7.4.6. Chainages possibles depuis `PhoneInfo`
-
-Point d’entrée :
-
-```php
-$phone = $countries->country('FR')->phone();
-```
-
-#### Méthodes publiques
-
-```php
-$phone->code();
-$phone->internationalPrefix();
-$phone->nationalPrefix();
-$phone->subscriberPattern();
-$phone->pattern();
-$phone->toArray();
-$phone->jsonSerialize();
-(string) $phone;
-```
-
-#### Exemples détaillés
-
-```php
-$countries->country('FR')->phone()->code();
-$countries->country('FR')->phone()->internationalPrefix();
-$countries->country('FR')->phone()->nationalPrefix();
-$countries->country('FR')->phone()->subscriberPattern();
-$countries->country('FR')->phone()->pattern();
-$countries->country('FR')->phone()->toArray();
-```
-
----
-
-### 7.4.7. Chainages possibles depuis `CountriesCollection`
-
-Point d’entrée :
-
-```php
-$collection = $countries->countries();
-```
-
-#### 7.4.7.1 Sélection du format de code
-
-```php
-$countries->countries()->alpha2();
-$countries->countries()->alpha3();
-$countries->countries()->numeric();
-```
-
-Chainages usuels :
-
-```php
-$countries->countries()->alpha2()->list();
-$countries->countries()->alpha3()->list();
-$countries->countries()->numeric()->list();
-
-$countries->countries()->alpha2()->codes();
-$countries->countries()->alpha3()->codes();
-$countries->countries()->numeric()->codes();
-```
-
-#### 7.4.7.2 Filtres chaînables
-
-Tous ces filtres peuvent s’enchaîner librement entre eux, puis avec les méthodes de tri, pagination, extraction ou export.
-
-```php
-$countries->countries()->inRegion('Europe');
-$countries->countries()->inSubRegion('Western Europe');
-$countries->countries()->withCurrency('EUR');
-$countries->countries()->withPhoneCode('+33');
-$countries->countries()->withTld('.fr');
-$countries->countries()->named('France');
-$countries->countries()->matching('fr');
-```
-
-#### 7.4.7.3 Tri et pagination
-
-```php
-$countries->countries()->sortByName();
-$countries->countries()->sortByCode();
-$countries->countries()->sortByNumeric();
-$countries->countries()->paginate(0, 10);
-```
-
-#### 7.4.7.4 Accès ponctuel
-
-```php
-$countries->countries()->first();
-$countries->countries()->last();
-$countries->countries()->count();
-$countries->countries()->isEmpty();
-$countries->countries()->isNotEmpty();
-$countries->countries()->contains('FR');
-$countries->countries()->containsCountry('FR');
-$countries->countries()->containsCountry($countries->country('FR'));
-$countries->countries()->containsCountry(fn ($country) => $country->hasCurrency('EUR'));
-$countries->countries()->chunk(50);
-```
-
-#### 7.4.7.5 Extraction / restitution
-
-```php
-$countries->countries()->values();
-$countries->countries()->names();
-$countries->countries()->codes();
-$countries->countries()->list();
-$countries->countries()->exportArray();
-$countries->countries()->toStorageArray();
-$countries->countries()->toApiArray();
-$countries->countries()->toArray();
-$countries->countries()->jsonSerialize();
-```
-
-#### 7.4.7.6 Agrégations
-
-```php
-$countries->countries()->stats();
-$countries->countries()->groupByRegion();
-$countries->countries()->groupByCurrency();
-$countries->countries()->pluckNames();
-$countries->countries()->pluckCodes();
-```
-
-#### 7.4.7.7 Fonctionnel
-
-```php
-$countries->countries()->map(fn ($country) => $country->name());
-$countries->countries()->filter(fn ($country) => $country->hasCurrency('EUR'));
-$countries->countries()->reduce(fn ($carry, $country) => $carry + 1, 0);
-```
-
-#### 7.4.7.8 Export
-
-```php
-$countries->countries()->toJson();
-$countries->countries()->toCsv();
-$countries->countries()->exportJsonFile('/tmp/countries.json');
-$countries->countries()->exportCsvFile('/tmp/countries.csv');
-```
-
-#### 7.4.7.9 Exemples de chainages libres
-
-##### Exemple 1
-
-```php
-$countries->countries()
-    ->inRegion('Europe')
-    ->withCurrency('EUR')
-    ->alpha2()
-    ->sortByName()
-    ->list();
-```
-
-##### Exemple 2
-
-```php
-$countries->countries()
-    ->inRegion('Europe')
-    ->inSubRegion('Western Europe')
-    ->withCurrency('EUR')
-    ->matching('fr')
-    ->sortByCode()
-    ->paginate(0, 20)
-    ->values();
-```
-
-##### Exemple 3
-
-```php
-$countries->countries()
-    ->withTld('.fr')
-    ->withPhoneCode('+33')
-    ->alpha3()
-    ->codes();
-```
-
-##### Exemple 4
-
-```php
-$countries->countries()
-    ->matching('united')
-    ->sortByNumeric()
-    ->pluckNames();
-```
-
-##### Exemple 5
-
-```php
-$countries->countries()
-    ->filter(fn ($country) => $country->region()->name() === 'Europe')
-    ->map(fn ($country) => [
-        'code' => $country->alpha2(),
-        'name' => $country->name(),
-        'currency' => $country->currency()->code(),
-    ]);
-```
-
-##### Exemple 6
-
-```php
-$countries->countries()
-    ->inRegion('Asia')
-    ->sortByName()
-    ->exportJsonFile('/tmp/asia.json');
-```
-
-##### Exemple 7
-
-```php
-$countries->countries()
-    ->inRegion('Americas')
-    ->groupByCurrency();
-```
-
----
-
-#### 7.4.8. Chainages possibles depuis `CurrenciesCollection`
-
-Point d’entrée :
-
-```php
-$currencies = $countries->currencies();
-```
-
-##### Méthodes publiques
-
-```php
-$currencies->values();
-$currencies->list();
-$currencies->countries();
-$currencies->exportArray();
-$currencies->toJson();
-$currencies->toCsv();
-$currencies->exportJsonFile('/tmp/currencies.json');
-$currencies->exportCsvFile('/tmp/currencies.csv');
-$currencies->toArray();
-$currencies->jsonSerialize();
-```
-
-##### Exemples
-
-```php
-$countries->currencies()->list();
-$countries->currencies()->values();
-$countries->currencies()->countries();
-$countries->currencies()->toJson();
-$countries->currencies()->exportCsvFile('/tmp/currencies.csv');
-```
-
----
-
-#### 7.4.9. Chainages possibles depuis `RegionsCollection`
-
-Point d’entrée :
-
-```php
-$regions = $countries->regions();
-```
-
-##### Méthodes publiques
-
-```php
-$regions->values();
-$regions->list();
-$regions->countries();
-$regions->exportArray();
-$regions->toJson();
-$regions->toCsv();
-$regions->exportJsonFile('/tmp/regions.json');
-$regions->exportCsvFile('/tmp/regions.csv');
-$regions->toArray();
-$regions->jsonSerialize();
-```
-
-##### Exemples
-
-```php
-$countries->regions()->list();
-$countries->regions()->values();
-$countries->regions()->countries();
-$countries->regions()->toJson();
-$countries->regions()->exportCsvFile('/tmp/regions.csv');
-```
-
----
-
-#### 7.4.10. Chainages possibles depuis `CountriesQuery`
-
-Point d’entrée :
-
-```php
-$query = $countries->query();
-```
-
-##### Filtres / tri / pagination
-
-```php
-$query->inRegion('Europe');
-$query->inSubRegion('Western Europe');
-$query->withCurrency('EUR');
-$query->withPhoneCode('+33');
-$query->withTld('.fr');
-$query->matching('fr');
-$query->sortByName();
-$query->sortByCode();
-$query->sortByNumeric();
-$query->limit(20);
-$query->offset(0, 20);
-```
-
-##### Résolution finale
-
-```php
-$query->get();
-$query->list();
-```
-
-##### Exemples complets
-
-```php
-$countries->query()
-    ->inRegion('Europe')
-    ->withCurrency('EUR')
-    ->sortByName()
-    ->limit(20)
-    ->get();
-```
-
-```php
-$countries->query()
-    ->inRegion('Europe')
-    ->inSubRegion('Western Europe')
-    ->matching('fr')
-    ->sortByCode()
-    ->offset(0, 10)
-    ->list();
-```
-
-```php
-$countries->query()
-    ->withTld('.fr')
-    ->withPhoneCode('+33')
-    ->get();
-```
-
----
-
-#### 7.4.11. Chainages possibles depuis `MetaInfo`
-
-Point d’entrée :
-
-```php
-$meta = $countries->meta();
-```
-
-##### Méthodes publiques
-
-```php
-$meta->count();
-$meta->source();
-$meta->version();
-$meta->lastUpdatedAt();
-$meta->packageVersion();
-$meta->datasetVersion();
-$meta->checksum();
-$meta->builtAt();
-$meta->toArray();
-$meta->jsonSerialize();
-```
-
-##### Exemples
-
-```php
-$countries->meta()->source();
-$countries->meta()->datasetVersion();
-$countries->meta()->checksum();
-$countries->meta()->builtAt();
-$countries->meta()->toArray();
-```
-
----
-
-#### 7.4.12. Chainages liés au factory et à la config runtime
-
-##### Factory directe
-
-```php
-Iriven\CountriesServiceFactory::make();
-Iriven\CountriesServiceFactory::make(Iriven\CountriesServiceFactory::defaultSqlitePath());
-Iriven\CountriesServiceFactory::make(Iriven\CountriesServiceFactory::defaultJsonPath());
-Iriven\CountriesServiceFactory::make(Iriven\CountriesServiceFactory::defaultCsvPath());
-```
-
-##### Factory avec config
-
-```php
-$config = new Iriven\CountriesRuntimeConfig(
-    sourcePath: Iriven\CountriesServiceFactory::defaultSqlitePath(),
-    verifyChecksum: true,
-    strictValidation: true,
-);
-
-$countries = Iriven\CountriesServiceFactory::fromConfig($config);
-```
-
-##### Validation stricte
-
-```php
-Iriven\CountriesServiceFactory::makeWithValidation();
-```
-
-##### Checksum
-
-```php
-Iriven\CountriesServiceFactory::assertChecksum(
-    Iriven\CountriesServiceFactory::defaultSqlitePath()
-);
-```
-
----
-
-#### 7.4.13. Résumé des familles de chainage
-
-##### 7.4.13.1 Service -> Country -> Value Object -> propriété
-
-```php
-$countries->country('FR')->region()->subRegion()->name();
-$countries->country('FR')->currency()->code();
-$countries->country('FR')->phone()->pattern();
-```
-
-##### 7.4.13.2 Service -> CountriesCollection -> filtres -> tri -> sortie
-
-```php
-$countries->countries()
-    ->inRegion('Europe')
-    ->withCurrency('EUR')
-    ->sortByName()
-    ->list();
-```
-
-##### 7.4.13.3 Service -> CountriesCollection -> fonctionnel -> sortie
-
-```php
-$countries->countries()
-    ->filter(fn ($country) => $country->hasCurrency('EUR'))
-    ->map(fn ($country) => $country->name());
-```
-
-##### 7.4.13.4 Service -> Query -> résultat
-
-```php
-$countries->query()
-    ->matching('fr')
-    ->limit(10)
-    ->get();
-```
-
-##### 7.4.13.5 Service -> collection spécialisée -> export
-
-```php
-$countries->currencies()->exportJsonFile('/tmp/currencies.json');
-$countries->regions()->exportCsvFile('/tmp/regions.csv');
-```
-
-##### 7.4.14. Important
-
-Les chainages ci-dessus sont donnés **sans restriction artificielle** :  
-tout ce qui est exposé publiquement par les objets peut être combiné dans l’ordre logique du type retourné.
-
-En pratique :
-
-- un `Country` peut chaîner vers ses value objects
-- une `CountriesCollection` peut enchaîner filtres, tri, pagination, extraction, agrégation, export
-- un `CountriesQuery` peut enchaîner filtres, tri et pagination avant `get()` ou `list()`
-- `CurrenciesCollection` et `RegionsCollection` peuvent aller jusqu’à l’export final
-
 
 ---
 
 # 8. Exports
 
 ```php
-$json = $countries->countries()->toJson();
-$csv = $countries->countries()->toCsv();
+$json = $worldDatasets->countries()->toJson();
+$csv = $worldDatasets->countries()->toCsv();
 
-$countries->countries()->exportJsonFile('/tmp/countries.json');
-$countries->countries()->exportCsvFile('/tmp/countries.csv');
+$worldDatasets->countries()->exportJsonFile('/tmp/countries.json');
+$worldDatasets->countries()->exportCsvFile('/tmp/countries.csv');
 
-$countries->currencies()->exportJsonFile('/tmp/currencies.json');
-$countries->regions()->exportCsvFile('/tmp/regions.csv');
+$worldDatasets->currencies()->exportJsonFile('/tmp/currencies.json');
+$worldDatasets->regions()->exportCsvFile('/tmp/regions.csv');
 ```
 
 ---
@@ -1143,18 +551,18 @@ composer run validate-data -- --strict
 ## 9.3 Checksum
 
 ```php
-$countries = Iriven\CountriesServiceFactory::makeWithValidation();
+$worldDatasets = Iriven\WorldDatasets\WorldDatasetsFactory::makeWithValidation();
 ```
 
 ou
 
 ```php
-$config = new Iriven\CountriesRuntimeConfig(
+$config = new Iriven\WorldDatasets\WorldDatasetsRuntimeConfig(
     verifyChecksum: true,
     strictValidation: true,
 );
 
-$countries = Iriven\CountriesServiceFactory::fromConfig($config);
+$worldDatasets = Iriven\WorldDatasets\WorldDatasetsFactory::fromConfig($config);
 ```
 
 ---
@@ -1190,25 +598,25 @@ Cette commande vérifie :
 
 ```yaml
 services:
-  Iriven\Countries:
-    factory: ['Iriven\CountriesServiceFactory', 'make']
+  Iriven\WorldDatasets\WorldDatasetsService:
+    factory: ['Iriven\WorldDatasets\WorldDatasetsFactory', 'make']
 ```
 
 ## 11.2 Avec validation stricte
 
 ```yaml
 services:
-  Iriven\CountriesRuntimeConfig:
+  Iriven\WorldDatasets\WorldDatasetsRuntimeConfig:
     arguments:
-      $sourcePath: '%kernel.project_dir%/vendor/iriven/php-countries-data/src/data/.countriesRepository.sqlite'
+      $sourcePath: '%kernel.project_dir%/vendor/iriven/php-world-datasets/src/data/.countriesRepository.sqlite'
       $verifyChecksum: true
       $strictValidation: true
       $usePsr16Cache: false
 
-  Iriven\Countries:
-    factory: ['Iriven\CountriesServiceFactory', 'fromConfig']
+  Iriven\WorldDatasets\WorldDatasetsService:
+    factory: ['Iriven\WorldDatasets\WorldDatasetsFactory', 'fromConfig']
     arguments:
-      $config: '@Iriven\CountriesRuntimeConfig'
+      $config: '@Iriven\WorldDatasets\WorldDatasetsRuntimeConfig'
 ```
 
 ## 11.3 Exemple de contrôleur
@@ -1218,7 +626,7 @@ services:
 
 namespace App\Controller;
 
-use Iriven\Countries;
+use Iriven\WorldDatasets\WorldDatasetsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -1226,9 +634,9 @@ use Symfony\Component\Routing\Annotation\Route;
 final class CountryController extends AbstractController
 {
     #[Route('/countries/{code}', methods: ['GET'])]
-    public function show(Countries $countries, string $code): JsonResponse
+    public function show(Countries $worldDatasets, string $code): JsonResponse
     {
-        $country = $countries->country($code);
+        $country = $worldDatasets->country($code);
 
         return $this->json([
             'country' => $country->toArray(),
@@ -1239,10 +647,10 @@ final class CountryController extends AbstractController
     }
 
     #[Route('/countries/europe/eur', methods: ['GET'])]
-    public function euroCountries(Countries $countries): JsonResponse
+    public function euroCountries(Countries $worldDatasets): JsonResponse
     {
         return $this->json(
-            $countries->countries()
+            $worldDatasets->countries()
                 ->inRegion('Europe')
                 ->withCurrency('EUR')
                 ->alpha2()
@@ -1259,7 +667,7 @@ final class CountryController extends AbstractController
 
 namespace App\Command;
 
-use Iriven\Countries;
+use Iriven\WorldDatasets\WorldDatasetsService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -1269,7 +677,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class CountriesDoctorCommand extends Command
 {
     public function __construct(
-        private readonly Countries $countries,
+        private readonly Countries $worldDatasets,
     ) {
         parent::__construct();
     }
@@ -1293,7 +701,7 @@ final class CountriesDoctorCommand extends Command
 Le provider fourni se trouve dans :
 
 ```text
-src/Bridge/Laravel/CountriesServiceProvider.php
+src/Bridge/Laravel/WorldDatasetsServiceProvider.php
 ```
 
 ## 12.2 Enregistrement
@@ -1301,7 +709,7 @@ src/Bridge/Laravel/CountriesServiceProvider.php
 Dans `config/app.php` ou auto-discovery selon votre packaging :
 
 ```php
-Iriven\Bridge\Laravel\CountriesServiceProvider::class,
+Iriven\WorldDatasets\Bridge\Laravel\WorldDatasetsServiceProvider::class,
 ```
 
 ## 12.3 Utilisation dans un contrôleur
@@ -1312,13 +720,13 @@ Iriven\Bridge\Laravel\CountriesServiceProvider::class,
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use Iriven\Countries;
+use Iriven\WorldDatasets\WorldDatasetsService;
 
 final class CountryController
 {
-    public function show(Countries $countries, string $code): JsonResponse
+    public function show(Countries $worldDatasets, string $code): JsonResponse
     {
-        $country = $countries->country($code);
+        $country = $worldDatasets->country($code);
 
         return response()->json([
             'country' => $country->toArray(),
@@ -1328,10 +736,10 @@ final class CountryController
         ]);
     }
 
-    public function euroCountries(Countries $countries): JsonResponse
+    public function euroCountries(Countries $worldDatasets): JsonResponse
     {
         return response()->json(
-            $countries->countries()
+            $worldDatasets->countries()
                 ->inRegion('Europe')
                 ->withCurrency('EUR')
                 ->alpha3()
@@ -1348,12 +756,12 @@ final class CountryController
 
 namespace App\Services;
 
-use Iriven\Countries;
+use Iriven\WorldDatasets\WorldDatasetsService;
 
 final class ShippingService
 {
     public function __construct(
-        private readonly Countries $countries,
+        private readonly Countries $worldDatasets,
     ) {
     }
 
@@ -1370,10 +778,10 @@ final class ShippingService
 ## 12.5 Utilisation directe via le container
 
 ```php
-$countries = app(Iriven\Countries::class);
+$worldDatasets = app(Iriven\WorldDatasets\WorldDatasetsService::class);
 
-$france = $countries->country('FR');
-$list = $countries->countries()->alpha2()->list();
+$france = $worldDatasets->country('FR');
+$list = $worldDatasets->countries()->alpha2()->list();
 ```
 
 ---
@@ -1417,9 +825,38 @@ Le workflow GitHub Actions :
 
 - classe de service principale : `WorldDatasets`
 - alias concret recommandé : `Countries`
-- factory canonique : `CountriesServiceFactory`
+- factory canonique : `WorldDatasetsFactory`
 - source par défaut : SQLite
 - source JSON et CSV : dérivées, mais maintenues
+
+---
+
+# 15. Fichiers du projet
+
+## 15.1 Documentation
+- `README.md`
+- `CHANGELOG.md`
+- `CONTRIBUTING.md`
+- `docs/compatibility.md`
+
+## 15.2 Scripts
+- `bin/build_data.php`
+- `bin/check_data.php`
+- `bin/import_countries.php`
+- `bin/validate_countries.php`
+- `bin/countries`
+- `bin/countries-doctor`
+
+## 15.3 Données
+- `src/data/.countriesRepository.sqlite`
+- `src/data/.countriesRepository.json`
+- `src/data/countriesRepository.csv`
+- `src/data/.countriesRepository.meta.json`
+- `src/data/.countriesRepository.sha256`
+
+## 15.4 Schémas
+- `src/data/schema/country.schema.json`
+- `src/data/schema/countries.sql`
 
 ---
 
@@ -1442,7 +879,7 @@ composer test
 ## Exemple complet
 
 ```php
-$countries->countries()
+$worldDatasets->countries()
     ->inRegion('Europe')
     ->inSubRegion('Western Europe')
     ->withCurrency('EUR')
@@ -1467,3 +904,707 @@ composer run doctor
 - séparation data/build/runtime
 - source SQLite par défaut
 
+
+---
+
+# Addendum — inventaire des chainages possibles
+
+Cette section complète le README avec un inventaire explicite des enchaînements autorisés sur les **value objects**, les **filtres**, les **collections** et le **query builder**.
+
+> Convention utilisée ci-dessous :
+>
+> - `$worldDatasets` est une instance de `Iriven\WorldDatasets\WorldDatasetsService`
+> - `country()` retourne un `Country`
+> - `countries()` retourne une `CountriesCollection`
+> - `currencies()` retourne une `CurrencyCollection`
+> - `regions()` retourne une `RegionCollection`
+> - `query()` retourne une `WorldDatasetsQuery`
+
+## 1. Chainages depuis le service principal
+
+### Point d’entrée pays
+
+```php
+$worldDatasets->country('FR');
+$worldDatasets->findCountry('FR');
+```
+
+### Point d’entrée collections
+
+```php
+$worldDatasets->countries();
+$worldDatasets->countries('alpha2');
+$worldDatasets->countries('alpha3');
+$worldDatasets->countries('numeric');
+
+$worldDatasets->currencies();
+$worldDatasets->regions();
+$worldDatasets->query();
+$worldDatasets->meta();
+```
+
+---
+
+## 2. Chainages possibles depuis `Country`
+
+## 2.1 Accès direct aux propriétés scalaires
+
+```php
+$worldDatasets->country('FR')->alpha2();
+$worldDatasets->country('FR')->alpha3();
+$worldDatasets->country('FR')->numeric();
+$worldDatasets->country('FR')->name();
+$worldDatasets->country('FR')->capital();
+$worldDatasets->country('FR')->tld();
+$worldDatasets->country('FR')->language();
+$worldDatasets->country('FR')->languages();
+$worldDatasets->country('FR')->postalCodePattern();
+$worldDatasets->country('FR')->exists();
+$worldDatasets->country('FR')->data();
+$worldDatasets->country('FR')->all();
+$worldDatasets->country('FR')->toArray();
+$worldDatasets->country('FR')->toIndexedArray();
+$worldDatasets->country('FR')->jsonSerialize();
+```
+
+## 2.2 Chainages vers les value objects
+
+```php
+$worldDatasets->country('FR')->currency();
+$worldDatasets->country('FR')->region();
+$worldDatasets->country('FR')->phone();
+```
+
+## 2.3 Chainages métier
+
+```php
+$worldDatasets->country('FR')->hasCurrency('EUR');
+$worldDatasets->country('FR')->isInRegion('Europe');
+```
+
+---
+
+## 3. Chainages possibles depuis `CurrencyInfo`
+
+Point d’entrée :
+
+```php
+$currency = $worldDatasets->country('FR')->currency();
+```
+
+### Méthodes publiques
+
+```php
+$currency->code();
+$currency->name();
+$currency->toArray();
+$currency->jsonSerialize();
+(string) $currency;
+```
+
+### Exemples
+
+```php
+$worldDatasets->country('FR')->currency()->code();
+$worldDatasets->country('FR')->currency()->name();
+$worldDatasets->country('FR')->currency()->toArray();
+```
+
+---
+
+## 4. Chainages possibles depuis `RegionInfo`
+
+Point d’entrée :
+
+```php
+$region = $worldDatasets->country('FR')->region();
+```
+
+### Méthodes publiques
+
+```php
+$region->alphaCode();
+$region->numericCode();
+$region->name();
+$region->subRegion();
+$region->toArray();
+$region->jsonSerialize();
+(string) $region;
+```
+
+### Chainages complets
+
+```php
+$worldDatasets->country('FR')->region()->alphaCode();
+$worldDatasets->country('FR')->region()->numericCode();
+$worldDatasets->country('FR')->region()->name();
+$worldDatasets->country('FR')->region()->toArray();
+$worldDatasets->country('FR')->region()->jsonSerialize();
+```
+
+### Passage vers `SubRegionInfo`
+
+```php
+$worldDatasets->country('FR')->region()->subRegion();
+$worldDatasets->country('FR')->region()->subRegion()->code();
+$worldDatasets->country('FR')->region()->subRegion()->Code();
+$worldDatasets->country('FR')->region()->subRegion()->name();
+$worldDatasets->country('FR')->region()->subRegion()->Name();
+$worldDatasets->country('FR')->region()->subRegion()->toArray();
+$worldDatasets->country('FR')->region()->subRegion()->jsonSerialize();
+```
+
+---
+
+## 5. Chainages possibles depuis `SubRegionInfo`
+
+Point d’entrée :
+
+```php
+$subRegion = $worldDatasets->country('FR')->region()->subRegion();
+```
+
+### Méthodes publiques
+
+```php
+$subRegion->code();
+$subRegion->Code();
+$subRegion->name();
+$subRegion->Name();
+$subRegion->toArray();
+$subRegion->jsonSerialize();
+(string) $subRegion;
+```
+
+---
+
+## 6. Chainages possibles depuis `PhoneInfo`
+
+Point d’entrée :
+
+```php
+$phone = $worldDatasets->country('FR')->phone();
+```
+
+### Méthodes publiques
+
+```php
+$phone->code();
+$phone->internationalPrefix();
+$phone->nationalPrefix();
+$phone->subscriberPattern();
+$phone->pattern();
+$phone->toArray();
+$phone->jsonSerialize();
+(string) $phone;
+```
+
+### Exemples détaillés
+
+```php
+$worldDatasets->country('FR')->phone()->code();
+$worldDatasets->country('FR')->phone()->internationalPrefix();
+$worldDatasets->country('FR')->phone()->nationalPrefix();
+$worldDatasets->country('FR')->phone()->subscriberPattern();
+$worldDatasets->country('FR')->phone()->pattern();
+$worldDatasets->country('FR')->phone()->toArray();
+```
+
+---
+
+## 7. Chainages possibles depuis `CountriesCollection`
+
+Point d’entrée :
+
+```php
+$collection = $worldDatasets->countries();
+```
+
+## 7.1 Sélection du format de code
+
+```php
+$worldDatasets->countries()->alpha2();
+$worldDatasets->countries()->alpha3();
+$worldDatasets->countries()->numeric();
+```
+
+Chainages usuels :
+
+```php
+$worldDatasets->countries()->alpha2()->list();
+$worldDatasets->countries()->alpha3()->list();
+$worldDatasets->countries()->numeric()->list();
+
+$worldDatasets->countries()->alpha2()->codes();
+$worldDatasets->countries()->alpha3()->codes();
+$worldDatasets->countries()->numeric()->codes();
+```
+
+## 7.2 Filtres chaînables
+
+Tous ces filtres peuvent s’enchaîner librement entre eux, puis avec les méthodes de tri, pagination, extraction ou export.
+
+```php
+$worldDatasets->countries()->inRegion('Europe');
+$worldDatasets->countries()->inSubRegion('Western Europe');
+$worldDatasets->countries()->withCurrency('EUR');
+$worldDatasets->countries()->withPhoneCode('+33');
+$worldDatasets->countries()->withTld('.fr');
+$worldDatasets->countries()->named('France');
+$worldDatasets->countries()->matching('fr');
+```
+
+## 7.3 Tri et pagination
+
+```php
+$worldDatasets->countries()->sortByName();
+$worldDatasets->countries()->sortByCode();
+$worldDatasets->countries()->sortByNumeric();
+$worldDatasets->countries()->paginate(0, 10);
+```
+
+## 7.4 Accès ponctuel
+
+```php
+$worldDatasets->countries()->first();
+$worldDatasets->countries()->last();
+$worldDatasets->countries()->count();
+$worldDatasets->countries()->isEmpty();
+$worldDatasets->countries()->isNotEmpty();
+$worldDatasets->countries()->contains('FR');
+$worldDatasets->countries()->containsCountry('FR');
+$worldDatasets->countries()->containsCountry($worldDatasets->country('FR'));
+$worldDatasets->countries()->containsCountry(fn ($country) => $country->hasCurrency('EUR'));
+$worldDatasets->countries()->chunk(50);
+```
+
+## 7.5 Extraction / restitution
+
+```php
+$worldDatasets->countries()->values();
+$worldDatasets->countries()->names();
+$worldDatasets->countries()->codes();
+$worldDatasets->countries()->list();
+$worldDatasets->countries()->exportArray();
+$worldDatasets->countries()->toStorageArray();
+$worldDatasets->countries()->toApiArray();
+$worldDatasets->countries()->toArray();
+$worldDatasets->countries()->jsonSerialize();
+```
+
+## 7.6 Agrégations
+
+```php
+$worldDatasets->countries()->stats();
+$worldDatasets->countries()->groupByRegion();
+$worldDatasets->countries()->groupByCurrency();
+$worldDatasets->countries()->pluckNames();
+$worldDatasets->countries()->pluckCodes();
+```
+
+## 7.7 Fonctionnel
+
+```php
+$worldDatasets->countries()->map(fn ($country) => $country->name());
+$worldDatasets->countries()->filter(fn ($country) => $country->hasCurrency('EUR'));
+$worldDatasets->countries()->reduce(fn ($carry, $country) => $carry + 1, 0);
+```
+
+## 7.8 Export
+
+```php
+$worldDatasets->countries()->toJson();
+$worldDatasets->countries()->toCsv();
+$worldDatasets->countries()->exportJsonFile('/tmp/countries.json');
+$worldDatasets->countries()->exportCsvFile('/tmp/countries.csv');
+```
+
+## 7.9 Exemples de chainages libres
+
+### Exemple 1
+
+```php
+$worldDatasets->countries()
+    ->inRegion('Europe')
+    ->withCurrency('EUR')
+    ->alpha2()
+    ->sortByName()
+    ->list();
+```
+
+### Exemple 2
+
+```php
+$worldDatasets->countries()
+    ->inRegion('Europe')
+    ->inSubRegion('Western Europe')
+    ->withCurrency('EUR')
+    ->matching('fr')
+    ->sortByCode()
+    ->paginate(0, 20)
+    ->values();
+```
+
+### Exemple 3
+
+```php
+$worldDatasets->countries()
+    ->withTld('.fr')
+    ->withPhoneCode('+33')
+    ->alpha3()
+    ->codes();
+```
+
+### Exemple 4
+
+```php
+$worldDatasets->countries()
+    ->matching('united')
+    ->sortByNumeric()
+    ->pluckNames();
+```
+
+### Exemple 5
+
+```php
+$worldDatasets->countries()
+    ->filter(fn ($country) => $country->region()->name() === 'Europe')
+    ->map(fn ($country) => [
+        'code' => $country->alpha2(),
+        'name' => $country->name(),
+        'currency' => $country->currency()->code(),
+    ]);
+```
+
+### Exemple 6
+
+```php
+$worldDatasets->countries()
+    ->inRegion('Asia')
+    ->sortByName()
+    ->exportJsonFile('/tmp/asia.json');
+```
+
+### Exemple 7
+
+```php
+$worldDatasets->countries()
+    ->inRegion('Americas')
+    ->groupByCurrency();
+```
+
+---
+
+## 8. Chainages possibles depuis `CurrencyCollection`
+
+Point d’entrée :
+
+```php
+$currencies = $worldDatasets->currencies();
+```
+
+### Méthodes publiques
+
+```php
+$currencies->values();
+$currencies->list();
+$currencies->countries();
+$currencies->exportArray();
+$currencies->toJson();
+$currencies->toCsv();
+$currencies->exportJsonFile('/tmp/currencies.json');
+$currencies->exportCsvFile('/tmp/currencies.csv');
+$currencies->toArray();
+$currencies->jsonSerialize();
+```
+
+### Exemples
+
+```php
+$worldDatasets->currencies()->list();
+$worldDatasets->currencies()->values();
+$worldDatasets->currencies()->countries();
+$worldDatasets->currencies()->toJson();
+$worldDatasets->currencies()->exportCsvFile('/tmp/currencies.csv');
+```
+
+---
+
+## 9. Chainages possibles depuis `RegionCollection`
+
+Point d’entrée :
+
+```php
+$regions = $worldDatasets->regions();
+```
+
+### Méthodes publiques
+
+```php
+$regions->values();
+$regions->list();
+$regions->countries();
+$regions->exportArray();
+$regions->toJson();
+$regions->toCsv();
+$regions->exportJsonFile('/tmp/regions.json');
+$regions->exportCsvFile('/tmp/regions.csv');
+$regions->toArray();
+$regions->jsonSerialize();
+```
+
+### Exemples
+
+```php
+$worldDatasets->regions()->list();
+$worldDatasets->regions()->values();
+$worldDatasets->regions()->countries();
+$worldDatasets->regions()->toJson();
+$worldDatasets->regions()->exportCsvFile('/tmp/regions.csv');
+```
+
+---
+
+## 10. Chainages possibles depuis `WorldDatasetsQuery`
+
+Point d’entrée :
+
+```php
+$query = $worldDatasets->query();
+```
+
+### Filtres / tri / pagination
+
+```php
+$query->inRegion('Europe');
+$query->inSubRegion('Western Europe');
+$query->withCurrency('EUR');
+$query->withPhoneCode('+33');
+$query->withTld('.fr');
+$query->matching('fr');
+$query->sortByName();
+$query->sortByCode();
+$query->sortByNumeric();
+$query->limit(20);
+$query->offset(0, 20);
+```
+
+### Résolution finale
+
+```php
+$query->get();
+$query->list();
+```
+
+### Exemples complets
+
+```php
+$worldDatasets->query()
+    ->inRegion('Europe')
+    ->withCurrency('EUR')
+    ->sortByName()
+    ->limit(20)
+    ->get();
+```
+
+```php
+$worldDatasets->query()
+    ->inRegion('Europe')
+    ->inSubRegion('Western Europe')
+    ->matching('fr')
+    ->sortByCode()
+    ->offset(0, 10)
+    ->list();
+```
+
+```php
+$worldDatasets->query()
+    ->withTld('.fr')
+    ->withPhoneCode('+33')
+    ->get();
+```
+
+---
+
+## 11. Chainages possibles depuis `MetaInfo`
+
+Point d’entrée :
+
+```php
+$meta = $worldDatasets->meta();
+```
+
+### Méthodes publiques
+
+```php
+$meta->count();
+$meta->source();
+$meta->version();
+$meta->lastUpdatedAt();
+$meta->packageVersion();
+$meta->datasetVersion();
+$meta->checksum();
+$meta->builtAt();
+$meta->toArray();
+$meta->jsonSerialize();
+```
+
+### Exemples
+
+```php
+$worldDatasets->meta()->source();
+$worldDatasets->meta()->datasetVersion();
+$worldDatasets->meta()->checksum();
+$worldDatasets->meta()->builtAt();
+$worldDatasets->meta()->toArray();
+```
+
+---
+
+## 12. Chainages liés au factory et à la config runtime
+
+### Factory directe
+
+```php
+Iriven\WorldDatasets\WorldDatasetsFactory::make();
+Iriven\WorldDatasets\WorldDatasetsFactory::make(Iriven\WorldDatasets\WorldDatasetsFactory::defaultSqlitePath());
+Iriven\WorldDatasets\WorldDatasetsFactory::make(Iriven\WorldDatasets\WorldDatasetsFactory::defaultJsonPath());
+Iriven\WorldDatasets\WorldDatasetsFactory::make(Iriven\WorldDatasets\WorldDatasetsFactory::defaultCsvPath());
+```
+
+### Factory avec config
+
+```php
+$config = new Iriven\WorldDatasets\WorldDatasetsRuntimeConfig(
+    sourcePath: Iriven\WorldDatasets\WorldDatasetsFactory::defaultSqlitePath(),
+    verifyChecksum: true,
+    strictValidation: true,
+);
+
+$worldDatasets = Iriven\WorldDatasets\WorldDatasetsFactory::fromConfig($config);
+```
+
+### Validation stricte
+
+```php
+Iriven\WorldDatasets\WorldDatasetsFactory::makeWithValidation();
+```
+
+### Checksum
+
+```php
+Iriven\WorldDatasets\WorldDatasetsFactory::assertChecksum(
+    Iriven\WorldDatasets\WorldDatasetsFactory::defaultSqlitePath()
+);
+```
+
+---
+
+## 13. Résumé des familles de chainage
+
+### 13.1 Service -> Country -> Value Object -> propriété
+
+```php
+$worldDatasets->country('FR')->region()->subRegion()->name();
+$worldDatasets->country('FR')->currency()->code();
+$worldDatasets->country('FR')->phone()->pattern();
+```
+
+### 13.2 Service -> CountriesCollection -> filtres -> tri -> sortie
+
+```php
+$worldDatasets->countries()
+    ->inRegion('Europe')
+    ->withCurrency('EUR')
+    ->sortByName()
+    ->list();
+```
+
+### 13.3 Service -> CountriesCollection -> fonctionnel -> sortie
+
+```php
+$worldDatasets->countries()
+    ->filter(fn ($country) => $country->hasCurrency('EUR'))
+    ->map(fn ($country) => $country->name());
+```
+
+### 13.4 Service -> Query -> résultat
+
+```php
+$worldDatasets->query()
+    ->matching('fr')
+    ->limit(10)
+    ->get();
+```
+
+### 13.5 Service -> collection spécialisée -> export
+
+```php
+$worldDatasets->currencies()->exportJsonFile('/tmp/currencies.json');
+$worldDatasets->regions()->exportCsvFile('/tmp/regions.csv');
+```
+
+---
+
+## 14. Important
+
+Les chainages ci-dessus sont donnés **sans restriction artificielle** :  
+tout ce qui est exposé publiquement par les objets peut être combiné dans l’ordre logique du type retourné.
+
+En pratique :
+
+- un `Country` peut chaîner vers ses value objects
+- une `CountriesCollection` peut enchaîner filtres, tri, pagination, extraction, agrégation, export
+- un `WorldDatasetsQuery` peut enchaîner filtres, tri et pagination avant `get()` ou `list()`
+- `CurrencyCollection` et `RegionCollection` peuvent aller jusqu’à l’export final
+
+
+---
+
+# Optimisations internes appliquées
+
+Sans modification de la logique métier ni de l’API publique, cette version ajoute :
+
+- index mémoire pour les lookups `alpha2`, `alpha3`, `numeric`
+- cache interne des résultats de collections :
+  - `list()`
+  - `codes()`
+  - `names()`
+  - `exportArray()`
+  - `stats()`
+  - `groupByRegion()`
+  - `groupByCurrency()`
+- réduction des instanciations répétées des normalizers et value objects
+- factorisation des transformations de tableaux via `CountryArrayTransformer`
+- lecture unique des métadonnées et checksums dans `WorldDatasetsFactory`
+- optimisation des index SQLite
+- support de requêtes partielles côté repository SQLite via :
+  - `iterateAllLazy(int $limit = 500)`
+  - `iterateByRegionLazy(string $region, int $limit = 500)`
+
+## Notes sur le lazy loading SQLite
+
+Ces méthodes sont internes au repository SQLite et permettent de parcourir les données par lots, sans charger l’intégralité du dataset d’un coup.
+
+Exemple conceptuel :
+
+```php
+$repository = Iriven\WorldDatasets\WorldDatasetsFactory::makeRepository(
+    Iriven\WorldDatasets\WorldDatasetsFactory::defaultSqlitePath()
+);
+
+if ($repository instanceof Iriven\Infrastructure\Persistence\SqliteCountryRepository) {
+    foreach ($repository->iterateAllLazy(100) as $country) {
+        // traitement batch
+    }
+}
+```
+
+## GitHub Actions
+
+Le workflow CI active maintenant explicitement Node 24 pour anticiper la dépréciation Node 20 :
+
+```yaml
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+```
