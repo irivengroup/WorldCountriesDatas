@@ -102,6 +102,18 @@ function rebuild_sqlite_from_records(string $sqliteFile, array $normalizedRecord
     $pdo->commit();
 }
 
+/**
+ * @param array<string, string> $checksums
+ */
+function canonical_meta_payload(array $checksums, string $builtAt): string
+{
+    return json_encode([
+        'dataset_version' => '2026.04.11',
+        'built_at' => $builtAt,
+        'checksums' => $checksums,
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+}
+
 $targetDir = __DIR__ . '/../src/data';
 $sqlitePath = $targetDir . '/' . DataSource::SQLITE;
 $jsonPath = $targetDir . '/' . DataSource::JSON;
@@ -154,11 +166,11 @@ $normalizedRecords = array_map(
     $records
 );
 
-$jsonPayload = json_encode($normalizedRecords, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-if ($jsonPayload === false) {
-    throw new RuntimeException('Failed to encode JSON dataset.');
-}
-write_if_changed($jsonPath, $jsonPayload . PHP_EOL);
+$jsonPayload = json_encode(
+    $normalizedRecords,
+    JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+) . PHP_EOL;
+write_if_changed($jsonPath, $jsonPayload);
 
 $csv = fopen('php://temp', 'w+b');
 if ($csv === false) {
@@ -176,37 +188,22 @@ if ($csvPayload === false) {
 }
 write_if_changed($csvPath, $csvPayload);
 
-// Important for CI idempotence:
-// if the default source is already the repository SQLite file, keep it as-is.
-// Rebuilding SQLite from identical rows can still change the binary file hash.
 if (realpath($sourceFile) !== realpath($sqlitePath)) {
     rebuild_sqlite_from_records($sqlitePath, $normalizedRecords);
 }
 
 $validator = new DatasetValidator();
 $report = $validator->validate($service->countries()->values(), false);
-$validationPayload = json_encode($report->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-if ($validationPayload === false) {
-    throw new RuntimeException('Failed to encode validation report.');
-}
-write_if_changed($validationPath, $validationPayload . PHP_EOL);
+$validationPayload = json_encode(
+    $report->toArray(),
+    JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+) . PHP_EOL;
+write_if_changed($validationPath, $validationPayload);
 
 $checksums = [];
 foreach ([DataSource::SQLITE, DataSource::JSON, DataSource::CSV] as $fileName) {
     $fullPath = $targetDir . '/' . $fileName;
     $checksums[$fileName] = hash_file('sha256', $fullPath);
-}
-
-$builtAt = gmdate('c');
-if (
-    is_array($previousMeta)
-    && isset($previousMeta['checksums'])
-    && is_array($previousMeta['checksums'])
-    && $previousMeta['checksums'] === $checksums
-    && isset($previousMeta['built_at'])
-    && is_string($previousMeta['built_at'])
-) {
-    $builtAt = $previousMeta['built_at'];
 }
 
 $shaPayload = implode(PHP_EOL, array_map(
@@ -216,14 +213,19 @@ $shaPayload = implode(PHP_EOL, array_map(
 )) . PHP_EOL;
 write_if_changed($shaPath, $shaPayload);
 
-$metaPayload = json_encode([
-    'dataset_version' => '2026.04.11',
-    'built_at' => $builtAt,
-    'checksums' => $checksums,
-], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-if ($metaPayload === false) {
-    throw new RuntimeException('Failed to encode metadata.');
+// If checksums are unchanged, do not rewrite meta at all.
+if (
+    is_array($previousMeta)
+    && isset($previousMeta['checksums'])
+    && is_array($previousMeta['checksums'])
+    && $previousMeta['checksums'] === $checksums
+) {
+    echo 'Dataset build completed.' . PHP_EOL;
+    exit(0);
 }
-write_if_changed($metaPath, $metaPayload . PHP_EOL);
+
+$builtAt = gmdate('Y-m-d\TH:i:s\Z');
+$metaPayload = canonical_meta_payload($checksums, $builtAt);
+write_if_changed($metaPath, $metaPayload);
 
 echo 'Dataset build completed.' . PHP_EOL;
