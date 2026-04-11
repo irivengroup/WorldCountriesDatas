@@ -2,7 +2,7 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XDCFPNTKUC4TU)
 
-Service de consultation des pays basé sur SQLite, avec une API moderne centrée sur `country()` et le chaînage fluide.
+Service de consultation des pays basé sur SQLite, avec une API moderne .
 
 ## Pré-requis
 
@@ -33,14 +33,42 @@ echo $countries->country('FR')->name();
 echo $countries->country('250')->tld();
 echo $countries->country('FRA')->currency()->code();
 
-print_r($countries->country('FRA')->all());
+print_r($countries->country('FRA')->data());
+print_r($countries->currencies()->list());
+print_r($countries->countries()->alpha3()->list());
 ```
+
+## Philosophie
+
+Cette version expose :
+
+- `country()` pour l’accès strict à un pays
+- `findCountry()` pour l’accès tolérant
+- `currencies()`, `regions()` et `countries()` pour les agrégations
+- value objects obligatoires pour devise, région et téléphone
+- collections chaînables pour produire des listes et regroupements
 
 ## Accès principal
 
 ```php
 $countries->country('FR');
 $countries->findCountry('FR');
+```
+
+## Collections principales
+
+```php
+$countries->currencies()->list();
+$countries->currencies()->countries();
+
+$countries->regions()->list();
+$countries->regions()->countries();
+
+$countries->countries()->list();
+$countries->countries()->alpha2()->list();
+$countries->countries()->alpha3()->list();
+$countries->countries()->numeric()->list();
+$countries->countries(Iriven\WorldCountriesDatas::ALPHA3)->list();
 ```
 
 ## Inventaire des méthodes disponibles
@@ -55,12 +83,9 @@ $countries->findCountry('FR');
 | `getIterator()` | `Traversable` | Support `foreach` |
 | `country(string $code)` | `Country` | Retourne un pays ou lève une exception |
 | `findCountry(string $code)` | `?Country` | Retourne `null` si introuvable |
-| `getCountryData(string $code)` | `array` | Données du pays au format associatif |
-| `getAllCurrenciesCodeAndName()` | `array<string,string>` | Devise => nom |
-| `getAllCountriesCodeAndName($format = self::ALPHA2)` | `array<string,string>` | Code => nom pays |
-| `getAllRegionsCodeAndName()` | `array<string,string>` | Région => nom |
-| `getAllCountriesGroupedByRegions()` | `array<string,array<string,string>>` | Pays groupés par région |
-| `getAllCountriesGroupedByCurrencies()` | `array<string,array<string,string>>` | Pays groupés par devise |
+| `countries(int|string $format = self::ALPHA2)` | `CountriesCollection` | Collection des pays avec format de code |
+| `currencies()` | `CurrenciesCollection` | Collection des devises |
+| `regions()` | `RegionsCollection` | Collection des régions |
 | `findByName(string $name)` | `array<Country>` | Recherche exacte par nom |
 | `searchCountries(string $term)` | `array<Country>` | Recherche partielle |
 | `findByCurrencyCode(string $code)` | `array<Country>` | Recherche par devise |
@@ -87,10 +112,34 @@ $countries->findCountry('FR');
 | `isInRegion(string $region)` | `bool` | Vérifie l’appartenance régionale |
 | `hasCurrency(string $code)` | `bool` | Vérifie la devise |
 | `exists()` | `bool` | Toujours `true` si obtenu via `country()` |
+| `data()` | `array` | Alias de `all()` |
 | `toArray()` | `array` | Tableau associatif |
 | `toIndexedArray()` | `array` | Tableau technique |
-| `all()` | `array` | Alias de `toArray()` |
+| `all()` | `array` | Tableau associatif |
 | `jsonSerialize()` | `array` | Compatible JSON |
+
+### `CountriesCollection`
+
+| Méthode | Retour | Description |
+|---|---:|---|
+| `alpha2()` | `CountriesCollection` | Bascule le format de liste en alpha2 |
+| `alpha3()` | `CountriesCollection` | Bascule le format de liste en alpha3 |
+| `numeric()` | `CountriesCollection` | Bascule le format de liste en numeric |
+| `list()` | `array<string,string>` | Retourne la liste code => nom |
+
+### `CurrenciesCollection`
+
+| Méthode | Retour | Description |
+|---|---:|---|
+| `list()` | `array<string,string>` | Retourne devise => nom |
+| `countries()` | `array<string,array<string,string>>` | Retourne devise => [alpha2 => pays] |
+
+### `RegionsCollection`
+
+| Méthode | Retour | Description |
+|---|---:|---|
+| `list()` | `array<string,string>` | Retourne code région => nom |
+| `countries()` | `array<string,array<string,string>>` | Retourne région => [alpha2 => pays] |
 
 ### `CurrencyInfo`
 
@@ -140,6 +189,7 @@ $countries->country('FR')->postalCodePattern();
 $countries->country('FR')->exists();
 $countries->country('FR')->isInRegion('Europe');
 $countries->country('FR')->hasCurrency('EUR');
+$countries->country('FR')->data();
 $countries->country('FR')->toArray();
 $countries->country('FR')->toIndexedArray();
 $countries->country('FR')->all();
@@ -178,6 +228,40 @@ $countries->country('FR')->phone()->pattern();
 $countries->country('FR')->phone()->toArray();
 ```
 
+### Chaînages sur les collections
+
+```php
+$countries->currencies()->list();
+$countries->currencies()->countries();
+
+$countries->regions()->list();
+$countries->regions()->countries();
+
+$countries->countries()->list();
+$countries->countries()->alpha2()->list();
+$countries->countries()->alpha3()->list();
+$countries->countries()->numeric()->list();
+$countries->countries(Iriven\WorldCountriesDatas::ALPHA3)->list();
+```
+
+## Exemples équivalents demandés
+
+```php
+$countries->country('FRA')->data();
+$countries->country('FRA')->all();
+
+$countries->currencies()->list();
+$countries->countries()->list();
+$countries->regions()->list();
+
+$countries->regions()->countries();
+$countries->currencies()->countries();
+
+$countries->countries()->alpha2()->list();
+$countries->countries()->alpha3()->list();
+$countries->countries()->numeric()->list();
+```
+
 ## Exemples Symfony
 
 ```yaml
@@ -206,20 +290,23 @@ return $this->json([
     'currency' => $country->currency()->toArray(),
     'region' => $country->region()->toArray(),
     'phone' => $country->phone()->toArray(),
+    'currencies_list' => $countries->currencies()->list(),
 ]);
 ```
 
 ## Exemples Laravel
 
 ```php
-$country = app(\Iriven\WorldCountriesDatas::class)
-    ->country('FR');
+$service = app(\Iriven\WorldCountriesDatas::class);
+
+$country = $service->country('FR');
 
 return response()->json([
     'name' => $country->name(),
     'currency' => $country->currency()->toArray(),
     'region' => $country->region()->toArray(),
     'phone' => $country->phone()->toArray(),
+    'countries_alpha3' => $service->countries()->alpha3()->list(),
 ]);
 ```
 

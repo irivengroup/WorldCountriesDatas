@@ -86,48 +86,19 @@ final class WorldCountriesDatas implements Countable, IteratorAggregate
         return null;
     }
 
-    public function getCountryData(string $code): array
+    public function countries(int|string $format = self::ALPHA2): CountriesCollection
     {
-        return $this->country($code)->toArray();
+        return new CountriesCollection($this->repository->findAll(), $this->normalizeFormat($format));
     }
 
-    public function getAllCurrenciesCodeAndName(): array
+    public function currencies(): CurrenciesCollection
     {
-        return $this->repository->getAllCurrenciesCodeAndName();
+        return new CurrenciesCollection($this->repository->findAll());
     }
 
-    public function getAllCountriesCodeAndName(int|string $format = self::ALPHA2): array
+    public function regions(): RegionsCollection
     {
-        $index = $this->normalizeFormat($format);
-
-        $result = [];
-        foreach ($this->repository->findAll() as $country) {
-            $key = match ($index) {
-                self::ALPHA2 => $country->alpha2(),
-                self::ALPHA3 => $country->alpha3(),
-                self::NUMERIC => $country->numeric(),
-            };
-            $result[$key] = $country->name();
-        }
-
-        asort($result);
-
-        return $result;
-    }
-
-    public function getAllRegionsCodeAndName(): array
-    {
-        return $this->repository->getAllRegionsCodeAndName();
-    }
-
-    public function getAllCountriesGroupedByRegions(): array
-    {
-        return $this->repository->getAllCountriesGroupedByRegions();
-    }
-
-    public function getAllCountriesGroupedByCurrencies(): array
-    {
-        return $this->repository->getAllCountriesGroupedByCurrencies();
+        return new RegionsCollection($this->repository->findAll());
     }
 
     public function findByName(string $name): array

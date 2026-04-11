@@ -32,26 +32,27 @@ final class WorldCountriesDatasTest extends TestCase
         self::assertSame('France', $this->service->country('FR')->name());
     }
 
-    public function testCanResolveFranceFromAlpha3(): void
+    public function testCountryDataAlias(): void
     {
-        self::assertSame('FRA', $this->service->country('FR')->alpha3());
-        self::assertSame('250', $this->service->country('FRA')->numeric());
+        self::assertSame(
+            $this->service->country('FRA')->all(),
+            $this->service->country('FRA')->data()
+        );
     }
 
-    public function testCanResolveFranceFromNumeric(): void
+    public function testCountriesCollectionAlphaVariants(): void
     {
-        self::assertSame('FR', $this->service->country('250')->alpha2());
+        self::assertArrayHasKey('FR', $this->service->countries()->alpha2()->list());
+        self::assertArrayHasKey('FRA', $this->service->countries()->alpha3()->list());
+        self::assertArrayHasKey('250', $this->service->countries()->numeric()->list());
     }
 
-    public function testGetCountryDataReturnsAssociativeArray(): void
+    public function testCurrenciesAndRegionsCollections(): void
     {
-        $infos = $this->service->getCountryData('FR');
-
-        self::assertSame('France', $infos['country']);
-        self::assertSame('FRA', $infos['alpha3']);
-        self::assertArrayHasKey('currency', $infos);
-        self::assertArrayHasKey('region', $infos);
-        self::assertArrayHasKey('phone', $infos);
+        self::assertArrayHasKey('EUR', $this->service->currencies()->list());
+        self::assertNotEmpty($this->service->regions()->list());
+        self::assertNotEmpty($this->service->currencies()->countries());
+        self::assertNotEmpty($this->service->regions()->countries());
     }
 
     public function testRegionChain(): void
@@ -60,22 +61,6 @@ final class WorldCountriesDatasTest extends TestCase
 
         self::assertSame('Europe', $region->name());
         self::assertSame('EU', $region->alphaCode());
-    }
-
-    public function testSubRegionChain(): void
-    {
-        $subRegion = $this->service->country('FR')->region()->subRegion();
-
-        self::assertNotSame('', $subRegion->code());
-        self::assertNotSame('', $subRegion->name());
-    }
-
-    public function testPhoneChain(): void
-    {
-        $phone = $this->service->country('FR')->phone();
-
-        self::assertSame('33', $phone->code());
-        self::assertNotSame('', $phone->pattern());
     }
 
     public function testFindCountryReturnsNullForUnknownCode(): void

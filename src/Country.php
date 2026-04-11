@@ -87,6 +87,11 @@ final class Country implements \JsonSerializable
         return true;
     }
 
+    public function data(): array
+    {
+        return $this->all();
+    }
+
     public function toArray(): array
     {
         return [
