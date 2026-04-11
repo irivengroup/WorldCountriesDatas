@@ -1,6 +1,11 @@
 
 # PHP World Datasets
 
+[![Build Status](https://scrutinizer-ci.com/g/irivengroup/WorldDatasets/badges/build.png?b=master)](https://scrutinizer-ci.com/g/irivengroup/WorldDatasets/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/irivengroup/WorldDatasets/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/irivengroup/WorldDatasets/?branch=master)
+[![Code Intelligence Status](https://scrutinizer-ci.com/g/irivengroup/WorldDatasets/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
+[![GitHub license](https://img.shields.io/badge/license-AGPL-blue.svg)](https://github.com/irivengroup/WorldDatasets/blob/master/LICENSE)
+
 Bibliothèque PHP orientée entreprise pour consulter, filtrer, exporter et valider des données pays avec source principale SQLite, sources dérivées JSON/CSV, collections fluentes, value objects, pipeline de build et intégrations Symfony/Laravel.
 
 ---
