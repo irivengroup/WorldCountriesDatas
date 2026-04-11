@@ -4,6 +4,6 @@
 - Rationalisation de l’architecture
 - Source de vérité déplacée dans `src/data`
 - Source SQLite par défaut
-- Renommage `WorldCountriesDatas` -> `WorldDatasets`
+- Renommage `WorldDatasets` -> `WorldDatasets`
 - Query builder, exports, validation, doctor, pipeline data
 - Métadonnées de dataset, checksums, CI, documentation étendue

@@ -38,7 +38,7 @@ Le nom principal de la classe de service est désormais :
 Iriven\WorldDatasets
 ```
 
-L’alias de compatibilité historique `WorldCountriesDatas` est conservé, mais déprécié.
+L’alias de compatibilité historique `WorldDatasets` est conservé, mais déprécié.
 
 ---
 
@@ -810,3 +810,36 @@ composer run doctor
 composer run analyse
 composer test
 ```
+
+
+---
+
+# Utilisation avancée & chainage
+
+## Exemple complet
+
+```php
+$countries->countries()
+    ->inRegion('Europe')
+    ->inSubRegion('Western Europe')
+    ->withCurrency('EUR')
+    ->matching('fr')
+    ->sortByName()
+    ->paginate(0, 10)
+    ->values();
+```
+
+## Pipeline
+
+```bash
+composer run build-data
+composer run check-data
+composer run doctor
+```
+
+## Patterns
+
+- Query fluente
+- immutabilité
+- séparation data/build/runtime
+- source SQLite par défaut
