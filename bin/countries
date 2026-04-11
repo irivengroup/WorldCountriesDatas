@@ -1,0 +1,69 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Iriven\CountriesServiceFactory;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$service = CountriesServiceFactory::make(__DIR__ . '/../src/data/countries.sqlite');
+
+$args = $argv;
+array_shift($args);
+$command = $args[0] ?? 'help';
+
+switch ($command) {
+    case 'list':
+        $format = $args[1] ?? 'alpha2';
+        print json_encode($service->countries($format)->list(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
+        break;
+
+    case 'show':
+        $code = $args[1] ?? '';
+        print json_encode($service->country($code)->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
+        break;
+
+    case 'search':
+        $term = $args[1] ?? '';
+        print json_encode(array_map(static fn($c) => $c->toArray(), $service->searchCountries($term)), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
+        break;
+
+    case 'export':
+        $type = $args[1] ?? 'countries';
+        $format = $args[2] ?? 'json';
+        $target = $args[3] ?? null;
+
+        $collection = match ($type) {
+            'countries' => $service->countries(),
+            'currencies' => $service->currencies(),
+            'regions' => $service->regions(),
+            default => throw new InvalidArgumentException('Unsupported export type.')
+        };
+
+        $content = $format === 'csv' ? $collection->toCsv() : $collection->toJson();
+
+        if ($target !== null) {
+            file_put_contents($target, $content);
+            echo $target . PHP_EOL;
+        } else {
+            echo $content . PHP_EOL;
+        }
+        break;
+
+    case 'validate':
+        $strict = ($args[1] ?? '--strict') === '--strict';
+        $validator = new \Iriven\DatasetValidator();
+        $report = $validator->validate($service->countries()->values(), $strict);
+        print json_encode($report->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
+        break;
+
+    default:
+        echo "Usage:\n";
+        echo "  php bin/countries list [alpha2|alpha3|numeric]\n";
+        echo "  php bin/countries show FR\n";
+        echo "  php bin/countries search france\n";
+        echo "  php bin/countries export [countries|currencies|regions] [json|csv] [optional-output-file]\n";
+        echo "  php bin/countries validate [--strict|--lenient]\n";
+        break;
+}

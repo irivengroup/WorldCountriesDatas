@@ -2,29 +2,78 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XDCFPNTKUC4TU)
 
-Service de consultation des pays basé sur SQLite, avec une API moderne centrée sur des value objects, des collections immutables chaînables, des exports et une façade stable.
+Service autonome de consultation des pays basé sur SQLite, avec données embarquées dans `src/data`, API moderne fluide, collections immutables, validation, exports, CLI et intégrations framework.
 
-## Ce qui a été ajouté
+## Ce qui a été ajouté dans cette version
 
-Cette version inclut les améliorations suivantes :
+Cette version applique toutes les améliorations identifiées, à l’exception du support multilingue :
 
-- collections plus expressives avec `values()`, `names()`, `codes()`
-- filtres chaînables sur `CountriesCollection`
-- tri et pagination
-- exports `toJson()`, `toCsv()`, `exportArray()`
+- déplacement du dossier de données de `/data` vers `src/data`
+- fonctionnement autonome par défaut via `CountriesServiceFactory::make()`
+- collections enrichies :
+  - `values()`
+  - `names()`
+  - `codes()`
+  - `stats()`
+  - `groupByRegion()`
+  - `groupByCurrency()`
+  - `pluckNames()`
+  - `pluckCodes()`
+  - `map()`
+  - `filter()`
+  - `reduce()`
+- filtres chaînables :
+  - `inRegion()`
+  - `inSubRegion()`
+  - `withCurrency()`
+  - `withPhoneCode()`
+  - `withTld()`
+  - `named()`
+  - `matching()`
+- tri et pagination :
+  - `sortByName()`
+  - `sortByCode()`
+  - `sortByNumeric()`
+  - `paginate()`
+  - `first()`
+  - `last()`
+- exports :
+  - `toJson()`
+  - `toCsv()`
+  - `exportArray()`
+  - `exportJsonFile()`
+  - `exportCsvFile()`
 - enum `CountryCodeFormat`
-- interfaces publiques `CountriesDataInterface` et `Arrayable`
+- interface publique `CountriesDataInterface`
+- interface `Arrayable`
 - normaliseurs dédiés :
   - `CountryCodeNormalizer`
   - `PhoneCodeNormalizer`
   - `TldNormalizer`
-- alias moderne `Countries` en plus de `WorldCountriesDatas`
+- alias moderne `Countries`
 - métadonnées via `meta()`
-- support d’autres repositories :
+- statistiques via `CountriesStats`
+- validation renforcée via `DatasetValidator`
+- rapport de validation via `DatasetValidationReport`
+- exceptions métier plus fines
+- cache persistant par système de fichiers
+- query builder via `CountriesQuery`
+- repositories multiples :
   - `SqliteCountryRepository`
   - `ArrayCountryRepository`
   - `JsonCountryRepository`
-- value objects homogènes avec `toArray()`, `jsonSerialize()` et `__toString()` quand pertinent
+- CLI officielle `bin/countries`
+- intégrations Symfony/Laravel plus explicites
+
+## Arborescence
+
+```text
+src/
+  data/
+    countries.sqlite
+```
+
+La base SQLite est désormais stockée dans `src/data/countries.sqlite`.
 
 ## Installation
 
@@ -43,7 +92,7 @@ use Iriven\CountriesServiceFactory;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$countries = CountriesServiceFactory::make(__DIR__ . '/data/countries.sqlite');
+$countries = CountriesServiceFactory::make();
 
 echo $countries->country('FR')->name();
 echo $countries->country('250')->tld();
@@ -54,16 +103,14 @@ print_r($countries->currencies()->list());
 print_r($countries->countries()->alpha3()->list());
 ```
 
-# Accès principal
+## Accès principal
 
 ```php
 $countries->country('FR');
 $countries->findCountry('FR');
 ```
 
-# Formats de code
-
-Vous pouvez utiliser l’enum :
+## Formats de code
 
 ```php
 use Iriven\CountryCodeFormat;
@@ -73,7 +120,7 @@ $countries->countries(CountryCodeFormat::ALPHA3)->list();
 $countries->countries(CountryCodeFormat::NUMERIC)->list();
 ```
 
-Vous pouvez aussi utiliser les raccourcis chaînables :
+Raccourcis :
 
 ```php
 $countries->countries()->alpha2()->list();
@@ -96,7 +143,7 @@ $countries->countries()->numeric()->list();
 | `countries($format = CountryCodeFormat::ALPHA2)` | `CountriesCollection` | Collection des pays |
 | `currencies()` | `CurrenciesCollection` | Collection des devises |
 | `regions()` | `RegionsCollection` | Collection des régions |
-| `meta()` | `MetaInfo` | Métadonnées du dataset |
+| `meta()` | `MetaInfo` | Métadonnées dataset |
 | `findByName(string $name)` | `array<Country>` | Recherche exacte |
 | `searchCountries(string $term)` | `array<Country>` | Recherche partielle |
 | `findByCurrencyCode(string $code)` | `array<Country>` | Filtre devise |
@@ -128,62 +175,76 @@ $countries->countries()->numeric()->list();
 | `toIndexedArray()` | `array` |
 | `all()` | `array` |
 | `jsonSerialize()` | `array` |
+| `__toString()` | `string` |
 
 ## `CountriesCollection`
 
-| Méthode | Retour | Description |
-|---|---:|---|
-| `alpha2()` | `CountriesCollection` | Format alpha2 |
-| `alpha3()` | `CountriesCollection` | Format alpha3 |
-| `numeric()` | `CountriesCollection` | Format numeric |
-| `inRegion(string $name)` | `CountriesCollection` | Filtre région |
-| `inSubRegion(string $name)` | `CountriesCollection` | Filtre sous-région |
-| `withCurrency(string $code)` | `CountriesCollection` | Filtre devise |
-| `withPhoneCode(string $code)` | `CountriesCollection` | Filtre indicatif |
-| `withTld(string $tld)` | `CountriesCollection` | Filtre TLD |
-| `named(string $country)` | `CountriesCollection` | Filtre nom exact |
-| `matching(string $term)` | `CountriesCollection` | Recherche partielle |
-| `sortByName()` | `CountriesCollection` | Tri par nom |
-| `sortByCode()` | `CountriesCollection` | Tri par code courant |
-| `sortByNumeric()` | `CountriesCollection` | Tri par numeric |
-| `paginate(int $offset, int $limit)` | `CountriesCollection` | Pagination |
-| `first()` | `?Country` | Premier élément |
-| `last()` | `?Country` | Dernier élément |
-| `values()` | `array<Country>` | Liste d’objets |
-| `names()` | `array<string,string>` | Alias de `list()` |
-| `codes()` | `array<int,string>` | Liste des codes |
-| `list()` | `array<string,string>` | Code => nom |
-| `exportArray()` | `array` | Export tableau |
-| `toJson()` | `string` | Export JSON |
-| `toCsv()` | `string` | Export CSV |
-| `toArray()` | `array` | Alias export |
-| `jsonSerialize()` | `array` | JSON ready |
+| Méthode | Retour |
+|---|---:|
+| `alpha2()` | `CountriesCollection` |
+| `alpha3()` | `CountriesCollection` |
+| `numeric()` | `CountriesCollection` |
+| `inRegion(string $name)` | `CountriesCollection` |
+| `inSubRegion(string $name)` | `CountriesCollection` |
+| `withCurrency(string $code)` | `CountriesCollection` |
+| `withPhoneCode(string $code)` | `CountriesCollection` |
+| `withTld(string $tld)` | `CountriesCollection` |
+| `named(string $country)` | `CountriesCollection` |
+| `matching(string $term)` | `CountriesCollection` |
+| `sortByName()` | `CountriesCollection` |
+| `sortByCode()` | `CountriesCollection` |
+| `sortByNumeric()` | `CountriesCollection` |
+| `paginate(int $offset, int $limit)` | `CountriesCollection` |
+| `first()` | `?Country` |
+| `last()` | `?Country` |
+| `values()` | `array<Country>` |
+| `names()` | `array<string,string>` |
+| `codes()` | `array<int,string>` |
+| `count()` | `int` |
+| `stats()` | `CountriesStats` |
+| `groupByRegion()` | `array` |
+| `groupByCurrency()` | `array` |
+| `pluckNames()` | `array` |
+| `pluckCodes()` | `array` |
+| `map(callable $callback)` | `array` |
+| `filter(callable $callback)` | `CountriesCollection` |
+| `reduce(callable $callback, mixed $initial = null)` | `mixed` |
+| `list()` | `array<string,string>` |
+| `exportArray()` | `array` |
+| `toJson()` | `string` |
+| `toCsv()` | `string` |
+| `exportJsonFile(string $path)` | `void` |
+| `exportCsvFile(string $path)` | `void` |
+| `toStorageArray()` | `array` |
+| `toApiArray()` | `array` |
+| `toArray()` | `array` |
+| `jsonSerialize()` | `array` |
 
 ## `CurrenciesCollection`
 
-| Méthode | Retour |
-|---|---:|
-| `values()` | `array<CurrencyInfo>` |
-| `list()` | `array<string,string>` |
-| `countries()` | `array<string,array<string,string>>` |
-| `exportArray()` | `array` |
-| `toJson()` | `string` |
-| `toCsv()` | `string` |
-| `toArray()` | `array` |
-| `jsonSerialize()` | `array` |
+- `values(): array<CurrencyInfo>`
+- `list(): array<string,string>`
+- `countries(): array<string,array<string,string>>`
+- `exportArray(): array`
+- `toJson(): string`
+- `toCsv(): string`
+- `exportJsonFile(string $path): void`
+- `exportCsvFile(string $path): void`
+- `toArray(): array`
+- `jsonSerialize(): array`
 
 ## `RegionsCollection`
 
-| Méthode | Retour |
-|---|---:|
-| `values()` | `array<RegionInfo>` |
-| `list()` | `array<string,string>` |
-| `countries()` | `array<string,array<string,string>>` |
-| `exportArray()` | `array` |
-| `toJson()` | `string` |
-| `toCsv()` | `string` |
-| `toArray()` | `array` |
-| `jsonSerialize()` | `array` |
+- `values(): array<RegionInfo>`
+- `list(): array<string,string>`
+- `countries(): array<string,array<string,string>>`
+- `exportArray(): array`
+- `toJson(): string`
+- `toCsv(): string`
+- `exportJsonFile(string $path): void`
+- `exportCsvFile(string $path): void`
+- `toArray(): array`
+- `jsonSerialize(): array`
 
 ## Value objects
 
@@ -229,6 +290,39 @@ $countries->countries()->numeric()->list();
 - `lastUpdatedAt(): ?string`
 - `toArray(): array`
 - `jsonSerialize(): array`
+
+### `CountriesStats`
+- `total(): int`
+- `regions(): int`
+- `currencies(): int`
+- `toArray(): array`
+- `jsonSerialize(): array`
+
+## Validation
+
+### `DatasetValidator`
+- `validate(array $countries, bool $strict = true): DatasetValidationReport`
+
+### `DatasetValidationReport`
+- `duplicates(): array`
+- `invalidCodes(): array`
+- `warnings(): array`
+- `strict(): bool`
+- `isValid(): bool`
+- `toArray(): array`
+- `jsonSerialize(): array`
+
+## Normaliseurs
+
+### `CountryCodeNormalizer`
+- `normalize(string $code): string`
+- `normalizePreservingNumeric(string $code): string`
+
+### `PhoneCodeNormalizer`
+- `normalize(string $code): string`
+
+### `TldNormalizer`
+- `normalize(string $tld): string`
 
 # Utilisation détaillée
 
@@ -289,11 +383,46 @@ $countries->countries()->sortByCode()->first();
 $countries->countries()->sortByNumeric()->last();
 ```
 
+## Agrégations et statistiques
+
+```php
+$countries->countries()->count();
+$countries->countries()->stats();
+$countries->countries()->groupByRegion();
+$countries->countries()->groupByCurrency();
+$countries->countries()->pluckNames();
+$countries->countries()->pluckCodes();
+```
+
+## API fonctionnelle
+
+```php
+$countries->countries()->map(fn ($country) => $country->name());
+$countries->countries()->filter(fn ($country) => $country->hasCurrency('EUR'));
+$countries->countries()->reduce(fn ($carry, $country) => $carry + 1, 0);
+```
+
+## Query builder
+
+```php
+$query = new Iriven\CountriesQuery($countries->countries());
+
+$result = $query
+    ->inRegion('Europe')
+    ->withCurrency('EUR')
+    ->sortByName()
+    ->limit(20)
+    ->get();
+```
+
 ## Exports
 
 ```php
 $json = $countries->countries()->alpha3()->toJson();
 $csv = $countries->countries()->alpha2()->toCsv();
+
+$countries->countries()->exportJsonFile('/tmp/countries.json');
+$countries->countries()->exportCsvFile('/tmp/countries.csv');
 
 $currenciesJson = $countries->currencies()->toJson();
 $regionsCsv = $countries->regions()->toCsv();
@@ -319,43 +448,104 @@ $countries->meta()->version();
 $countries->meta()->lastUpdatedAt();
 ```
 
-## Équivalents modernes déjà demandés
+## Validation de dataset
+
+### Mode strict
 
 ```php
-$countries->country('FRA')->data();
-$countries->country('FRA')->all();
-
-$countries->currencies()->list();
-$countries->currencies()->countries();
-
-$countries->regions()->list();
-$countries->regions()->countries();
-
-$countries->countries()->alpha2()->list();
-$countries->countries()->alpha3()->list();
-$countries->countries()->numeric()->list();
+$validator = new Iriven\DatasetValidator();
+$report = $validator->validate($countries->countries()->values(), true);
 ```
 
-# Exemple Symfony
+### Mode tolérant
+
+```php
+$validator = new Iriven\DatasetValidator();
+$report = $validator->validate($countries->countries()->values(), false);
+
+$report->duplicates();
+$report->invalidCodes();
+$report->warnings();
+$report->isValid();
+```
+
+## Repositories multiples
+
+### SQLite
+
+```php
+$service = Iriven\CountriesServiceFactory::make();
+```
+
+### Array repository
+
+```php
+$repo = new Iriven\ArrayCountryRepository([$country1, $country2]);
+$service = new Iriven\Countries($repo);
+```
+
+### JSON repository
+
+```php
+$repo = new Iriven\JsonCountryRepository('/path/to/countries.json');
+$service = new Iriven\Countries($repo);
+```
+
+## Cache persistant
+
+```php
+$cache = new Iriven\FilesystemCache(__DIR__ . '/cache');
+```
+
+## CLI officielle
+
+### Lister les pays
+
+```bash
+php bin/countries list alpha2
+php bin/countries list alpha3
+php bin/countries list numeric
+```
+
+### Afficher un pays
+
+```bash
+php bin/countries show FR
+```
+
+### Rechercher
+
+```bash
+php bin/countries search france
+```
+
+### Exporter
+
+```bash
+php bin/countries export countries json
+php bin/countries export countries csv /tmp/countries.csv
+php bin/countries export currencies json
+php bin/countries export regions csv
+```
+
+### Valider
+
+```bash
+php bin/countries validate --strict
+php bin/countries validate --lenient
+```
+
+# Intégration Symfony
+
+## Service
 
 ```yaml
 services:
-  Iriven\Infrastructure\Cache\ArrayCache: ~
-
-  Iriven\Support\NullLogger: ~
-
-  Iriven\Infrastructure\Persistence\SqliteCountryRepository:
-    factory: ['Iriven\Infrastructure\Persistence\SqliteCountryRepository', 'fromSqliteFile']
-    arguments:
-      $sqliteFilePath: '%kernel.project_dir%/data/countries.sqlite'
-      $cache: '@Iriven\Infrastructure\Cache\ArrayCache'
-      $logger: '@Iriven\Support\NullLogger'
-
   Iriven\Countries:
     factory: ['Iriven\CountriesServiceFactory', 'make']
-    arguments:
-      $sqliteFilePath: '%kernel.project_dir%/data/countries.sqlite'
 ```
+
+## Usage
 
 ```php
 $payload = [
@@ -369,7 +559,17 @@ $payload = [
 ];
 ```
 
-# Exemple Laravel
+# Intégration Laravel
+
+## Service Provider
+
+Le provider se trouve dans :
+
+```text
+src/Bridge/Laravel/CountriesServiceProvider.php
+```
+
+## Usage
 
 ```php
 $service = app(\Iriven\Countries::class);
@@ -383,29 +583,6 @@ return response()->json([
         ->values(),
     'currencies' => $service->currencies()->list(),
 ]);
-```
-
-# Qualité et analyse
-
-Le projet inclut aussi une base pour l’analyse statique.
-
-```bash
-composer analyse
-```
-
-# Sources de données
-
-API pensée pour être compatible avec plusieurs sources :
-
-- `SqliteCountryRepository`
-- `ArrayCountryRepository`
-- `JsonCountryRepository`
-
-Exemple avec `ArrayCountryRepository` :
-
-```php
-$repo = new \Iriven\ArrayCountryRepository([$country1, $country2]);
-$service = new \Iriven\Countries($repo);
 ```
 
 # Commandes utiles

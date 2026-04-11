@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Iriven;
 
 use Iriven\Contract\Arrayable;
+use Iriven\Exception\ExportException;
 
 final class RegionsCollection implements Arrayable, \JsonSerializable
 {
@@ -24,7 +25,6 @@ final class RegionsCollection implements Arrayable, \JsonSerializable
             $result[$region->numericCode() . '|' . $region->name()] = $region;
         }
         ksort($result);
-
         return array_values($result);
     }
 
@@ -38,9 +38,7 @@ final class RegionsCollection implements Arrayable, \JsonSerializable
             }
             $result[$region->numericCode()] = $region->name();
         }
-
         asort($result);
-
         return $result;
     }
 
@@ -54,9 +52,7 @@ final class RegionsCollection implements Arrayable, \JsonSerializable
             }
             $result[$region->name()][$country->alpha2()] = $country->name();
         }
-
         ksort($result);
-
         return $result;
     }
 
@@ -76,28 +72,29 @@ final class RegionsCollection implements Arrayable, \JsonSerializable
         if ($rows === []) {
             return '';
         }
-
         $stream = fopen('php://temp', 'r+');
         fputcsv($stream, ['alpha_code', 'numeric_code', 'name', 'sub_region']);
         foreach ($rows as $row) {
-            fputcsv($stream, [
-                $row['alpha_code'],
-                $row['numeric_code'],
-                $row['name'],
-                json_encode($row['sub_region'], JSON_UNESCAPED_UNICODE),
-            ]);
+            fputcsv($stream, [$row['alpha_code'], $row['numeric_code'], $row['name'], json_encode($row['sub_region'], JSON_UNESCAPED_UNICODE)]);
         }
         rewind($stream);
         return (string) stream_get_contents($stream);
     }
 
-    public function toArray(): array
+    public function exportJsonFile(string $path): void
     {
-        return $this->exportArray();
+        if (file_put_contents($path, $this->toJson()) === false) {
+            throw new ExportException(sprintf('Unable to write JSON file: %s', $path));
+        }
     }
 
-    public function jsonSerialize(): array
+    public function exportCsvFile(string $path): void
     {
-        return $this->exportArray();
+        if (file_put_contents($path, $this->toCsv()) === false) {
+            throw new ExportException(sprintf('Unable to write CSV file: %s', $path));
+        }
     }
+
+    public function toArray(): array { return $this->exportArray(); }
+    public function jsonSerialize(): array { return $this->exportArray(); }
 }

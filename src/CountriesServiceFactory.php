@@ -10,10 +10,12 @@ use Iriven\Support\NullLogger;
 
 final class CountriesServiceFactory
 {
-    public static function make(string $sqliteFilePath): Countries
+    public static function make(?string $sqliteFilePath = null): Countries
     {
+        $path = $sqliteFilePath ?? __DIR__ . '/data/countries.sqlite';
+
         $repository = SqliteCountryRepository::fromSqliteFile(
-            $sqliteFilePath,
+            $path,
             new ArrayCache(),
             new NullLogger()
         );

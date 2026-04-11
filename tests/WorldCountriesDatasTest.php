@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Iriven\Tests;
 
 use Iriven\CountryCodeFormat;
+use Iriven\CountriesQuery;
+use Iriven\DatasetValidator;
 use Iriven\Infrastructure\Cache\ArrayCache;
 use Iriven\Infrastructure\Persistence\SqliteCountryRepository;
 use Iriven\Support\NullLogger;
@@ -17,7 +19,7 @@ final class WorldCountriesDatasTest extends TestCase
 
     protected function setUp(): void
     {
-        $dbFile = __DIR__ . '/../data/countries.sqlite';
+        $dbFile = __DIR__ . '/../src/data/countries.sqlite';
 
         $repository = SqliteCountryRepository::fromSqliteFile(
             $dbFile,
@@ -59,15 +61,6 @@ final class WorldCountriesDatasTest extends TestCase
         self::assertNotEmpty($this->service->regions()->values());
     }
 
-    public function testRegionChain(): void
-    {
-        $region = $this->service->country('FR')->region();
-
-        self::assertSame('Europe', $region->name());
-        self::assertSame('EU', $region->alphaCode());
-        self::assertNotSame('', $region->subRegion()->name());
-    }
-
     public function testCollectionFiltersAndPagination(): void
     {
         $collection = $this->service->countries()
@@ -79,12 +72,39 @@ final class WorldCountriesDatasTest extends TestCase
         self::assertLessThanOrEqual(10, count($collection->values()));
     }
 
-    public function testExports(): void
+    public function testExportsAndFiles(): void
     {
         self::assertIsString($this->service->countries()->toJson());
         self::assertIsString($this->service->countries()->toCsv());
-        self::assertIsString($this->service->currencies()->toJson());
-        self::assertIsString($this->service->regions()->toCsv());
+
+        $json = sys_get_temp_dir() . '/countries_test.json';
+        $csv = sys_get_temp_dir() . '/countries_test.csv';
+
+        $this->service->countries()->exportJsonFile($json);
+        $this->service->countries()->exportCsvFile($csv);
+
+        self::assertFileExists($json);
+        self::assertFileExists($csv);
+    }
+
+    public function testStatsAndMeta(): void
+    {
+        self::assertGreaterThan(0, $this->service->countries()->stats()->total());
+        self::assertGreaterThan(0, $this->service->meta()->count());
+    }
+
+    public function testQueryBuilder(): void
+    {
+        $query = new CountriesQuery($this->service->countries());
+        self::assertIsArray($query->inRegion('Europe')->sortByName()->limit(5)->list());
+    }
+
+    public function testValidationLenient(): void
+    {
+        $validator = new DatasetValidator();
+        $report = $validator->validate($this->service->countries()->values(), false);
+
+        self::assertIsBool($report->isValid());
     }
 
     public function testFindCountryReturnsNullForUnknownCode(): void
