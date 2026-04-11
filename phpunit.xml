@@ -5,4 +5,13 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
+<source>
+  <include>
+    <directory suffix=".php">src</directory>
+  </include>
+  <exclude>
+    <directory suffix=".php">src/Bridge/Laravel</directory>
+  </exclude>
+</source>
+
 </phpunit>

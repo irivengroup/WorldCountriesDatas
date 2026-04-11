@@ -30,8 +30,9 @@ build:
       - command: "composer run check-data"
       - command: "composer run doctor"
       - command: "composer run analyse"
+        idle_timeout: 1200
       - command: "mkdir -p build/logs"
-      - command: "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-clover build/logs/clover.xml"
+      - command: "XDEBUG_MODE=coverage vendor/bin/phpunit --configuration phpunit.xml --coverage-clover build/logs/clover.xml"
         idle_timeout: 1200
       - command: "composer test"
       # - command: "git diff --exit-code"

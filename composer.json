@@ -30,12 +30,13 @@
   "scripts": {
     "import-data": "php bin/import_countries.php",
     "validate-data": "php bin/validate_countries.php",
-    "analyse": "phpstan analyse",
+    "analyse": "phpstan analyse --memory-limit=512M",
     "test": "phpunit",
     "countries": "php bin/countries",
     "build-data": "php bin/build_data.php",
     "check-data": "php bin/check_data.php",
-    "doctor": "php bin/countries-doctor"
+    "doctor": "php bin/countries-doctor",
+    "analyseTests": "phpstan analyse --memory-limit=512M"
   },
   "keywords": [
     "php",
