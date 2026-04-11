@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Iriven;
 
-final class PhoneInfo
+use Iriven\Contract\Arrayable;
+
+final class PhoneInfo implements Arrayable, \JsonSerializable
 {
     public function __construct(
         private readonly string $code,
@@ -49,5 +51,15 @@ final class PhoneInfo
             'subscriber_pattern' => $this->subscriberPattern,
             'pattern' => $this->pattern,
         ];
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
+
+    public function __toString(): string
+    {
+        return $this->code;
     }
 }

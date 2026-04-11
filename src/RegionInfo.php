@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Iriven;
 
-final class RegionInfo
+use Iriven\Contract\Arrayable;
+
+final class RegionInfo implements Arrayable, \JsonSerializable
 {
     public function __construct(
         private readonly string $alphaCode,
@@ -42,5 +44,15 @@ final class RegionInfo
             'name' => $this->name,
             'sub_region' => $this->subRegion->toArray(),
         ];
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

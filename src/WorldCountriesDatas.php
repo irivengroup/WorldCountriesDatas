@@ -7,20 +7,24 @@ namespace Iriven;
 use Countable;
 use Generator;
 use InvalidArgumentException;
+use Iriven\Contract\CountriesDataInterface;
 use Iriven\Contract\CountryRepositoryInterface;
 use Iriven\Exception\CountryNotFoundException;
 use Iriven\Exception\InvalidCountryCodeException;
 use IteratorAggregate;
 use Traversable;
 
-final class WorldCountriesDatas implements Countable, IteratorAggregate
+class WorldCountriesDatas implements CountriesDataInterface, Countable, IteratorAggregate
 {
     public const ALPHA2 = 0;
     public const ALPHA3 = 1;
     public const NUMERIC = 2;
 
     public function __construct(
-        private readonly CountryRepositoryInterface $repository
+        private readonly CountryRepositoryInterface $repository,
+        private readonly CountryCodeNormalizer $countryCodeNormalizer = new CountryCodeNormalizer(),
+        private readonly PhoneCodeNormalizer $phoneCodeNormalizer = new PhoneCodeNormalizer(),
+        private readonly TldNormalizer $tldNormalizer = new TldNormalizer(),
     ) {
     }
 
@@ -32,15 +36,15 @@ final class WorldCountriesDatas implements Countable, IteratorAggregate
         );
     }
 
-    public function iterator(int|string $format = self::ALPHA2): Generator
+    public function iterator(int|string|CountryCodeFormat $format = CountryCodeFormat::ALPHA2): Generator
     {
-        $index = $this->normalizeFormat($format);
+        $formatEnum = $this->normalizeFormat($format);
 
         foreach ($this->repository->findAll() as $country) {
-            $key = match ($index) {
-                self::ALPHA2 => $country->alpha2(),
-                self::ALPHA3 => $country->alpha3(),
-                self::NUMERIC => $country->numeric(),
+            $key = match ($formatEnum) {
+                CountryCodeFormat::ALPHA2 => $country->alpha2(),
+                CountryCodeFormat::ALPHA3 => $country->alpha3(),
+                CountryCodeFormat::NUMERIC => $country->numeric(),
             };
             yield $key => $country;
         }
@@ -71,22 +75,24 @@ final class WorldCountriesDatas implements Countable, IteratorAggregate
             return null;
         }
 
-        if (preg_match('/^\d{3}$/', $code) === 1) {
-            return $this->repository->findOneByNumeric($code);
+        $normalized = $this->countryCodeNormalizer->normalizePreservingNumeric($code);
+
+        if (preg_match('/^\d{3}$/', $normalized) === 1) {
+            return $this->repository->findOneByNumeric($normalized);
         }
 
-        if (preg_match('/^[A-Za-z]{2}$/', $code) === 1) {
-            return $this->repository->findOneByAlpha2($code);
+        if (preg_match('/^[A-Z]{2}$/', $normalized) === 1) {
+            return $this->repository->findOneByAlpha2($normalized);
         }
 
-        if (preg_match('/^[A-Za-z]{3}$/', $code) === 1) {
-            return $this->repository->findOneByAlpha3($code);
+        if (preg_match('/^[A-Z]{3}$/', $normalized) === 1) {
+            return $this->repository->findOneByAlpha3($normalized);
         }
 
         return null;
     }
 
-    public function countries(int|string $format = self::ALPHA2): CountriesCollection
+    public function countries(int|string|CountryCodeFormat $format = CountryCodeFormat::ALPHA2): CountriesCollection
     {
         return new CountriesCollection($this->repository->findAll(), $this->normalizeFormat($format));
     }
@@ -101,86 +107,44 @@ final class WorldCountriesDatas implements Countable, IteratorAggregate
         return new RegionsCollection($this->repository->findAll());
     }
 
+    public function meta(): MetaInfo
+    {
+        return new MetaInfo(
+            count: $this->count(),
+            source: 'sqlite',
+            version: '1.0.0',
+            lastUpdatedAt: null,
+        );
+    }
+
     public function findByName(string $name): array
     {
-        $needle = mb_strtolower(trim($name));
-        if ($needle === '') {
-            return [];
-        }
-
-        return array_values(array_filter(
-            $this->repository->findAll(),
-            static fn(Country $country): bool => mb_strtolower($country->name()) === $needle
-        ));
+        return $this->countries()->named($name)->values();
     }
 
     public function searchCountries(string $term): array
     {
-        $needle = mb_strtolower(trim($term));
-        if ($needle === '') {
-            return [];
-        }
-
-        return array_values(array_filter(
-            $this->repository->findAll(),
-            static fn(Country $country): bool =>
-                str_contains(mb_strtolower($country->name()), $needle)
-                || str_contains(mb_strtolower($country->alpha2()), $needle)
-                || str_contains(mb_strtolower($country->alpha3()), $needle)
-                || str_contains(mb_strtolower($country->numeric()), $needle)
-        ));
+        return $this->countries()->matching($term)->values();
     }
 
     public function findByCurrencyCode(string $currencyCode): array
     {
-        $needle = strtoupper(trim($currencyCode));
-        if ($needle === '') {
-            return [];
-        }
-
-        return array_values(array_filter(
-            $this->repository->findAll(),
-            static fn(Country $country): bool => strtoupper($country->currency()->code()) === $needle
-        ));
+        return $this->countries()->withCurrency($currencyCode)->values();
     }
 
     public function findByRegion(string $region): array
     {
-        $needle = mb_strtolower(trim($region));
-        if ($needle === '') {
-            return [];
-        }
-
-        return array_values(array_filter(
-            $this->repository->findAll(),
-            static fn(Country $country): bool => mb_strtolower($country->region()->name()) === $needle
-        ));
+        return $this->countries()->inRegion($region)->values();
     }
 
     public function findByPhoneCode(string $phoneCode): array
     {
-        $needle = ltrim(trim($phoneCode), '+');
-        if ($needle === '') {
-            return [];
-        }
-
-        return array_values(array_filter(
-            $this->repository->findAll(),
-            static fn(Country $country): bool => ltrim($country->phone()->code(), '+') === $needle
-        ));
+        return $this->countries()->withPhoneCode($phoneCode)->values();
     }
 
     public function findByTld(string $tld): array
     {
-        $needle = mb_strtolower(trim($tld));
-        if ($needle === '') {
-            return [];
-        }
-
-        return array_values(array_filter(
-            $this->repository->findAll(),
-            static fn(Country $country): bool => mb_strtolower($country->tld()) === $needle
-        ));
+        return $this->countries()->withTld($tld)->values();
     }
 
     private function resolveCountry(string $code): Country
@@ -194,10 +158,12 @@ final class WorldCountriesDatas implements Countable, IteratorAggregate
         $country = $this->findCountry($code);
 
         if ($country === null) {
+            $normalized = $this->countryCodeNormalizer->normalizePreservingNumeric($code);
+
             if (
-                preg_match('/^\d{3}$/', $code) !== 1
-                && preg_match('/^[A-Za-z]{2}$/', $code) !== 1
-                && preg_match('/^[A-Za-z]{3}$/', $code) !== 1
+                preg_match('/^\d{3}$/', $normalized) !== 1
+                && preg_match('/^[A-Z]{2}$/', $normalized) !== 1
+                && preg_match('/^[A-Z]{3}$/', $normalized) !== 1
             ) {
                 throw InvalidCountryCodeException::forValue($code);
             }
@@ -208,21 +174,26 @@ final class WorldCountriesDatas implements Countable, IteratorAggregate
         return $country;
     }
 
-    private function normalizeFormat(int|string $format): int
+    private function normalizeFormat(int|string|CountryCodeFormat $format): CountryCodeFormat
     {
+        if ($format instanceof CountryCodeFormat) {
+            return $format;
+        }
+
         if (is_int($format) || ctype_digit((string) $format)) {
-            $index = (int) $format;
-            if (!in_array($index, [self::ALPHA2, self::ALPHA3, self::NUMERIC], true)) {
-                throw new InvalidArgumentException(sprintf('Unsupported format: %s', (string) $format));
-            }
-            return $index;
+            return match ((int) $format) {
+                self::ALPHA2 => CountryCodeFormat::ALPHA2,
+                self::ALPHA3 => CountryCodeFormat::ALPHA3,
+                self::NUMERIC => CountryCodeFormat::NUMERIC,
+                default => throw new InvalidArgumentException(sprintf('Unsupported format: %s', (string) $format)),
+            };
         }
 
         return match (strtolower(trim((string) $format))) {
-            'alpha-2', 'alpha2', 'iso-2', 'iso2' => self::ALPHA2,
-            'alpha-3', 'alpha3', 'iso-3', 'iso3' => self::ALPHA3,
-            'numeric', 'num' => self::NUMERIC,
-            default => self::ALPHA2,
+            'alpha-2', 'alpha2', 'iso-2', 'iso2' => CountryCodeFormat::ALPHA2,
+            'alpha-3', 'alpha3', 'iso-3', 'iso3' => CountryCodeFormat::ALPHA3,
+            'numeric', 'num' => CountryCodeFormat::NUMERIC,
+            default => CountryCodeFormat::ALPHA2,
         };
     }
 }

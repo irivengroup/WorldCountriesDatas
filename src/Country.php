@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Iriven;
 
-final class Country implements \JsonSerializable
+use Iriven\Contract\Arrayable;
+
+final class Country implements Arrayable, \JsonSerializable
 {
     public function __construct(
         private readonly string $alpha2,
@@ -142,6 +144,11 @@ final class Country implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return $this->toArray();
+    }
+
+    public function __toString(): string
+    {
+        return $this->country;
     }
 
     public static function fromDatabaseRow(array $row): self
