@@ -1,5 +1,5 @@
 {
-  "name": "iriven/php-world-datasets",
+  "name": "irivengroup/world-datasets",
   "description": "Enterprise-ready PHP world datasets library with harmonized public API, SQLite/JSON/CSV sources, fluent collections, value objects, validation and export tools.",
   "type": "library",
   "license": "MIT",
@@ -49,10 +49,10 @@
     "symfony",
     "laravel"
   ],
-  "homepage": "https://github.com/iriven/php-world-datasets",
+  "homepage": "https://github.com/irivengroup/world-datasets",
   "support": {
-    "issues": "https://github.com/iriven/php-world-datasets/issues",
-    "source": "https://github.com/iriven/php-world-datasets"
+    "issues": "https://github.com/irivengroup/world-datasets/issues",
+    "source": "https://github.com/irivengroup/world-datasets"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,

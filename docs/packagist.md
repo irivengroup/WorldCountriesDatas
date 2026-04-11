@@ -27,5 +27,5 @@ git push origin v1.0.0
 
 ## Package
 
-- Name: `iriven/php-world-datasets`
+- Name: `irivengroup/world-datasets`
 - Namespace: `Iriven\WorldDatasets\`
