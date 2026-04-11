@@ -1608,3 +1608,15 @@ Le workflow CI active maintenant explicitement Node 24 pour anticiper la dépré
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 ```
+
+
+## Build determinism
+
+Le script `bin/build_data.php` produit désormais des artefacts déterministes :
+
+- ordre stable des enregistrements
+- JSON avec fin de ligne normalisée
+- métadonnées `built_at` conservées si les checksums n’ont pas changé
+
+Cela évite les diffs parasites lors du contrôle `git diff --exit-code` après génération.
+

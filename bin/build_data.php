@@ -23,6 +23,11 @@ $headers = [
 ];
 
 $targetDir = __DIR__ . '/../src/data';
+$metaPath = $targetDir . '/.countriesRepository.meta.json';
+$previousMeta = is_file($metaPath)
+    ? json_decode((string) file_get_contents($metaPath), true)
+    : null;
+
 $normalizedRecords = array_map(
     static function (array $row): array {
         return [
@@ -32,27 +37,35 @@ $normalizedRecords = array_map(
             'country_name' => (string) ($row['country'] ?? ''),
             'capital' => (string) ($row['capital'] ?? ''),
             'tld' => (string) ($row['tld'] ?? ''),
-            'region_alpha_code' => (string) (($row['region']['alpha_code'] ?? '')),
-            'region_num_code' => (string) (($row['region']['numeric_code'] ?? '')),
-            'region_name' => (string) (($row['region']['name'] ?? '')),
-            'sub_region_code' => (string) (($row['region']['sub_region']['code'] ?? '')),
-            'sub_region_name' => (string) (($row['region']['sub_region']['name'] ?? '')),
+            'region_alpha_code' => (string) ($row['region']['alpha_code'] ?? ''),
+            'region_num_code' => (string) ($row['region']['numeric_code'] ?? ''),
+            'region_name' => (string) ($row['region']['name'] ?? ''),
+            'sub_region_code' => (string) ($row['region']['sub_region']['code'] ?? ''),
+            'sub_region_name' => (string) ($row['region']['sub_region']['name'] ?? ''),
             'language' => (string) ($row['language'] ?? ''),
-            'currency_code' => (string) (($row['currency']['code'] ?? '')),
-            'currency_name' => (string) (($row['currency']['name'] ?? '')),
+            'currency_code' => (string) ($row['currency']['code'] ?? ''),
+            'currency_name' => (string) ($row['currency']['name'] ?? ''),
             'postal_code_pattern' => (string) ($row['postal_code_pattern'] ?? ''),
-            'phone_code' => (string) (($row['phone']['code'] ?? '')),
-            'intl_dialing_prefix' => (string) (($row['phone']['international_prefix'] ?? '')),
-            'natl_dialing_prefix' => (string) (($row['phone']['national_prefix'] ?? '')),
-            'subscriber_phone_pattern' => (string) (($row['phone']['subscriber_pattern'] ?? '')),
+            'phone_code' => (string) ($row['phone']['code'] ?? ''),
+            'intl_dialing_prefix' => (string) ($row['phone']['international_prefix'] ?? ''),
+            'natl_dialing_prefix' => (string) ($row['phone']['national_prefix'] ?? ''),
+            'subscriber_phone_pattern' => (string) ($row['phone']['subscriber_pattern'] ?? ''),
         ];
     },
     $records
 );
 
-file_put_contents($targetDir . '/' . DataSource::JSON, json_encode($normalizedRecords, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+$jsonPayload = json_encode($normalizedRecords, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+if ($jsonPayload === false) {
+    throw new RuntimeException('Failed to encode JSON dataset.');
+}
+file_put_contents($targetDir . '/' . DataSource::JSON, $jsonPayload . PHP_EOL);
 
-$csv = fopen($targetDir . '/' . DataSource::CSV, 'wb');
+$csvPath = $targetDir . '/' . DataSource::CSV;
+$csv = fopen($csvPath, 'wb');
+if ($csv === false) {
+    throw new RuntimeException('Unable to open CSV output.');
+}
 fputcsv($csv, $headers);
 foreach ($normalizedRecords as $record) {
     fputcsv($csv, $record);
@@ -91,6 +104,12 @@ $pdo->exec('CREATE INDEX idx_countries_alpha3 ON countries(alpha3)');
 $pdo->exec('CREATE INDEX idx_countries_numeric_code ON countries(numeric_code)');
 $pdo->exec('CREATE INDEX idx_countries_region_name ON countries(region_name)');
 $pdo->exec('CREATE INDEX idx_countries_currency_code ON countries(currency_code)');
+$pdo->exec('CREATE INDEX idx_countries_country_name ON countries(country_name)');
+$pdo->exec('CREATE INDEX idx_countries_region_subregion ON countries(region_name, sub_region_name)');
+$pdo->exec('CREATE INDEX idx_countries_tld ON countries(tld)');
+$pdo->exec('CREATE INDEX idx_countries_phone_code ON countries(phone_code)');
+$pdo->exec('CREATE INDEX idx_countries_currency_country ON countries(currency_code, country_name)');
+$pdo->exec('CREATE INDEX idx_countries_region_country ON countries(region_name, country_name)');
 
 $insert = $pdo->prepare('INSERT INTO countries (
     alpha2, alpha3, numeric_code, country_name, capital, tld, region_alpha_code, region_num_code,
@@ -129,24 +148,47 @@ $pdo->commit();
 
 $validator = new DatasetValidator();
 $report = $validator->validate($service->countries()->values(), false);
-file_put_contents($targetDir . '/.countriesRepository.validation.json', json_encode($report->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+$validationPayload = json_encode($report->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+if ($validationPayload === false) {
+    throw new RuntimeException('Failed to encode validation report.');
+}
+file_put_contents($targetDir . '/.countriesRepository.validation.json', $validationPayload . PHP_EOL);
 
 $checksums = [];
 foreach ([DataSource::SQLITE, DataSource::JSON, DataSource::CSV] as $fileName) {
     $fullPath = $targetDir . '/' . $fileName;
     $checksums[$fileName] = hash_file('sha256', $fullPath);
 }
+
+$builtAt = gmdate('c');
+if (
+    is_array($previousMeta)
+    && isset($previousMeta['checksums'])
+    && is_array($previousMeta['checksums'])
+    && $previousMeta['checksums'] === $checksums
+    && isset($previousMeta['built_at'])
+    && is_string($previousMeta['built_at'])
+) {
+    $builtAt = $previousMeta['built_at'];
+}
+
 file_put_contents(
     $targetDir . '/.countriesRepository.sha256',
-    implode(PHP_EOL, array_map(static fn(string $name, string $hash): string => $hash . '  ' . $name, array_keys($checksums), $checksums)) . PHP_EOL
+    implode(PHP_EOL, array_map(
+        static fn(string $name, string $hash): string => $hash . '  ' . $name,
+        array_keys($checksums),
+        $checksums
+    )) . PHP_EOL
 );
-file_put_contents(
-    $targetDir . '/.countriesRepository.meta.json',
-    json_encode([
-        'dataset_version' => '2026.04.11',
-        'built_at' => gmdate('c'),
-        'checksums' => $checksums,
-    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-);
+
+$metaPayload = json_encode([
+    'dataset_version' => '2026.04.11',
+    'built_at' => $builtAt,
+    'checksums' => $checksums,
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+if ($metaPayload === false) {
+    throw new RuntimeException('Failed to encode metadata.');
+}
+file_put_contents($metaPath, $metaPayload . PHP_EOL);
 
 echo 'Dataset build completed.' . PHP_EOL;
