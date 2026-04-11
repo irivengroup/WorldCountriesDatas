@@ -1,0 +1,53 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Iriven;
+
+final class PhoneInfo
+{
+    public function __construct(
+        private readonly string $code,
+        private readonly string $internationalPrefix,
+        private readonly string $nationalPrefix,
+        private readonly string $subscriberPattern,
+        private readonly string $pattern,
+    ) {
+    }
+
+    public function code(): string
+    {
+        return $this->code;
+    }
+
+    public function internationalPrefix(): string
+    {
+        return $this->internationalPrefix;
+    }
+
+    public function nationalPrefix(): string
+    {
+        return $this->nationalPrefix;
+    }
+
+    public function subscriberPattern(): string
+    {
+        return $this->subscriberPattern;
+    }
+
+    public function pattern(): string
+    {
+        return $this->pattern;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'code' => $this->code,
+            'international_prefix' => $this->internationalPrefix,
+            'national_prefix' => $this->nationalPrefix,
+            'subscriber_pattern' => $this->subscriberPattern,
+            'pattern' => $this->pattern,
+        ];
+    }
+}

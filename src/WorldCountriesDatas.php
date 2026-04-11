@@ -37,13 +37,12 @@ final class WorldCountriesDatas implements Countable, IteratorAggregate
         $index = $this->normalizeFormat($format);
 
         foreach ($this->repository->findAll() as $country) {
-            $dataset = match ($index) {
+            $key = match ($index) {
                 self::ALPHA2 => $country->alpha2(),
                 self::ALPHA3 => $country->alpha3(),
                 self::NUMERIC => $country->numeric(),
             };
-
-            yield $dataset => $country;
+            yield $key => $country;
         }
     }
 
@@ -59,14 +58,9 @@ final class WorldCountriesDatas implements Countable, IteratorAggregate
         }
     }
 
-    public function getCountry(string $code): Country
-    {
-        return $this->resolveCountry($code);
-    }
-
     public function country(string $code): Country
     {
-        return $this->getCountry($code);
+        return $this->resolveCountry($code);
     }
 
     public function findCountry(string $code): ?Country
@@ -94,7 +88,7 @@ final class WorldCountriesDatas implements Countable, IteratorAggregate
 
     public function getCountryData(string $code): array
     {
-        return $this->getCountry($code)->toArray();
+        return $this->country($code)->toArray();
     }
 
     public function getAllCurrenciesCodeAndName(): array
@@ -175,7 +169,7 @@ final class WorldCountriesDatas implements Countable, IteratorAggregate
 
         return array_values(array_filter(
             $this->repository->findAll(),
-            static fn(Country $country): bool => strtoupper($country->currencyCode()) === $needle
+            static fn(Country $country): bool => strtoupper($country->currency()->code()) === $needle
         ));
     }
 
@@ -188,7 +182,7 @@ final class WorldCountriesDatas implements Countable, IteratorAggregate
 
         return array_values(array_filter(
             $this->repository->findAll(),
-            static fn(Country $country): bool => mb_strtolower($country->regionName()) === $needle
+            static fn(Country $country): bool => mb_strtolower($country->region()->name()) === $needle
         ));
     }
 
@@ -201,7 +195,7 @@ final class WorldCountriesDatas implements Countable, IteratorAggregate
 
         return array_values(array_filter(
             $this->repository->findAll(),
-            static fn(Country $country): bool => ltrim($country->phoneCode(), '+') === $needle
+            static fn(Country $country): bool => ltrim($country->phone()->code(), '+') === $needle
         ));
     }
 
