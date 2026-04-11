@@ -17,6 +17,9 @@ final class WorldDatasetsStats implements \JsonSerializable
     public function regions(): int { return $this->regions; }
     public function currencies(): int { return $this->currencies; }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -26,6 +29,9 @@ final class WorldDatasetsStats implements \JsonSerializable
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

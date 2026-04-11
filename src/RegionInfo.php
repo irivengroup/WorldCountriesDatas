@@ -36,6 +36,9 @@ final class RegionInfo implements Arrayable, \JsonSerializable
         return $this->subRegion;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -46,6 +49,9 @@ final class RegionInfo implements Arrayable, \JsonSerializable
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

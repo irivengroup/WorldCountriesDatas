@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
 
-use Iriven\WorldDatasets\WorldDatasets\WorldDatasetsFactory;
+use Iriven\WorldDatasets\WorldDatasetsFactory;
 use PHPUnit\Framework\TestCase;
 
 final class DatasetRegressionTest extends TestCase

@@ -69,6 +69,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         });
     }
 
+    /** @return list<Country> */
     public function findAll(): array
     {
         /** @var list<Country> */
@@ -130,6 +131,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         return $results[0] ?? null;
     }
 
+    /** @return list<Country> */
     public function findByName(string $name): array
     {
         $normalized = trim($name);
@@ -153,6 +155,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         });
     }
 
+    /** @return list<Country> */
     public function search(string $term): array
     {
         $normalized = '%' . strtolower(trim($term)) . '%';
@@ -182,21 +185,25 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         });
     }
 
+    /** @return list<Country> */
     public function findByCurrencyCode(string $currencyCode): array
     {
         return $this->fetchByExactColumn('currency_code', strtoupper(trim($currencyCode)), true);
     }
 
+    /** @return list<Country> */
     public function findByRegion(string $region): array
     {
         return $this->fetchByExactColumn('region_name', trim($region), false);
     }
 
+    /** @return list<Country> */
     public function findByPhoneCode(string $phoneCode): array
     {
         return $this->fetchByExactColumn('phone_code', trim($phoneCode), false);
     }
 
+    /** @return list<Country> */
     public function findByTld(string $tld): array
     {
         return $this->fetchByExactColumn('tld', $this->normalizer()->normalizeTld($tld), false);
@@ -262,6 +269,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         } while ($batch !== []);
     }
 
+    /** @return array<string, string> */
     public function getAllCurrenciesCodeAndName(): array
     {
         /** @var array<string,string> */
@@ -279,6 +287,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         });
     }
 
+    /** @return array<string, string> */
     public function getAllRegionsCodeAndName(): array
     {
         /** @var array<string,string> */
@@ -296,6 +305,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         });
     }
 
+    /** @return array<string, array<string, string>> */
     public function getAllCountriesGroupedByRegions(): array
     {
         /** @var array<string,array<string,string>> */
@@ -313,6 +323,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         });
     }
 
+    /** @return array<string, array<string, string>> */
     public function getAllCountriesGroupedByCurrencies(): array
     {
         /** @var array<string,array<string,string>> */
@@ -359,6 +370,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         }
     }
 
+    /** @return list<Country> */
     private function fetchByExactColumn(string $column, string $value, bool $normalizeAlpha = true): array
     {
         $allowedColumns = ['currency_code', 'region_name', 'phone_code', 'tld'];
@@ -453,6 +465,11 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
     }
 
     /** @return list<Country> */
+    /**
+     * @param array<string, mixed> $params
+     * @param array<string, int> $paramTypes
+     * @return list<Country>
+     */
     private function fetchCountriesPrepared(string $sql, array $params, array $paramTypes = []): array
     {
         try {

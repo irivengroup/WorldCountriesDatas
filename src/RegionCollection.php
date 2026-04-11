@@ -10,16 +10,24 @@ use Iriven\WorldDatasets\Exporter\JsonExporter;
 
 final class RegionCollection implements Arrayable, \JsonSerializable
 {
+    /** @var list<RegionInfo>|null */
     private ?array $cachedValues = null;
+    /** @var array<string, string>|null */
     private ?array $cachedList = null;
+    /** @var array<string, array<string, string>>|null */
     private ?array $cachedCountries = null;
+    /** @var list<array<string, mixed>>|null */
     private ?array $cachedExportArray = null;
 
+    /**
+     * @param list<Country> $countries
+     */
     public function __construct(
         private readonly array $countries,
     ) {
     }
 
+    /** @return list<RegionInfo> */
     public function values(): array
     {
         if ($this->cachedValues !== null) {
@@ -39,6 +47,7 @@ final class RegionCollection implements Arrayable, \JsonSerializable
         return $this->cachedValues = array_values($result);
     }
 
+    /** @return array<string, string> */
     public function list(): array
     {
         if ($this->cachedList !== null) {
@@ -58,6 +67,7 @@ final class RegionCollection implements Arrayable, \JsonSerializable
         return $this->cachedList = $result;
     }
 
+    /** @return array<string, array<string, string>> */
     public function countries(): array
     {
         if ($this->cachedCountries !== null) {
@@ -77,6 +87,7 @@ final class RegionCollection implements Arrayable, \JsonSerializable
         return $this->cachedCountries = $result;
     }
 
+    /** @return list<array<string, mixed>> */
     public function exportArray(): array
     {
         if ($this->cachedExportArray !== null) {
@@ -111,6 +122,8 @@ final class RegionCollection implements Arrayable, \JsonSerializable
         (new CsvExporter())->exportFile($path, $this->exportArray());
     }
 
+    /** @return list<array<string, mixed>> */
     public function toArray(): array { return $this->exportArray(); }
+    /** @return list<array<string, mixed>> */
     public function jsonSerialize(): array { return $this->exportArray(); }
 }

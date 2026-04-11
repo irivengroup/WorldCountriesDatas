@@ -11,7 +11,9 @@ final class Country implements Arrayable, \JsonSerializable
     private ?CurrencyInfo $currency = null;
     private ?RegionInfo $regionObject = null;
     private ?PhoneInfo $phoneObject = null;
+    /** @var array<string, mixed>|null */
     private ?array $apiArray = null;
+    /** @var list<string>|null */
     private ?array $indexedArray = null;
 
     public function __construct(
@@ -99,26 +101,41 @@ final class Country implements Arrayable, \JsonSerializable
         return true;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function data(): array
     {
         return $this->all();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return $this->apiArray ??= (new CountryArrayTransformer())->toApiArray($this);
     }
 
+    /**
+     * @return list<string>
+     */
     public function toIndexedArray(): array
     {
         return $this->indexedArray ??= (new CountryArrayTransformer())->toStorageArray($this);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function all(): array
     {
         return $this->toArray();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();
@@ -129,6 +146,9 @@ final class Country implements Arrayable, \JsonSerializable
         return $this->country;
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     public static function fromDatabaseRow(array $row): self
     {
         return new self(

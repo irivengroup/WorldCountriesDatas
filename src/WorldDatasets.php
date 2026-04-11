@@ -16,6 +16,9 @@ use Iriven\WorldDatasets\Exception\InvalidFormatException;
 use IteratorAggregate;
 use Traversable;
 
+/**
+ * @implements IteratorAggregate<int, Country>
+ */
 class WorldDatasets implements CountriesDataInterface, ReadonlyWorldDatasetsServiceInterface, Countable, IteratorAggregate
 {
     public const ALPHA2 = 0;
@@ -34,6 +37,7 @@ class WorldDatasets implements CountriesDataInterface, ReadonlyWorldDatasetsServ
     ) {
     }
 
+    /** @return list<array<string, mixed>> */
     public function all(): array
     {
         return array_map(
@@ -132,34 +136,40 @@ class WorldDatasets implements CountriesDataInterface, ReadonlyWorldDatasetsServ
         return new WorldDatasetsQuery($this->countries());
     }
 
+    /** @return list<Country> */
     public function findByName(string $name): array
     {
         return $this->repository->findByName($name);
     }
 
+    /** @return list<Country> */
     public function searchCountries(string $term): array
     {
         return $this->repository->search($term);
     }
 
+    /** @return list<Country> */
     public function findByCurrencyCode(string $currencyCode): array
     {
         return $this->repository->findByCurrencyCode($currencyCode);
     }
 
+    /** @return list<Country> */
     public function findByRegion(string $region): array
     {
         return $this->repository->findByRegion($region);
     }
 
+    /** @return list<Country> */
     public function findByPhoneCode(string $phoneCode): array
     {
-        return $this->repository->findByPhoneCode($phoneCode);
+        return $this->repository->findByPhoneCode($this->phoneCodeNormalizer->normalize($phoneCode));
     }
 
+    /** @return list<Country> */
     public function findByTld(string $tld): array
     {
-        return $this->repository->findByTld($tld);
+        return $this->repository->findByTld($this->tldNormalizer->normalize($tld));
     }
 
     private function resolveCountry(string $code): Country

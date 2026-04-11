@@ -14,6 +14,7 @@ use RuntimeException;
 
 final class WorldDatasetsFactory
 {
+    /** @var array<string, mixed>|null */
     private static ?array $metaCache = null;
 
     public static function make(?string $sourcePath = null): WorldDatasetsService
@@ -116,7 +117,7 @@ final class WorldDatasetsFactory
     public static function builtAt(): ?string
     {
         $data = self::metaData();
-        return is_array($data) ? ($data['built_at'] ?? null) : null;
+        return isset($data['built_at']) ? (string) $data['built_at'] : null;
     }
 
     public static function checksumFor(string $path): ?string
@@ -143,6 +144,7 @@ final class WorldDatasetsFactory
         }
     }
 
+    /** @return array<string, mixed> */
     private static function metaData(): array
     {
         if (self::$metaCache !== null) {

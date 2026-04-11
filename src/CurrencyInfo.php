@@ -24,6 +24,9 @@ final class CurrencyInfo implements Arrayable, \JsonSerializable
         return $this->name;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -32,6 +35,9 @@ final class CurrencyInfo implements Arrayable, \JsonSerializable
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

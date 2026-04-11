@@ -6,5 +6,8 @@ namespace Iriven\WorldDatasets\Contract;
 
 interface Arrayable
 {
+    /**
+     * @return array<mixed>
+     */
     public function toArray(): array;
 }

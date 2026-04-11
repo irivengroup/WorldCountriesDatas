@@ -27,6 +27,9 @@ final class MetaInfo implements \JsonSerializable
     public function checksum(): ?string { return $this->checksum; }
     public function builtAt(): ?string { return $this->builtAt; }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -41,6 +44,9 @@ final class MetaInfo implements \JsonSerializable
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

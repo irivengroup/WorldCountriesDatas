@@ -43,6 +43,7 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
         return count($this->countries);
     }
 
+    /** @return list<Country> */
     public function findAll(): array
     {
         return $this->countries;
@@ -68,12 +69,14 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
         return $this->byName[mb_strtolower(trim($name))] ?? null;
     }
 
+    /** @return list<Country> */
     public function findByName(string $name): array
     {
         $country = $this->findOneByName($name);
         return $country === null ? [] : [$country];
     }
 
+    /** @return list<Country> */
     public function search(string $term): array
     {
         $needle = mb_strtolower(trim($term));
@@ -95,6 +98,7 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
         return $result;
     }
 
+    /** @return list<Country> */
     public function findByCurrencyCode(string $currencyCode): array
     {
         $needle = strtoupper(trim($currencyCode));
@@ -109,6 +113,7 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
         return $result;
     }
 
+    /** @return list<Country> */
     public function findByRegion(string $region): array
     {
         $needle = mb_strtolower(trim($region));
@@ -123,6 +128,7 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
         return $result;
     }
 
+    /** @return list<Country> */
     public function findByPhoneCode(string $phoneCode): array
     {
         $normalizer = new PhoneCodeNormalizer();
@@ -138,6 +144,7 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
         return $result;
     }
 
+    /** @return list<Country> */
     public function findByTld(string $tld): array
     {
         $normalizer = new TldNormalizer();
@@ -153,21 +160,25 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
         return $result;
     }
 
+    /** @return array<string, string> */
     public function getAllCurrenciesCodeAndName(): array
     {
         return (new CurrencyCollection($this->countries))->list();
     }
 
+    /** @return array<string, string> */
     public function getAllRegionsCodeAndName(): array
     {
         return (new RegionCollection($this->countries))->list();
     }
 
+    /** @return array<string, array<string, string>> */
     public function getAllCountriesGroupedByRegions(): array
     {
         return (new RegionCollection($this->countries))->countries();
     }
 
+    /** @return array<string, array<string, string>> */
     public function getAllCountriesGroupedByCurrencies(): array
     {
         return (new CurrencyCollection($this->countries))->countries();

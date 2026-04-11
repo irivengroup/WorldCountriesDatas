@@ -31,14 +31,41 @@ final class DatasetValidator
                 $invalid[] = ['field' => 'numeric', 'value' => $country->numeric(), 'country' => $country->name()];
             }
 
-            foreach ([['alpha2',$country->alpha2(), &$alpha2], ['alpha3',$country->alpha3(), &$alpha3], ['numeric',$country->numeric(), &$numeric]] as [$field,$value,&$bucket]) {
+            $pairs = [
+                ['field' => 'alpha2', 'value' => $country->alpha2()],
+                ['field' => 'alpha3', 'value' => $country->alpha3()],
+                ['field' => 'numeric', 'value' => $country->numeric()],
+            ];
+
+            foreach ($pairs as $pair) {
+                $field = $pair['field'];
+                $value = $pair['value'];
                 if ($value === '') {
                     continue;
                 }
-                if (isset($bucket[$value])) {
-                    $duplicates[] = ['field' => $field, 'value' => $value, 'countries' => [$bucket[$value], $country->name()]];
+
+                if ($field === 'alpha2') {
+                    if (array_key_exists($value, $alpha2)) {
+                        $duplicates[] = ['field' => $field, 'value' => $value, 'countries' => [$alpha2[$value], $country->name()]];
+                    } else {
+                        $alpha2[$value] = $country->name();
+                    }
+                    continue;
+                }
+
+                if ($field === 'alpha3') {
+                    if (array_key_exists($value, $alpha3)) {
+                        $duplicates[] = ['field' => $field, 'value' => $value, 'countries' => [$alpha3[$value], $country->name()]];
+                    } else {
+                        $alpha3[$value] = $country->name();
+                    }
+                    continue;
+                }
+
+                if (array_key_exists($value, $numeric)) {
+                    $duplicates[] = ['field' => $field, 'value' => $value, 'countries' => [$numeric[$value], $country->name()]];
                 } else {
-                    $bucket[$value] = $country->name();
+                    $numeric[$value] = $country->name();
                 }
             }
 

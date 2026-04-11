@@ -8,6 +8,9 @@ use Iriven\WorldDatasets\Exception\ExportException;
 
 final class CsvExporter
 {
+    /**
+     * @param list<array<string, mixed>> $rows
+     */
     public function export(array $rows): string
     {
         if ($rows === []) {
@@ -32,6 +35,9 @@ final class CsvExporter
         return (string) stream_get_contents($stream);
     }
 
+    /**
+     * @param list<array<string, mixed>> $rows
+     */
     public function exportFile(string $path, array $rows): void
     {
         if (file_put_contents($path, $this->export($rows)) === false) {

@@ -42,6 +42,9 @@ final class PhoneInfo implements Arrayable, \JsonSerializable
         return $this->pattern;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -53,6 +56,9 @@ final class PhoneInfo implements Arrayable, \JsonSerializable
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

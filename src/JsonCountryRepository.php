@@ -24,30 +24,41 @@ final class JsonCountryRepository implements CountryRepositoryInterface
             throw new RuntimeException('Invalid JSON dataset.');
         }
 
-        $worldDatasets = [];
+        $countries = [];
         foreach ($decoded as $row) {
             if (is_array($row)) {
-                $worldDatasets[] = Country::fromDatabaseRow($row);
+                $countries[] = Country::fromDatabaseRow($row);
             }
         }
 
-        $this->inner = new ArrayCountryRepository($worldDatasets);
+        $this->inner = new ArrayCountryRepository($countries);
     }
 
     public function count(): int { return $this->inner->count(); }
+    /** @return list<Country> */
     public function findAll(): array { return $this->inner->findAll(); }
     public function findOneByAlpha2(string $alpha2): ?Country { return $this->inner->findOneByAlpha2($alpha2); }
     public function findOneByAlpha3(string $alpha3): ?Country { return $this->inner->findOneByAlpha3($alpha3); }
     public function findOneByNumeric(string $numeric): ?Country { return $this->inner->findOneByNumeric($numeric); }
     public function findOneByName(string $name): ?Country { return $this->inner->findOneByName($name); }
+    /** @return list<Country> */
     public function findByName(string $name): array { return $this->inner->findByName($name); }
+    /** @return list<Country> */
     public function search(string $term): array { return $this->inner->search($term); }
+    /** @return list<Country> */
     public function findByCurrencyCode(string $currencyCode): array { return $this->inner->findByCurrencyCode($currencyCode); }
+    /** @return list<Country> */
     public function findByRegion(string $region): array { return $this->inner->findByRegion($region); }
+    /** @return list<Country> */
     public function findByPhoneCode(string $phoneCode): array { return $this->inner->findByPhoneCode($phoneCode); }
+    /** @return list<Country> */
     public function findByTld(string $tld): array { return $this->inner->findByTld($tld); }
+    /** @return array<string, string> */
     public function getAllCurrenciesCodeAndName(): array { return $this->inner->getAllCurrenciesCodeAndName(); }
+    /** @return array<string, string> */
     public function getAllRegionsCodeAndName(): array { return $this->inner->getAllRegionsCodeAndName(); }
+    /** @return array<string, array<string, string>> */
     public function getAllCountriesGroupedByRegions(): array { return $this->inner->getAllCountriesGroupedByRegions(); }
+    /** @return array<string, array<string, string>> */
     public function getAllCountriesGroupedByCurrencies(): array { return $this->inner->getAllCountriesGroupedByCurrencies(); }
 }

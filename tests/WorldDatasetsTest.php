@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
 
-use Iriven\WorldDatasets\WorldDatasets\WorldDatasetsFactory;
-use Iriven\WorldDatasets\WorldDatasets\CountryCodeFormat;
-use Iriven\WorldDatasets\WorldDatasets\DatasetValidator;
+use Iriven\WorldDatasets\WorldDatasetsFactory;
+use Iriven\WorldDatasets\CountryCodeFormat;
+use Iriven\WorldDatasets\DatasetValidator;
 use PHPUnit\Framework\TestCase;
 
 final class WorldDatasetsTest extends TestCase

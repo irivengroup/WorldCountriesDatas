@@ -6,6 +6,9 @@ namespace Iriven\WorldDatasets;
 
 final class CountryArrayTransformer
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function toApiArray(Country $country): array
     {
         return [
@@ -23,6 +26,9 @@ final class CountryArrayTransformer
         ];
     }
 
+    /**
+     * @return list<string>
+     */
     public function toStorageArray(Country $country): array
     {
         return [
@@ -48,6 +54,9 @@ final class CountryArrayTransformer
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function toFlatArray(Country $country): array
     {
         return [
