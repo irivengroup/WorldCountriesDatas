@@ -9,6 +9,107 @@ use Iriven\WorldDatasets\DatasetValidator;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+/**
+ * @param non-empty-string $path
+ */
+function write_if_changed(string $path, string $content): void
+{
+    $current = is_file($path) ? (string) file_get_contents($path) : null;
+    if ($current === $content) {
+        return;
+    }
+
+    file_put_contents($path, $content);
+}
+
+/**
+ * @param list<array<string, string>> $normalizedRecords
+ */
+function rebuild_sqlite_from_records(string $sqliteFile, array $normalizedRecords): void
+{
+    if (is_file($sqliteFile)) {
+        unlink($sqliteFile);
+    }
+
+    $pdo = new PDO('sqlite:' . $sqliteFile);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->exec('CREATE TABLE countries (
+        alpha2 TEXT PRIMARY KEY,
+        alpha3 TEXT NOT NULL UNIQUE,
+        numeric_code TEXT NOT NULL UNIQUE,
+        country_name TEXT NOT NULL,
+        capital TEXT,
+        tld TEXT,
+        region_alpha_code TEXT,
+        region_num_code TEXT,
+        region_name TEXT,
+        sub_region_code TEXT,
+        sub_region_name TEXT,
+        language TEXT,
+        currency_code TEXT,
+        currency_name TEXT,
+        postal_code_pattern TEXT,
+        phone_code TEXT,
+        intl_dialing_prefix TEXT,
+        natl_dialing_prefix TEXT,
+        subscriber_phone_pattern TEXT
+    )');
+    $pdo->exec('CREATE INDEX idx_countries_alpha3 ON countries(alpha3)');
+    $pdo->exec('CREATE INDEX idx_countries_numeric_code ON countries(numeric_code)');
+    $pdo->exec('CREATE INDEX idx_countries_region_name ON countries(region_name)');
+    $pdo->exec('CREATE INDEX idx_countries_currency_code ON countries(currency_code)');
+    $pdo->exec('CREATE INDEX idx_countries_country_name ON countries(country_name)');
+    $pdo->exec('CREATE INDEX idx_countries_region_subregion ON countries(region_name, sub_region_name)');
+    $pdo->exec('CREATE INDEX idx_countries_tld ON countries(tld)');
+    $pdo->exec('CREATE INDEX idx_countries_phone_code ON countries(phone_code)');
+    $pdo->exec('CREATE INDEX idx_countries_currency_country ON countries(currency_code, country_name)');
+    $pdo->exec('CREATE INDEX idx_countries_region_country ON countries(region_name, country_name)');
+
+    $insert = $pdo->prepare('INSERT INTO countries (
+        alpha2, alpha3, numeric_code, country_name, capital, tld, region_alpha_code, region_num_code,
+        region_name, sub_region_code, sub_region_name, language, currency_code, currency_name,
+        postal_code_pattern, phone_code, intl_dialing_prefix, natl_dialing_prefix, subscriber_phone_pattern
+    ) VALUES (
+        :alpha2, :alpha3, :numeric_code, :country_name, :capital, :tld, :region_alpha_code, :region_num_code,
+        :region_name, :sub_region_code, :sub_region_name, :language, :currency_code, :currency_name,
+        :postal_code_pattern, :phone_code, :intl_dialing_prefix, :natl_dialing_prefix, :subscriber_phone_pattern
+    )');
+
+    $pdo->beginTransaction();
+    foreach ($normalizedRecords as $record) {
+        $insert->execute([
+            ':alpha2' => $record['alpha2'],
+            ':alpha3' => $record['alpha3'],
+            ':numeric_code' => $record['numeric_code'],
+            ':country_name' => $record['country_name'],
+            ':capital' => $record['capital'],
+            ':tld' => $record['tld'],
+            ':region_alpha_code' => $record['region_alpha_code'],
+            ':region_num_code' => $record['region_num_code'],
+            ':region_name' => $record['region_name'],
+            ':sub_region_code' => $record['sub_region_code'],
+            ':sub_region_name' => $record['sub_region_name'],
+            ':language' => $record['language'],
+            ':currency_code' => $record['currency_code'],
+            ':currency_name' => $record['currency_name'],
+            ':postal_code_pattern' => $record['postal_code_pattern'],
+            ':phone_code' => $record['phone_code'],
+            ':intl_dialing_prefix' => $record['intl_dialing_prefix'],
+            ':natl_dialing_prefix' => $record['natl_dialing_prefix'],
+            ':subscriber_phone_pattern' => $record['subscriber_phone_pattern'],
+        ]);
+    }
+    $pdo->commit();
+}
+
+$targetDir = __DIR__ . '/../src/data';
+$sqlitePath = $targetDir . '/' . DataSource::SQLITE;
+$jsonPath = $targetDir . '/' . DataSource::JSON;
+$csvPath = $targetDir . '/' . DataSource::CSV;
+$shaPath = $targetDir . '/.countriesRepository.sha256';
+$metaPath = $targetDir . '/.countriesRepository.meta.json';
+$validationPath = $targetDir . '/.countriesRepository.validation.json';
+
 $sourceFile = WorldDatasetsFactory::defaultSqlitePath();
 $service = WorldDatasetsFactory::make($sourceFile);
 $records = $service->countries()->sortByCode()->exportArray();
@@ -22,8 +123,6 @@ $headers = [
     'subscriber_phone_pattern',
 ];
 
-$targetDir = __DIR__ . '/../src/data';
-$metaPath = $targetDir . '/.countriesRepository.meta.json';
 $previousMeta = is_file($metaPath)
     ? json_decode((string) file_get_contents($metaPath), true)
     : null;
@@ -59,92 +158,30 @@ $jsonPayload = json_encode($normalizedRecords, JSON_PRETTY_PRINT | JSON_UNESCAPE
 if ($jsonPayload === false) {
     throw new RuntimeException('Failed to encode JSON dataset.');
 }
-file_put_contents($targetDir . '/' . DataSource::JSON, $jsonPayload . PHP_EOL);
+write_if_changed($jsonPath, $jsonPayload . PHP_EOL);
 
-$csvPath = $targetDir . '/' . DataSource::CSV;
-$csv = fopen($csvPath, 'wb');
+$csv = fopen('php://temp', 'w+b');
 if ($csv === false) {
-    throw new RuntimeException('Unable to open CSV output.');
+    throw new RuntimeException('Unable to open temporary CSV buffer.');
 }
 fputcsv($csv, $headers);
 foreach ($normalizedRecords as $record) {
     fputcsv($csv, $record);
 }
+rewind($csv);
+$csvPayload = stream_get_contents($csv);
 fclose($csv);
-
-$sqliteFile = $targetDir . '/' . DataSource::SQLITE;
-if (is_file($sqliteFile)) {
-    unlink($sqliteFile);
+if ($csvPayload === false) {
+    throw new RuntimeException('Unable to read temporary CSV buffer.');
 }
+write_if_changed($csvPath, $csvPayload);
 
-$pdo = new PDO('sqlite:' . $sqliteFile);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->exec('CREATE TABLE countries (
-    alpha2 TEXT PRIMARY KEY,
-    alpha3 TEXT NOT NULL UNIQUE,
-    numeric_code TEXT NOT NULL UNIQUE,
-    country_name TEXT NOT NULL,
-    capital TEXT,
-    tld TEXT,
-    region_alpha_code TEXT,
-    region_num_code TEXT,
-    region_name TEXT,
-    sub_region_code TEXT,
-    sub_region_name TEXT,
-    language TEXT,
-    currency_code TEXT,
-    currency_name TEXT,
-    postal_code_pattern TEXT,
-    phone_code TEXT,
-    intl_dialing_prefix TEXT,
-    natl_dialing_prefix TEXT,
-    subscriber_phone_pattern TEXT
-)');
-$pdo->exec('CREATE INDEX idx_countries_alpha3 ON countries(alpha3)');
-$pdo->exec('CREATE INDEX idx_countries_numeric_code ON countries(numeric_code)');
-$pdo->exec('CREATE INDEX idx_countries_region_name ON countries(region_name)');
-$pdo->exec('CREATE INDEX idx_countries_currency_code ON countries(currency_code)');
-$pdo->exec('CREATE INDEX idx_countries_country_name ON countries(country_name)');
-$pdo->exec('CREATE INDEX idx_countries_region_subregion ON countries(region_name, sub_region_name)');
-$pdo->exec('CREATE INDEX idx_countries_tld ON countries(tld)');
-$pdo->exec('CREATE INDEX idx_countries_phone_code ON countries(phone_code)');
-$pdo->exec('CREATE INDEX idx_countries_currency_country ON countries(currency_code, country_name)');
-$pdo->exec('CREATE INDEX idx_countries_region_country ON countries(region_name, country_name)');
-
-$insert = $pdo->prepare('INSERT INTO countries (
-    alpha2, alpha3, numeric_code, country_name, capital, tld, region_alpha_code, region_num_code,
-    region_name, sub_region_code, sub_region_name, language, currency_code, currency_name,
-    postal_code_pattern, phone_code, intl_dialing_prefix, natl_dialing_prefix, subscriber_phone_pattern
-) VALUES (
-    :alpha2, :alpha3, :numeric_code, :country_name, :capital, :tld, :region_alpha_code, :region_num_code,
-    :region_name, :sub_region_code, :sub_region_name, :language, :currency_code, :currency_name,
-    :postal_code_pattern, :phone_code, :intl_dialing_prefix, :natl_dialing_prefix, :subscriber_phone_pattern
-)');
-$pdo->beginTransaction();
-foreach ($normalizedRecords as $record) {
-    $insert->execute([
-        ':alpha2' => $record['alpha2'],
-        ':alpha3' => $record['alpha3'],
-        ':numeric_code' => $record['numeric_code'],
-        ':country_name' => $record['country_name'],
-        ':capital' => $record['capital'],
-        ':tld' => $record['tld'],
-        ':region_alpha_code' => $record['region_alpha_code'],
-        ':region_num_code' => $record['region_num_code'],
-        ':region_name' => $record['region_name'],
-        ':sub_region_code' => $record['sub_region_code'],
-        ':sub_region_name' => $record['sub_region_name'],
-        ':language' => $record['language'],
-        ':currency_code' => $record['currency_code'],
-        ':currency_name' => $record['currency_name'],
-        ':postal_code_pattern' => $record['postal_code_pattern'],
-        ':phone_code' => $record['phone_code'],
-        ':intl_dialing_prefix' => $record['intl_dialing_prefix'],
-        ':natl_dialing_prefix' => $record['natl_dialing_prefix'],
-        ':subscriber_phone_pattern' => $record['subscriber_phone_pattern'],
-    ]);
+// Important for CI idempotence:
+// if the default source is already the repository SQLite file, keep it as-is.
+// Rebuilding SQLite from identical rows can still change the binary file hash.
+if (realpath($sourceFile) !== realpath($sqlitePath)) {
+    rebuild_sqlite_from_records($sqlitePath, $normalizedRecords);
 }
-$pdo->commit();
 
 $validator = new DatasetValidator();
 $report = $validator->validate($service->countries()->values(), false);
@@ -152,7 +189,7 @@ $validationPayload = json_encode($report->toArray(), JSON_PRETTY_PRINT | JSON_UN
 if ($validationPayload === false) {
     throw new RuntimeException('Failed to encode validation report.');
 }
-file_put_contents($targetDir . '/.countriesRepository.validation.json', $validationPayload . PHP_EOL);
+write_if_changed($validationPath, $validationPayload . PHP_EOL);
 
 $checksums = [];
 foreach ([DataSource::SQLITE, DataSource::JSON, DataSource::CSV] as $fileName) {
@@ -172,14 +209,12 @@ if (
     $builtAt = $previousMeta['built_at'];
 }
 
-file_put_contents(
-    $targetDir . '/.countriesRepository.sha256',
-    implode(PHP_EOL, array_map(
-        static fn(string $name, string $hash): string => $hash . '  ' . $name,
-        array_keys($checksums),
-        $checksums
-    )) . PHP_EOL
-);
+$shaPayload = implode(PHP_EOL, array_map(
+    static fn(string $name, string $hash): string => $hash . '  ' . $name,
+    array_keys($checksums),
+    $checksums
+)) . PHP_EOL;
+write_if_changed($shaPath, $shaPayload);
 
 $metaPayload = json_encode([
     'dataset_version' => '2026.04.11',
@@ -189,6 +224,6 @@ $metaPayload = json_encode([
 if ($metaPayload === false) {
     throw new RuntimeException('Failed to encode metadata.');
 }
-file_put_contents($metaPath, $metaPayload . PHP_EOL);
+write_if_changed($metaPath, $metaPayload . PHP_EOL);
 
 echo 'Dataset build completed.' . PHP_EOL;

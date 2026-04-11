@@ -1620,3 +1620,15 @@ Le script `bin/build_data.php` produit désormais des artefacts déterministes :
 
 Cela évite les diffs parasites lors du contrôle `git diff --exit-code` après génération.
 
+
+
+## Build idempotent
+
+Le script `bin/build_data.php` est maintenant idempotent pour la CI :
+
+- les fichiers texte ne sont réécrits que si leur contenu change
+- la base SQLite n’est pas reconstruite quand elle est déjà la source par défaut
+- `built_at` reste stable si les checksums restent identiques
+
+Cela évite les échecs sur `git diff --exit-code` après `composer run build-data`.
+
