@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Application;
+use Iriven\WorldDatasets\Application\Query\WorldDatasetsQuery;
+use Iriven\WorldDatasets\Application\Support\TldNormalizer;
+use Iriven\WorldDatasets\Application\Support\PhoneCodeNormalizer;
+use Iriven\WorldDatasets\Application\Support\CountryCodeNormalizer;
 use Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\CountriesCollection\CountryCodeFormat;
 use Iriven\WorldDatasets\Domain\Country;
