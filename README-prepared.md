@@ -1,64 +1,9 @@
-# Convention retenue
-
-Cette version conserve volontairement :
-
-- `WorldDatasetsService` comme service principal
-- `WorldDatasetsFactory` comme factory principale
-- `countries()` comme point d’entrée de collection
-- `CountriesCollection` comme nom officiel de la collection de pays
-- la variable d’exemple `$worldDatasets` dans toute la documentation
-
-Autrement dit :
-- on **ne migre pas** `CountriesCollection` vers `DatasetsCollection`
-- on garde `countries()` → `CountriesCollection`
-
----
-
-# Version publique stabilisée v1
-
-Cette archive ne contient plus d’alias de transition.  
-L’API publique officielle repose uniquement sur :
-
-- `Iriven\WorldDatasets\Application\WorldDatasetsService`
-- `Iriven\WorldDatasets\Application\Factory\WorldDatasetsFactory`
-- `Iriven\WorldDatasets\Application\Config\WorldDatasetsRuntimeConfig`
-- `Iriven\WorldDatasets\Domain\CountriesCollection`
-- `Iriven\WorldDatasets\Domain\CurrencyCollection`
-- `Iriven\WorldDatasets\Domain\RegionCollection`
-- `Iriven\WorldDatasets\Application\Query\WorldDatasetsQuery`
-- `Iriven\WorldDatasets\Application\Stats\WorldDatasetsStats`
-
----
-
-# Public API harmonisée
-
-Le package est maintenant aligné de bout en bout :
-
-- package Composer : `irivengroup/world-datasets`
-- namespace principal : `Iriven\WorldDatasets\`
-- service principal : `WorldDatasetsService`
-- factory principale : `WorldDatasetsFactory`
-- collection principale : `CountriesCollection`
-- query builder : `WorldDatasetsQuery`
-
----
-
-# Installation
-
-```bash
-composer require irivengroup/world-datasets
-```
-
-Namespace principal :
-
-```php
-use Iriven\WorldDatasets\Application\WorldDatasetsService;
-use Iriven\WorldDatasets\Application\Factory\WorldDatasetsFactory;
-```
-
----
-
 # PHP Countries Data
+
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/irivengroup/WorldDatasets/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/irivengroup/WorldDatasets/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/irivengroup/WorldDatasets/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/irivengroup/WorldDatasets/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/irivengroup/WorldDatasets/badges/build.png?b=master)](https://scrutinizer-ci.com/g/irivengroup/WorldDatasets/build-status/master)
+[![Code Intelligence Status](https://scrutinizer-ci.com/g/irivengroup/WorldDatasets/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
 
 Bibliothèque PHP orientée entreprise pour consulter, filtrer, exporter et valider des données pays avec source principale SQLite, sources dérivées JSON/CSV, collections fluentes, value objects, pipeline de build et intégrations Symfony/Laravel.
 
@@ -245,12 +190,12 @@ print_r($worldDatasets->countries()->alpha3()->list());
 | `regions()` | `RegionCollection` | Collection de régions |
 | `meta()` | `MetaInfo` | Métadonnées package/dataset |
 | `query()` | `WorldDatasetsQuery` | Query builder fluide |
-| `findByName(string $name)` | `array<CountryInfo>` | Recherche exacte par nom |
-| `searchCountries(string $term)` | `array<CountryInfo>` | Recherche partielle |
-| `findByCurrencyCode(string $currencyCode)` | `array<CountryInfo>` | Filtre par devise |
-| `findByRegion(string $region)` | `array<CountryInfo>` | Filtre par région |
-| `findByPhoneCode(string $phoneCode)` | `array<CountryInfo>` | Filtre par indicatif |
-| `findByTld(string $tld)` | `array<CountryInfo>` | Filtre par TLD |
+| `findByName(string $name)` | `array<Country>` | Recherche exacte par nom |
+| `searchCountries(string $term)` | `array<Country>` | Recherche partielle |
+| `findByCurrencyCode(string $currencyCode)` | `array<Country>` | Filtre par devise |
+| `findByRegion(string $region)` | `array<Country>` | Filtre par région |
+| `findByPhoneCode(string $phoneCode)` | `array<Country>` | Filtre par indicatif |
+| `findByTld(string $tld)` | `array<Country>` | Filtre par TLD |
 
 ## 6.3 `Iriven\WorldDatasets\Domain\Country`
 
@@ -298,7 +243,7 @@ print_r($worldDatasets->countries()->alpha3()->list());
 | `paginate(int $offset, int $limit)` | `CountriesCollection` | Pagination |
 | `first()` | `?Country` | Premier pays |
 | `last()` | `?Country` | Dernier pays |
-| `values()` | `array<CountryInfo>` | Liste d’objets |
+| `values()` | `array<Country>` | Liste d’objets |
 | `names()` | `array<string,string>` | Alias de list |
 | `codes()` | `array<int,string>` | Liste des codes |
 | `count()` | `int` | Taille collection |
@@ -371,7 +316,7 @@ print_r($worldDatasets->countries()->alpha3()->list());
 | `sortByNumeric()` | `WorldDatasetsQuery` |
 | `limit(int $limit)` | `WorldDatasetsQuery` |
 | `offset(int $offset, int $limit = PHP_INT_MAX)` | `WorldDatasetsQuery` |
-| `get()` | `array<CountryInfo>` |
+| `get()` | `array<Country>` |
 | `list()` | `array<string,string>` |
 
 ## 6.8 Value objects
@@ -450,7 +395,7 @@ print_r($worldDatasets->countries()->alpha3()->list());
 - `strictValidation(): bool`
 - `usePsr16Cache(): bool`
 
-### `Iriven\WorldDatasets\Application\Support\CountryCodeNormalizer`
+### `Iriven\WorldDatasets\Domain\CountryCodeNormalizer`
 - `normalize(string $code): string`
 - `normalizeAlpha(string $code): string`
 - `normalizeNumeric(string $code): string`
@@ -496,14 +441,14 @@ $result = $worldDatasets->query()
 ## 7.3 Exemples fonctionnels
 
 ```php
-$names = $worldDatasets->countries()->map(fn (Iriven\WorldDatasets\Domain\CountryInfo $country) => $country->name());
+$names = $worldDatasets->countries()->map(fn (Iriven\WorldDatasets\Domain\Country $country) => $country->name());
 
 $eurCountries = $worldDatasets->countries()->filter(
-    fn (Iriven\WorldDatasets\Domain\CountryInfo $country) => $country->hasCurrency('EUR')
+    fn (Iriven\WorldDatasets\Domain\Country $country) => $country->hasCurrency('EUR')
 );
 
 $total = $worldDatasets->countries()->reduce(
-    fn (int $carry, Iriven\WorldDatasets\Domain\CountryInfo $country) => $carry + 1,
+    fn (int $carry, Iriven\WorldDatasets\Domain\Country $country) => $carry + 1,
     0
 );
 ```
@@ -1823,3 +1768,7 @@ Les namespaces sont maintenant alignés sur les dossiers réels du projet. Les i
 ### Clean Architecture légère
 
 Le projet est désormais structuré autour de `Domain`, `Application` et `Infrastructure`.
+
+
+
+ISO 3166 (countries and states/subdivisions ), ISO 4217 (currency), and E.164 (phone numbers).

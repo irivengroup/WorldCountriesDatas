@@ -12,7 +12,7 @@ use Iriven\WorldDatasets\Domain\CountryInfo;
 
 interface ReadonlyWorldDatasetsServiceInterface
 {
-    public function country(string $code): Country;
+    public function country(string $code): CountryInfo;
 
     public function findCountry(string $code): ?CountryInfo;
 
