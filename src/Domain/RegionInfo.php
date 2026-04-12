@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Domain;
+use Iriven\WorldDatasets\Domain\RegionInfo\SubRegionInfo;
 
 use Iriven\WorldDatasets\Contract\Arrayable;
 

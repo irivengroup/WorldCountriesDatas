@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Domain;
+use Iriven\WorldDatasets\Domain\DatasetValidator\DatasetValidationReport;
 
 use Iriven\WorldDatasets\Exception\DatasetValidationException;
 
