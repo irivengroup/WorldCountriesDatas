@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 final class CountriesCollectionExporterTest extends TestCase
 {
+    use CountryFactoryTrait;
 
     public function testToApiArrayAndToStorageArray(): void
     {
