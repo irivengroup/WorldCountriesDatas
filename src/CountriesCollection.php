@@ -11,6 +11,12 @@ use Iriven\WorldDatasets\Exporter\JsonExporter;
 final class CountriesCollection implements Arrayable, \JsonSerializable
 {
     private CountriesCollectionCache $cache;
+    private ?CountriesCollectionFilter $filtererInstance = null;
+    private ?CountriesCollectionSorter $sorterInstance = null;
+    private ?CountriesCollectionAggregator $aggregatorInstance = null;
+    private ?CountriesCollectionExporter $exporterInstance = null;
+    private ?CountriesCollectionReadModel $readerInstance = null;
+    private ?CountriesCollectionSequence $sequenceInstance = null;
 
     /**
      * @param array<int, Country> $countries
@@ -96,10 +102,10 @@ final class CountriesCollection implements Arrayable, \JsonSerializable
     /** @return array<int, array<string, mixed>> */
     public function jsonSerialize(): array { return $this->exportArray(); }
 
-    private function filterer(): CountriesCollectionFilter { return new CountriesCollectionFilter(); }
-    private function sorter(): CountriesCollectionSorter { return new CountriesCollectionSorter(); }
-    private function aggregator(): CountriesCollectionAggregator { return new CountriesCollectionAggregator(); }
-    private function exporter(): CountriesCollectionExporter { return new CountriesCollectionExporter(); }
-    private function reader(): CountriesCollectionReadModel { return new CountriesCollectionReadModel(); }
-    private function sequence(): CountriesCollectionSequence { return new CountriesCollectionSequence(); }
+    private function filterer(): CountriesCollectionFilter { return $this->filtererInstance ??= new CountriesCollectionFilter(); }
+    private function sorter(): CountriesCollectionSorter { return $this->sorterInstance ??= new CountriesCollectionSorter(); }
+    private function aggregator(): CountriesCollectionAggregator { return $this->aggregatorInstance ??= new CountriesCollectionAggregator(); }
+    private function exporter(): CountriesCollectionExporter { return $this->exporterInstance ??= new CountriesCollectionExporter(); }
+    private function reader(): CountriesCollectionReadModel { return $this->readerInstance ??= new CountriesCollectionReadModel(); }
+    private function sequence(): CountriesCollectionSequence { return $this->sequenceInstance ??= new CountriesCollectionSequence(); }
 }
