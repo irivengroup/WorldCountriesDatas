@@ -64,7 +64,7 @@ final class WorldDatasetsFactory
         $cache ??= null;
         $filename = basename($path);
         $extensionValue = pathinfo($path, PATHINFO_EXTENSION);
-        $extension = strtolower(is_string($extensionValue) ? $extensionValue : '');
+        $extension = strtolower((string) $extensionValue);
 
         return match (true) {
             $extension === 'json',
@@ -175,7 +175,7 @@ final class WorldDatasetsFactory
     {
         $filename = basename($path);
         $extensionValue = pathinfo($path, PATHINFO_EXTENSION);
-        $extension = strtolower(is_string($extensionValue) ? $extensionValue : '');
+        $extension = strtolower((string) $extensionValue);
 
         return match (true) {
             $extension === 'json',
