@@ -7,39 +7,79 @@ namespace Iriven\WorldDatasets;
 use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
 use RuntimeException;
 
-final class CsvCountryRepository implements CountryRepositoryInterface
+final class CsvCountryRepository  implements CountryRepositoryInterface
 {
     private ArrayCountryRepository $inner;
 
     public function __construct(string $filePath)
+    {
+        $handle = $this->openFile($filePath);
+
+        try {
+            $headers = $this->readHeaders($handle);
+            $countries = $this->readCountries($handle, $headers);
+        } finally {
+            fclose($handle);
+        }
+
+        $this->inner = new ArrayCountryRepository($countries);
+    }
+
+    /**
+     * @return resource
+     */
+    private function openFile(string $filePath)
     {
         if (!is_file($filePath)) {
             throw new RuntimeException(sprintf('CSV file not found: %s', $filePath));
         }
 
         $handle = fopen($filePath, 'rb');
+
         if ($handle === false) {
             throw new RuntimeException(sprintf('Unable to open CSV file: %s', $filePath));
         }
 
+        return $handle;
+    }
+
+    /**
+     * @param resource $handle
+     * @return array<int, string>
+     */
+    private function readHeaders($handle): array
+    {
         $headers = fgetcsv($handle);
+
         if ($headers === false || $headers === []) {
-            fclose($handle);
             throw new RuntimeException('Invalid CSV header.');
         }
 
-        $countries = [];
-        while (($row = fgetcsv($handle)) !== false) {
-            $assoc = array_combine($headers, array_pad($row, count($headers), ''));
-            if (is_array($assoc)) {
-                $countries[] = Country::fromDatabaseRow($assoc);
-            }
-        }
-        fclose($handle);
-
-        $this->inner = new ArrayCountryRepository($countries);
+        return array_values($headers);
     }
 
+    /**
+     * @param resource $handle
+     * @param array<int, string> $headers
+     * @return array<int, Country>
+     */
+    private function readCountries($handle, array $headers): array
+    {
+        $countries = [];
+        $headerCount = count($headers);
+
+        while (($row = fgetcsv($handle)) !== false) {
+            $assoc = array_combine($headers, array_pad($row, $headerCount, ''));
+
+            if ($assoc === false) {
+                continue;
+            }
+
+            $countries[] = Country::fromDatabaseRow($assoc);
+        }
+
+        return $countries;
+    }
     public function count(): int { return $this->inner->count(); }
     /** @return array<int, Country> */
     public function findAll(): array { return $this->inner->findAll(); }
