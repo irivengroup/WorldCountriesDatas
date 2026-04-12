@@ -25,3 +25,5 @@ jobs:
       - run: composer run analyse
       - run: composer test
       # - run: git diff --exit-code
+
+
