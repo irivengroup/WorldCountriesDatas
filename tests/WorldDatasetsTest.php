@@ -8,7 +8,7 @@ use Iriven\WorldDatasets\Application\WorldDatasetsService;
 
 
 use Iriven\WorldDatasets\Application\Factory\WorldDatasetsFactory;
-use Iriven\WorldDatasets\Domain\CountryCodeFormat;
+use Iriven\WorldDatasets\Domain\CountriesCollection\CountryCodeFormat;
 use Iriven\WorldDatasets\Domain\DatasetValidator;
 use PHPUnit\Framework\TestCase;
 

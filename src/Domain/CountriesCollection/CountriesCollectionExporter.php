@@ -6,8 +6,6 @@ namespace Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\Country;
 use Iriven\WorldDatasets\Domain\Country\CountryArrayTransformer;
-use Iriven\WorldDatasets\Application\WorldDatasets;
-
 
 final class CountriesCollectionExporter
 {

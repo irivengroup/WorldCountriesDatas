@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Domain;
-use Iriven\WorldDatasets\Application\WorldDatasets;
-
 
 use Iriven\WorldDatasets\Contract\Arrayable;
 use Iriven\WorldDatasets\Exporter\CsvExporter;

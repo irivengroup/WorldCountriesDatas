@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Bridge\Laravel;
-use Iriven\WorldDatasets\Application\WorldDatasets;
-
 
 use Illuminate\Support\ServiceProvider;
 use Iriven\WorldDatasets\Application\Factory\WorldDatasetsFactory;

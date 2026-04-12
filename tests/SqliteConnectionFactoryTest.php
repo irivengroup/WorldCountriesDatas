@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
-use Iriven\WorldDatasets\Application\WorldDatasets;
-
 
 use Iriven\WorldDatasets\Exception\RepositoryException;
 use Iriven\WorldDatasets\Infrastructure\Persistence\SqliteConnectionFactory;

@@ -3,11 +3,9 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
-use Iriven\WorldDatasets\Application\WorldDatasets;
-
 
 use Iriven\WorldDatasets\Domain\CountriesCollectionSequence;
-use Iriven\WorldDatasets\Domain\CountryCodeFormat;
+use Iriven\WorldDatasets\Domain\CountriesCollection\CountryCodeFormat;
 use PHPUnit\Framework\TestCase;
 
 final class CountriesCollectionSequenceTest extends TestCase

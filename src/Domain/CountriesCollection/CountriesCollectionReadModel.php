@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\Country;
-use Iriven\WorldDatasets\Application\WorldDatasets;
-
 
 final class CountriesCollectionReadModel
 {

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Domain\RegionInfo;
 use Iriven\WorldDatasets\Domain\RegionInfo;
-use Iriven\WorldDatasets\Application\WorldDatasets;
-
 
 use Iriven\WorldDatasets\Contract\Arrayable;
 

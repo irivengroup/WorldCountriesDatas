@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Contract;
 use Iriven\WorldDatasets\Domain\CountriesCollection\CountryCodeFormat;
-use Iriven\WorldDatasets\Application\WorldDatasets;
-
 
 use Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\CurrencyCollection;
@@ -18,7 +16,7 @@ interface ReadonlyWorldDatasetsServiceInterface
 
     public function findCountry(string $code): ?Country;
 
-    public function countries(int|string|\Iriven\WorldDatasets\Domain\CountryCodeFormat $format = \Iriven\WorldDatasets\Domain\CountryCodeFormat::ALPHA2): CountriesCollection;
+    public function countries(int|string|\Iriven\WorldDatasets\Domain\CountriesCollection\CountryCodeFormat $format = \Iriven\WorldDatasets\Domain\CountriesCollection\CountryCodeFormat::ALPHA2): CountriesCollection;
 
     public function currencies(): CurrencyCollection;
 

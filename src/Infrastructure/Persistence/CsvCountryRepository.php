@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Infrastructure\Persistence;
 use Iriven\WorldDatasets\Domain\Country;
-use Iriven\WorldDatasets\Application\WorldDatasets;
-
 
 use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
 use RuntimeException;

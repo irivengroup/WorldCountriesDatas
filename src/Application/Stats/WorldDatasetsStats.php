@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Application\Stats;
-use Iriven\WorldDatasets\Application\WorldDatasets;
-
 
 final class WorldDatasetsStats implements \JsonSerializable
 {

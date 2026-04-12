@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Contract;
-use Iriven\WorldDatasets\Application\WorldDatasets;
-
 
 use Countable;
 use IteratorAggregate;
@@ -12,7 +10,7 @@ use Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\CurrencyCollection;
 use Iriven\WorldDatasets\Domain\RegionCollection;
 use Iriven\WorldDatasets\Domain\Country;
-use Iriven\WorldDatasets\Domain\CountryCodeFormat;
+use Iriven\WorldDatasets\Domain\CountriesCollection\CountryCodeFormat;
 
 /**
  * @extends IteratorAggregate<int, Country>
