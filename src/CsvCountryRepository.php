@@ -14,6 +14,7 @@ final class CsvCountryRepository implements CountryRepositoryInterface
     public function __construct(string $filePath)
     {
         $handle = $this->openFile($filePath);
+        $countries = [];
 
         try {
             $headers = $this->readHeaders($handle);
