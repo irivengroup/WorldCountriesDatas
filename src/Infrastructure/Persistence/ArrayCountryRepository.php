@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Infrastructure\Persistence;
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 use Iriven\WorldDatasets\Domain\CurrencyCollection;
 use Iriven\WorldDatasets\Domain\RegionCollection;
 use Iriven\WorldDatasets\Application\WorldDatasets;
@@ -15,7 +15,7 @@ use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
 
 final class ArrayCountryRepository implements CountryRepositoryInterface
 {
-    /** @var array<int, Country> */
+    /** @var array<int, CountryInfo> */
     private array $countries;
 
     /** @var array<string,Country> */
@@ -31,7 +31,7 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
     private array $byName = [];
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      */
     public function __construct(array $countries)
     {
@@ -50,40 +50,40 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
         return count($this->countries);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findAll(): array
     {
         return $this->countries;
     }
 
-    public function findOneByAlpha2(string $alpha2): ?Country
+    public function findOneByAlpha2(string $alpha2): ?CountryInfo
     {
         return $this->byAlpha2[strtoupper(trim($alpha2))] ?? null;
     }
 
-    public function findOneByAlpha3(string $alpha3): ?Country
+    public function findOneByAlpha3(string $alpha3): ?CountryInfo
     {
         return $this->byAlpha3[strtoupper(trim($alpha3))] ?? null;
     }
 
-    public function findOneByNumeric(string $numeric): ?Country
+    public function findOneByNumeric(string $numeric): ?CountryInfo
     {
         return $this->byNumeric[trim($numeric)] ?? null;
     }
 
-    public function findOneByName(string $name): ?Country
+    public function findOneByName(string $name): ?CountryInfo
     {
         return $this->byName[mb_strtolower(trim($name))] ?? null;
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByName(string $name): array
     {
         $country = $this->findOneByName($name);
         return $country === null ? [] : [$country];
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function search(string $term): array
     {
         $needle = mb_strtolower(trim($term));
@@ -105,7 +105,7 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
         return $result;
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByCurrencyCode(string $currencyCode): array
     {
         $needle = strtoupper(trim($currencyCode));
@@ -120,7 +120,7 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
         return $result;
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByRegion(string $region): array
     {
         $needle = mb_strtolower(trim($region));
@@ -135,7 +135,7 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
         return $result;
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByPhoneCode(string $phoneCode): array
     {
         $normalizer = new PhoneCodeNormalizer();
@@ -151,7 +151,7 @@ final class ArrayCountryRepository implements CountryRepositoryInterface
         return $result;
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByTld(string $tld): array
     {
         $normalizer = new TldNormalizer();

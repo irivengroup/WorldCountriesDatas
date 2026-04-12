@@ -20,7 +20,7 @@ final class CurrencyCollection implements Arrayable, \JsonSerializable
     private ?array $cachedExportArray = null;
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      */
     public function __construct(
         private readonly array $countries,

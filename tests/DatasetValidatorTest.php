@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Iriven\WorldDatasets\Tests;
 use Iriven\WorldDatasets\Tests\Support\CountryFactoryTrait;
 
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 use Iriven\WorldDatasets\Domain\DatasetValidator;
 use Iriven\WorldDatasets\Exception\DatasetValidationException;
 use PHPUnit\Framework\TestCase;
@@ -54,7 +54,7 @@ final class DatasetValidatorTest extends TestCase
     public function testWarningsAreReported(): void
     {
         $validator = new DatasetValidator();
-        $country = Country::fromDatabaseRow([
+        $country = CountryInfo::fromDatabaseRow([
             'alpha2' => 'FR',
             'alpha3' => 'FRA',
             'numeric_code' => '250',

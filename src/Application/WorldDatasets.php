@@ -9,7 +9,7 @@ use Iriven\WorldDatasets\Application\Support\PhoneCodeNormalizer;
 use Iriven\WorldDatasets\Application\Support\CountryCodeNormalizer;
 use Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\CountriesCollection\CountryCodeFormat;
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 use Iriven\WorldDatasets\Domain\CurrencyCollection;
 use Iriven\WorldDatasets\Domain\MetaInfo;
 use Iriven\WorldDatasets\Domain\RegionCollection;
@@ -28,7 +28,7 @@ use IteratorAggregate;
 use Traversable;
 
 /**
- * @implements IteratorAggregate<int, Country>
+ * @implements IteratorAggregate<int, CountryInfo>
  */
 class WorldDatasets implements CountriesDataInterface, ReadonlyWorldDatasetsServiceInterface, Countable, IteratorAggregate
 {
@@ -52,7 +52,7 @@ class WorldDatasets implements CountriesDataInterface, ReadonlyWorldDatasetsServ
     public function all(): array
     {
         return array_map(
-            static fn(Country $country): array => $country->toArray(),
+            static fn(CountryInfo $country): array => $country->toArray(),
             $this->repository->findAll()
         );
     }
@@ -88,7 +88,7 @@ class WorldDatasets implements CountriesDataInterface, ReadonlyWorldDatasetsServ
         return $this->resolveCountry($code);
     }
 
-    public function findCountry(string $code): ?Country
+    public function findCountry(string $code): ?CountryInfo
     {
         $code = trim($code);
 
@@ -147,37 +147,37 @@ class WorldDatasets implements CountriesDataInterface, ReadonlyWorldDatasetsServ
         return new WorldDatasetsQuery($this->countries());
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByName(string $name): array
     {
         return $this->repository->findByName($name);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function searchCountries(string $term): array
     {
         return $this->repository->search($term);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByCurrencyCode(string $currencyCode): array
     {
         return $this->repository->findByCurrencyCode($currencyCode);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByRegion(string $region): array
     {
         return $this->repository->findByRegion($region);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByPhoneCode(string $phoneCode): array
     {
         return $this->repository->findByPhoneCode($this->phoneCodeNormalizer->normalize($phoneCode));
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByTld(string $tld): array
     {
         return $this->repository->findByTld($this->tldNormalizer->normalize($tld));
@@ -212,7 +212,7 @@ class WorldDatasets implements CountriesDataInterface, ReadonlyWorldDatasetsServ
 
     private function normalizeFormat(int|string|CountryCodeFormat $format): CountryCodeFormat
     {
-        if ($format instanceof CountryCodeFormat) {
+        if ($format instanceof CountryInfoCodeFormat) {
             return $format;
         }
 

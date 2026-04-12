@@ -10,7 +10,7 @@ use Iriven\WorldDatasets\Exception\DatasetValidationException;
 final class DatasetValidator
 {
     /**
-     * @param array<int, Country> $worldDatasets
+     * @param array<int, CountryInfo> $worldDatasets
      */
     public function validate(array $worldDatasets, bool $strict = true): DatasetValidationReport
     {
@@ -47,7 +47,7 @@ final class DatasetValidator
     /**
      * @param array<int, array<string, mixed>> $invalid
      */
-    private function collectInvalidIsoCodes(Country $country, array &$invalid): void
+    private function collectInvalidIsoCodes(CountryInfo $country, array &$invalid): void
     {
         $this->collectInvalidCode(
             field: 'alpha2',
@@ -99,7 +99,7 @@ final class DatasetValidator
      * @param array<string, array<string, string>> $indexes
      * @param array<int, array<string, mixed>> $duplicates
      */
-    private function collectDuplicates(Country $country, array &$indexes, array &$duplicates): void
+    private function collectDuplicates(CountryInfo $country, array &$indexes, array &$duplicates): void
     {
         $this->registerDuplicateValue('alpha2', $country->alpha2(), $country->name(), $indexes['alpha2'], $duplicates);
         $this->registerDuplicateValue('alpha3', $country->alpha3(), $country->name(), $indexes['alpha3'], $duplicates);
@@ -136,7 +136,7 @@ final class DatasetValidator
     /**
      * @param array<int, array<string, mixed>> $warnings
      */
-    private function collectWarnings(Country $country, array &$warnings): void
+    private function collectWarnings(CountryInfo $country, array &$warnings): void
     {
         if ($country->currency()->code() !== '' && $country->currency()->name() === '') {
             $warnings[] = [
@@ -163,7 +163,7 @@ final class DatasetValidator
         }
     }
 
-    private function hasInvalidPhonePattern(Country $country): bool
+    private function hasInvalidPhonePattern(CountryInfo $country): bool
     {
         $pattern = $country->phone()->subscriberPattern();
         if ($pattern === '') {

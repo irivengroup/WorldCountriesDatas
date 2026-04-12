@@ -9,11 +9,11 @@ use IteratorAggregate;
 use Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\CurrencyCollection;
 use Iriven\WorldDatasets\Domain\RegionCollection;
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 use Iriven\WorldDatasets\Domain\CountriesCollection\CountryCodeFormat;
 
 /**
- * @extends IteratorAggregate<int, Country>
+ * @extends IteratorAggregate<int, CountryInfo>
  */
 interface CountriesDataInterface extends Countable, IteratorAggregate
 {
@@ -24,7 +24,7 @@ interface CountriesDataInterface extends Countable, IteratorAggregate
 
     public function country(string $code): Country;
 
-    public function findCountry(string $code): ?Country;
+    public function findCountry(string $code): ?CountryInfo;
 
     public function countries(int|string|CountryCodeFormat $format = CountryCodeFormat::ALPHA2): CountriesCollection;
 

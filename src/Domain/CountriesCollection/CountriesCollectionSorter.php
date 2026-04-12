@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\CountriesCollection;
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 
 final class CountriesCollectionSorter
 {
     /**
-     * @param array<int, Country> $countries
-     * @return array<int, Country>
+     * @param array<int, CountryInfo> $countries
+     * @return array<int, CountryInfo>
      */
     public function sortByName(array $countries): array
     {
-        usort($countries, static fn(Country $a, Country $b): int => strcmp($a->name(), $b->name()));
+        usort($countries, static fn(CountryInfo $a, CountryInfo $b): int => strcmp($a->name(), $b->name()));
         return $countries;
     }
 
     /**
-     * @param array<int, Country> $countries
-     * @return array<int, Country>
+     * @param array<int, CountryInfo> $countries
+     * @return array<int, CountryInfo>
      */
     public function sortByCode(array $countries, CountryCodeFormat $format): array
     {
-        usort($countries, static function (Country $a, Country $b) use ($format): int {
+        usort($countries, static function (CountryInfo $a, CountryInfo $b) use ($format): int {
             $left = match ($format) {
                 CountryCodeFormat::ALPHA2 => $a->alpha2(),
                 CountryCodeFormat::ALPHA3 => $a->alpha3(),
@@ -41,12 +41,12 @@ final class CountriesCollectionSorter
     }
 
     /**
-     * @param array<int, Country> $countries
-     * @return array<int, Country>
+     * @param array<int, CountryInfo> $countries
+     * @return array<int, CountryInfo>
      */
     public function sortByNumeric(array $countries): array
     {
-        usort($countries, static fn(Country $a, Country $b): int => strcmp($a->numeric(), $b->numeric()));
+        usort($countries, static fn(CountryInfo $a, CountryInfo $b): int => strcmp($a->numeric(), $b->numeric()));
         return $countries;
     }
 }

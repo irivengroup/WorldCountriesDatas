@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests\Support;
 
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 
 trait CountryFactoryTrait
 {
@@ -20,7 +20,7 @@ trait CountryFactoryTrait
         string $phoneCode = '33',
         string $tld = '.fr'
     ): Country {
-        return Country::fromDatabaseRow([
+        return CountryInfo::fromDatabaseRow([
             'alpha2' => $alpha2,
             'alpha3' => $alpha3,
             'numeric_code' => $numeric,
@@ -44,7 +44,7 @@ trait CountryFactoryTrait
     }
 
     /**
-     * @return array<int, Country>
+     * @return array<int, CountryInfo>
      */
     protected function makeCountries(): array
     {

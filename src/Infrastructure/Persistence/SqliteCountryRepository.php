@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Iriven\WorldDatasets\Infrastructure\Persistence;
 
 use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 use Iriven\WorldDatasets\Application\Support\CountryCodeNormalizer;
 use Iriven\WorldDatasets\Exception\RepositoryException;
 use Iriven\WorldDatasets\Infrastructure\Cache\CacheInterface;
@@ -64,10 +64,10 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         );
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findAll(): array
     {
-        /** @var array<int, Country> */
+        /** @var array<int, CountryInfo> */
         return $this->remember('countries.all', function (): array {
             return $this->hydrator->hydrateMany(
                 $this->executor->fetchAllRows($this->queryBuilder->selectAllOrdered())
@@ -75,7 +75,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         });
     }
 
-    public function findOneByAlpha2(string $alpha2): ?Country
+    public function findOneByAlpha2(string $alpha2): ?CountryInfo
     {
         $value = $this->normalizer()->normalizeAlpha($alpha2);
         $this->ensureLookupIndexes();
@@ -83,7 +83,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         return $this->byAlpha2[$value] ?? $this->findOneByColumn('alpha2', $value);
     }
 
-    public function findOneByAlpha3(string $alpha3): ?Country
+    public function findOneByAlpha3(string $alpha3): ?CountryInfo
     {
         $value = $this->normalizer()->normalizeAlpha($alpha3);
         $this->ensureLookupIndexes();
@@ -91,7 +91,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         return $this->byAlpha3[$value] ?? $this->findOneByColumn('alpha3', $value);
     }
 
-    public function findOneByNumeric(string $numeric): ?Country
+    public function findOneByNumeric(string $numeric): ?CountryInfo
     {
         $value = $this->normalizer()->normalizeNumeric($numeric);
         $this->ensureLookupIndexes();
@@ -99,20 +99,20 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         return $this->byNumeric[$value] ?? $this->findOneByColumn('numeric_code', $value);
     }
 
-    public function findOneByName(string $name): ?Country
+    public function findOneByName(string $name): ?CountryInfo
     {
         $results = $this->findByName($name);
 
         return $results[0] ?? null;
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByName(string $name): array
     {
         $normalized = trim($name);
         $cacheKey = 'countries.find_by_name.' . strtolower($normalized);
 
-        /** @var array<int, Country> */
+        /** @var array<int, CountryInfo> */
         return $this->remember($cacheKey, function () use ($normalized): array {
             return $this->hydrator->hydrateMany(
                 $this->executor->fetchAllRowsPrepared(
@@ -123,13 +123,13 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         });
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function search(string $term): array
     {
         $normalized = '%' . strtolower(trim($term)) . '%';
         $cacheKey = 'countries.search.' . md5($normalized);
 
-        /** @var array<int, Country> */
+        /** @var array<int, CountryInfo> */
         return $this->remember($cacheKey, function () use ($normalized): array {
             return $this->hydrator->hydrateMany(
                 $this->executor->fetchAllRowsPrepared(
@@ -140,31 +140,31 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         });
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByCurrencyCode(string $currencyCode): array
     {
         return $this->fetchByExactColumn('currency_code', strtoupper(trim($currencyCode)), true);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByRegion(string $region): array
     {
         return $this->fetchByExactColumn('region_name', trim($region), false);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByPhoneCode(string $phoneCode): array
     {
         return $this->fetchByExactColumn('phone_code', trim($phoneCode), false);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByTld(string $tld): array
     {
         return $this->fetchByExactColumn('tld', $this->normalizer()->normalizeTld($tld), false);
     }
 
-    /** @return iterable<Country> */
+    /** @return iterable<CountryInfo> */
     public function iterateAllLazy(int $limit = 500): iterable
     {
         $offset = 0;
@@ -186,7 +186,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         } while ($batch !== []);
     }
 
-    /** @return iterable<Country> */
+    /** @return iterable<CountryInfo> */
     public function iterateByRegionLazy(string $region, int $limit = 500): iterable
     {
         $offset = 0;
@@ -288,7 +288,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         }
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     private function fetchByExactColumn(string $column, string $value, bool $normalizeAlpha = true): array
     {
         $allowedColumns = ['currency_code', 'region_name', 'phone_code', 'tld'];
@@ -298,7 +298,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
 
         $cacheKey = sprintf('countries.filter.%s.%s', $column, strtolower($value));
 
-        /** @var array<int, Country> */
+        /** @var array<int, CountryInfo> */
         return $this->remember($cacheKey, function () use ($column, $value, $normalizeAlpha): array {
             $sqlValue = $normalizeAlpha ? strtoupper($value) : $value;
 
@@ -311,7 +311,7 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
         });
     }
 
-    private function findOneByColumn(string $column, string $value): ?Country
+    private function findOneByColumn(string $column, string $value): ?CountryInfo
     {
         $allowedColumns = ['alpha2', 'alpha3', 'numeric_code'];
         if (!in_array($column, $allowedColumns, true)) {
@@ -320,8 +320,8 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
 
         $cacheKey = sprintf('countries.lookup.%s.%s', $column, $value);
 
-        /** @var ?Country */
-        return $this->remember($cacheKey, function () use ($column, $value): ?Country {
+        /** @var ?CountryInfo */
+        return $this->remember($cacheKey, function () use ($column, $value): ?CountryInfoInfo {
             $row = $this->executor->fetchOneRowPrepared(
                 $this->queryBuilder->findOneByColumn($column),
                 [':value' => $value]

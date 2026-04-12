@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Infrastructure\Persistence;
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 
 use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
 use RuntimeException;
@@ -28,7 +28,7 @@ final class JsonCountryRepository implements CountryRepositoryInterface
         $countries = [];
         foreach ($decoded as $row) {
             if (is_array($row)) {
-                $countries[] = Country::fromDatabaseRow($row);
+                $countries[] = CountryInfo::fromDatabaseRow($row);
             }
         }
 
@@ -36,23 +36,23 @@ final class JsonCountryRepository implements CountryRepositoryInterface
     }
 
     public function count(): int { return $this->inner->count(); }
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findAll(): array { return $this->inner->findAll(); }
-    public function findOneByAlpha2(string $alpha2): ?Country { return $this->inner->findOneByAlpha2($alpha2); }
-    public function findOneByAlpha3(string $alpha3): ?Country { return $this->inner->findOneByAlpha3($alpha3); }
-    public function findOneByNumeric(string $numeric): ?Country { return $this->inner->findOneByNumeric($numeric); }
-    public function findOneByName(string $name): ?Country { return $this->inner->findOneByName($name); }
-    /** @return array<int, Country> */
+    public function findOneByAlpha2(string $alpha2): ?CountryInfoInfo { return $this->inner->findOneByAlpha2($alpha2); }
+    public function findOneByAlpha3(string $alpha3): ?CountryInfoInfo { return $this->inner->findOneByAlpha3($alpha3); }
+    public function findOneByNumeric(string $numeric): ?CountryInfoInfo { return $this->inner->findOneByNumeric($numeric); }
+    public function findOneByName(string $name): ?CountryInfoInfo { return $this->inner->findOneByName($name); }
+    /** @return array<int, CountryInfo> */
     public function findByName(string $name): array { return $this->inner->findByName($name); }
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function search(string $term): array { return $this->inner->search($term); }
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByCurrencyCode(string $currencyCode): array { return $this->inner->findByCurrencyCode($currencyCode); }
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByRegion(string $region): array { return $this->inner->findByRegion($region); }
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByPhoneCode(string $phoneCode): array { return $this->inner->findByPhoneCode($phoneCode); }
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByTld(string $tld): array { return $this->inner->findByTld($tld); }
     /** @return array<string, string> */
     public function getAllCurrenciesCodeAndName(): array { return $this->inner->getAllCurrenciesCodeAndName(); }

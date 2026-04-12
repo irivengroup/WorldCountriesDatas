@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\CountriesCollection;
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 use Iriven\WorldDatasets\Application\WorldDatasets;
 use Iriven\WorldDatasets\Application\Support\PhoneCodeNormalizer;
 use Iriven\WorldDatasets\Application\Support\TldNormalizer;
@@ -13,8 +13,8 @@ use Iriven\WorldDatasets\Application\Support\TldNormalizer;
 final class CountriesCollectionFilter
 {
     /**
-     * @param array<int, Country> $countries
-     * @return array<int, Country>
+     * @param array<int, CountryInfo> $countries
+     * @return array<int, CountryInfo>
      */
     public function inRegion(array $countries, string $name): array
     {
@@ -29,8 +29,8 @@ final class CountriesCollectionFilter
     }
 
     /**
-     * @param array<int, Country> $countries
-     * @return array<int, Country>
+     * @param array<int, CountryInfo> $countries
+     * @return array<int, CountryInfo>
      */
     public function inSubRegion(array $countries, string $name): array
     {
@@ -45,8 +45,8 @@ final class CountriesCollectionFilter
     }
 
     /**
-     * @param array<int, Country> $countries
-     * @return array<int, Country>
+     * @param array<int, CountryInfo> $countries
+     * @return array<int, CountryInfo>
      */
     public function withCurrency(array $countries, string $code): array
     {
@@ -61,8 +61,8 @@ final class CountriesCollectionFilter
     }
 
     /**
-     * @param array<int, Country> $countries
-     * @return array<int, Country>
+     * @param array<int, CountryInfo> $countries
+     * @return array<int, CountryInfo>
      */
     public function withPhoneCode(array $countries, string $code): array
     {
@@ -78,8 +78,8 @@ final class CountriesCollectionFilter
     }
 
     /**
-     * @param array<int, Country> $countries
-     * @return array<int, Country>
+     * @param array<int, CountryInfo> $countries
+     * @return array<int, CountryInfo>
      */
     public function withTld(array $countries, string $tld): array
     {
@@ -95,8 +95,8 @@ final class CountriesCollectionFilter
     }
 
     /**
-     * @param array<int, Country> $countries
-     * @return array<int, Country>
+     * @param array<int, CountryInfo> $countries
+     * @return array<int, CountryInfo>
      */
     public function named(array $countries, string $name): array
     {
@@ -111,8 +111,8 @@ final class CountriesCollectionFilter
     }
 
     /**
-     * @param array<int, Country> $countries
-     * @return array<int, Country>
+     * @param array<int, CountryInfo> $countries
+     * @return array<int, CountryInfo>
      */
     public function matching(array $countries, string $term): array
     {
@@ -132,7 +132,7 @@ final class CountriesCollectionFilter
     }
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      */
     public function contains(array $countries, string $code): bool
     {

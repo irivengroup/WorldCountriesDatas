@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\CountriesCollection;
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 
 final class CountriesCollectionReadModel
 {
@@ -14,52 +14,52 @@ final class CountriesCollectionReadModel
     ) {
     }
 
-    /** @param array<int, Country> $countries */
-    public function first(array $countries): ?Country
+    /** @param array<int, CountryInfo> $countries */
+    public function first(array $countries): ?CountryInfo
     {
         return $countries[0] ?? null;
     }
 
-    /** @param array<int, Country> $countries */
-    public function last(array $countries): ?Country
+    /** @param array<int, CountryInfo> $countries */
+    public function last(array $countries): ?CountryInfo
     {
         return $countries === [] ? null : $countries[array_key_last($countries)];
     }
 
-    /** @param array<int, Country> $countries
-     *  @return array<int, Country>
+    /** @param array<int, CountryInfo> $countries
+     *  @return array<int, CountryInfo>
      */
     public function values(array $countries): array
     {
         return array_values($countries);
     }
 
-    /** @param array<int, Country> $countries */
+    /** @param array<int, CountryInfo> $countries */
     public function count(array $countries): int
     {
         return count($countries);
     }
 
-    /** @param array<int, Country> $countries */
+    /** @param array<int, CountryInfo> $countries */
     public function isEmpty(array $countries): bool
     {
         return $countries === [];
     }
 
-    /** @param array<int, Country> $countries */
+    /** @param array<int, CountryInfo> $countries */
     public function isNotEmpty(array $countries): bool
     {
         return !$this->isEmpty($countries);
     }
 
-    /** @param array<int, Country> $countries */
+    /** @param array<int, CountryInfo> $countries */
     public function contains(array $countries, string $code): bool
     {
         return $this->filterer->contains($countries, $code);
     }
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      * @return array<string, string>
      */
     public function names(array $countries, CountryCodeFormat $format, CountriesCollectionCache $cache): array
@@ -68,7 +68,7 @@ final class CountriesCollectionReadModel
     }
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      * @return array<int, string>
      */
     public function codes(array $countries, CountryCodeFormat $format, CountriesCollectionCache $cache): array
@@ -83,7 +83,7 @@ final class CountriesCollectionReadModel
         return array_values($codes);
     }
 
-    /** @param array<int, Country> $countries
+    /** @param array<int, CountryInfo> $countries
      *  @return array<int, string>
      */
     public function pluckNames(array $countries): array
@@ -92,7 +92,7 @@ final class CountriesCollectionReadModel
     }
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      * @return array<int, string>
      */
     public function pluckCodes(array $countries, CountryCodeFormat $format): array
@@ -101,7 +101,7 @@ final class CountriesCollectionReadModel
     }
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      * @return array<string, string>
      */
     public function list(array $countries, CountryCodeFormat $format, CountriesCollectionCache $cache): array
@@ -109,10 +109,10 @@ final class CountriesCollectionReadModel
         return $cache->list ??= $this->aggregator->list($countries, $format);
     }
 
-    /** @param array<int, Country> $countries */
+    /** @param array<int, CountryInfo> $countries */
     public function containsCountry(array $countries, callable|Country|string $value): bool
     {
-        if ($value instanceof Country) {
+        if ($value instanceof CountryInfo) {
             return $this->contains($countries, $value->alpha2());
         }
 

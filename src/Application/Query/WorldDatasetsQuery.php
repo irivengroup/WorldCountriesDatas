@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Application\Query;
 use Iriven\WorldDatasets\Domain\CountriesCollection;
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 
 final class WorldDatasetsQuery
 {
@@ -25,7 +25,7 @@ final class WorldDatasetsQuery
     public function limit(int $limit): self { return new self($this->collection->paginate(0, $limit)); }
     public function offset(int $offset, int $limit = PHP_INT_MAX): self { return new self($this->collection->paginate($offset, $limit)); }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function get(): array
     {
         return $this->collection->values();

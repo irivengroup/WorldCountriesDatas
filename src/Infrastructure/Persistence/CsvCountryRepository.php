@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Infrastructure\Persistence;
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 
 use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
 use RuntimeException;
@@ -32,63 +32,63 @@ final class CsvCountryRepository implements CountryRepositoryInterface
         return $this->inner->count();
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findAll(): array
     {
         return $this->inner->findAll();
     }
 
-    public function findOneByAlpha2(string $alpha2): ?Country
+    public function findOneByAlpha2(string $alpha2): ?CountryInfo
     {
         return $this->inner->findOneByAlpha2($alpha2);
     }
 
-    public function findOneByAlpha3(string $alpha3): ?Country
+    public function findOneByAlpha3(string $alpha3): ?CountryInfo
     {
         return $this->inner->findOneByAlpha3($alpha3);
     }
 
-    public function findOneByNumeric(string $numeric): ?Country
+    public function findOneByNumeric(string $numeric): ?CountryInfo
     {
         return $this->inner->findOneByNumeric($numeric);
     }
 
-    public function findOneByName(string $name): ?Country
+    public function findOneByName(string $name): ?CountryInfo
     {
         return $this->inner->findOneByName($name);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByName(string $name): array
     {
         return $this->inner->findByName($name);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function search(string $term): array
     {
         return $this->inner->search($term);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByCurrencyCode(string $currencyCode): array
     {
         return $this->inner->findByCurrencyCode($currencyCode);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByRegion(string $region): array
     {
         return $this->inner->findByRegion($region);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByPhoneCode(string $phoneCode): array
     {
         return $this->inner->findByPhoneCode($phoneCode);
     }
 
-    /** @return array<int, Country> */
+    /** @return array<int, CountryInfo> */
     public function findByTld(string $tld): array
     {
         return $this->inner->findByTld($tld);
@@ -154,7 +154,7 @@ final class CsvCountryRepository implements CountryRepositoryInterface
     /**
      * @param resource $handle
      * @param array<int, string> $headers
-     * @return array<int, Country>
+     * @return array<int, CountryInfo>
      */
     private function readCountries($handle, array $headers): array
     {
@@ -167,7 +167,7 @@ final class CsvCountryRepository implements CountryRepositoryInterface
             /** @var array<string, mixed> $assoc */
             $assoc = $assoc;
 
-            $countries[] = Country::fromDatabaseRow($assoc);
+            $countries[] = CountryInfo::fromDatabaseRow($assoc);
         }
 
         return $countries;

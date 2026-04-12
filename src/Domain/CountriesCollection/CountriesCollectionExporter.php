@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\CountriesCollection;
-use Iriven\WorldDatasets\Domain\Country;
-use Iriven\WorldDatasets\Domain\Country\CountryArrayTransformer;
+use Iriven\WorldDatasets\Domain\CountryInfo;
+use Iriven\WorldDatasets\Domain\CountryInfo\CountryArrayTransformer;
 
 final class CountriesCollectionExporter
 {
@@ -15,7 +15,7 @@ final class CountriesCollectionExporter
     }
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      * @return array<int, array<string, mixed>>
      */
     public function toApiArray(array $countries): array
@@ -28,7 +28,7 @@ final class CountriesCollectionExporter
     }
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      * @return array<int, array<int, string>>
      */
     public function toStorageArray(array $countries): array

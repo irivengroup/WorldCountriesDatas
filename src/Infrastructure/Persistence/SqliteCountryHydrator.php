@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Infrastructure\Persistence;
 
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 
 final class SqliteCountryHydrator
 {
@@ -13,12 +13,12 @@ final class SqliteCountryHydrator
      */
     public function hydrate(array $row): Country
     {
-        return Country::fromDatabaseRow($row);
+        return CountryInfo::fromDatabaseRow($row);
     }
 
     /**
      * @param array<int, array<string, mixed>> $rows
-     * @return array<int, Country>
+     * @return array<int, CountryInfo>
      */
     public function hydrateMany(array $rows): array
     {

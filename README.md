@@ -1768,3 +1768,7 @@ Les namespaces sont maintenant alignés sur les dossiers réels du projet. Les i
 ### Clean Architecture légère
 
 Le projet est désormais structuré autour de `Domain`, `Application` et `Infrastructure`.
+
+
+
+ISO 3166 (countries and states/subdivisions ), ISO 4217 (currency), and E.164 (phone numbers).

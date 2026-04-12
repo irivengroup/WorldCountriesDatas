@@ -3,19 +3,23 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Domain;
-use Iriven\WorldDatasets\Domain\CountriesCollection\CountryCodeFormat;
-use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionSorter;
-use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionSequence;
-use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionReadModel;
-use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionFilter;
-use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionExporter;
-use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionCache;
-use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionAggregator;
 use Iriven\WorldDatasets\Application\Stats\WorldDatasetsStats;
-
 use Iriven\WorldDatasets\Contract\Arrayable;
+use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionAggregator;
+use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionCache;
+use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionExporter;
+use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionFilter;
+use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionReadModel;
+use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionSequence;
+use Iriven\WorldDatasets\Domain\CountriesCollection\CountriesCollectionSorter;
+use Iriven\WorldDatasets\Domain\CountriesCollection\CountryCodeFormat;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 use Iriven\WorldDatasets\Exporter\CsvExporter;
 use Iriven\WorldDatasets\Exporter\JsonExporter;
+
+
+
+
 
 final class CountriesCollection implements Arrayable, \JsonSerializable
 {
@@ -28,7 +32,7 @@ final class CountriesCollection implements Arrayable, \JsonSerializable
     private ?CountriesCollectionSequence $sequenceInstance = null;
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      */
     public function __construct(
         private readonly array $countries,
@@ -55,9 +59,9 @@ final class CountriesCollection implements Arrayable, \JsonSerializable
 
     public function paginate(int $offset, int $limit): self { return $this->sequence()->paginate($this->countries, $offset, $limit, $this->format); }
 
-    public function first(): ?Country { return $this->reader()->first($this->countries); }
-    public function last(): ?Country { return $this->reader()->last($this->countries); }
-    /** @return array<int, Country> */
+    public function first(): ?CountryInfoInfo { return $this->reader()->first($this->countries); }
+    public function last(): ?CountryInfoInfo { return $this->reader()->last($this->countries); }
+    /** @return array<int, CountryInfo> */
     public function values(): array { return $this->reader()->values($this->countries); }
     /** @return array<string, string> */
     public function names(): array { return $this->reader()->names($this->countries, $this->format, $this->cache); }

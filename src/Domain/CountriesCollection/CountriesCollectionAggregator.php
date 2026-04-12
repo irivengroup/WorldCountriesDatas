@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Domain\CountriesCollection;
 use Iriven\WorldDatasets\Domain\CountriesCollection;
-use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CountryInfo;
 use Iriven\WorldDatasets\Application\WorldDatasets;
 use Iriven\WorldDatasets\Application\Stats\WorldDatasetsStats;
 
@@ -12,7 +12,7 @@ use Iriven\WorldDatasets\Application\Stats\WorldDatasetsStats;
 final class CountriesCollectionAggregator
 {
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      */
     public function stats(array $countries): WorldDatasetsStats
     {
@@ -31,7 +31,7 @@ final class CountriesCollectionAggregator
     }
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      * @return array<string, array<string, string>>
      */
     public function groupByRegion(array $countries): array
@@ -46,7 +46,7 @@ final class CountriesCollectionAggregator
     }
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      * @return array<string, array<string, string>>
      */
     public function groupByCurrency(array $countries): array
@@ -61,21 +61,21 @@ final class CountriesCollectionAggregator
     }
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      * @return array<int, string>
      */
     public function pluckNames(array $countries): array
     {
-        return array_values(array_map(static fn(Country $country): string => $country->name(), $countries));
+        return array_values(array_map(static fn(CountryInfo $country): string => $country->name(), $countries));
     }
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      * @return array<int, string>
      */
     public function pluckCodes(array $countries, CountryCodeFormat $format): array
     {
-        return array_values(array_map(static function (Country $country) use ($format): string {
+        return array_values(array_map(static function (CountryInfo $country) use ($format): string {
             return match ($format) {
                 CountryCodeFormat::ALPHA2 => $country->alpha2(),
                 CountryCodeFormat::ALPHA3 => $country->alpha3(),
@@ -85,7 +85,7 @@ final class CountriesCollectionAggregator
     }
 
     /**
-     * @param array<int, Country> $countries
+     * @param array<int, CountryInfo> $countries
      * @return array<string, string>
      */
     public function list(array $countries, CountryCodeFormat $format): array
