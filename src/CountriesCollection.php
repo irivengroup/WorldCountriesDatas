@@ -184,7 +184,9 @@ final class CountriesCollection implements Arrayable, \JsonSerializable
             $this->cachedCodes = array_values(array_keys($this->list()));
         }
 
-        return array_values($this->cachedCodes);
+        $codes = $this->cachedCodes;
+
+        return is_array($codes) ? array_values($codes) : [];
     }
     public function count(): int { return count($this->countries); }
     public function isEmpty(): bool { return $this->countries === []; }
@@ -350,7 +352,10 @@ final class CountriesCollection implements Arrayable, \JsonSerializable
         }
 
         $this->cachedExportArray = array_values($result);
-        return $this->cachedExportArray;
+
+        $exportArray = $this->cachedExportArray;
+
+        return is_array($exportArray) ? $exportArray : [];
     }
 
     public function toJson(int $flags = JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE): string
@@ -387,7 +392,10 @@ final class CountriesCollection implements Arrayable, \JsonSerializable
         }
 
         $this->cachedStorageArray = array_values($result);
-        return $this->cachedStorageArray;
+
+        $storageArray = $this->cachedStorageArray;
+
+        return is_array($storageArray) ? $storageArray : [];
     }
 
     /** @return array<int, array<string, mixed>> */
@@ -397,7 +405,9 @@ final class CountriesCollection implements Arrayable, \JsonSerializable
             $this->cachedApiArray = $this->exportArray();
         }
 
-        return array_values($this->cachedApiArray);
+        $apiArray = $this->cachedApiArray;
+
+        return is_array($apiArray) ? array_values($apiArray) : [];
     }
 
     /** @return array<int, array<string, mixed>> */
