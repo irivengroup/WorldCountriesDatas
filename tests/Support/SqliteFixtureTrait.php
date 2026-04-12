@@ -10,9 +10,15 @@ trait SqliteFixtureTrait
 {
     protected function makeSqliteFixturePath(): string
     {
-        $path = tempnam(sys_get_temp_dir(), 'wd_sqlite_fixture_');
-        if ($path === false) {
+        $tempPath = tempnam(sys_get_temp_dir(), 'wd_sqlite_fixture_');
+        if ($tempPath === false) {
             self::fail('Unable to create sqlite temp file.');
+        }
+
+        $path = $tempPath . '.sqlite';
+
+        if (!rename($tempPath, $path)) {
+            self::fail('Unable to rename sqlite temp file.');
         }
 
         $pdo = new PDO('sqlite:' . $path);
