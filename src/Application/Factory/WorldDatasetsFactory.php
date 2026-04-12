@@ -99,27 +99,27 @@ final class WorldDatasetsFactory
 
     public static function defaultSqlitePath(): string
     {
-        return __DIR__ . '/data/' . DataSource::SQLITE;
+        return self::sourceDataDir() . '/' . DataSource::SQLITE;
     }
 
     public static function defaultJsonPath(): string
     {
-        return __DIR__ . '/data/' . DataSource::JSON;
+        return self::sourceDataDir() . '/' . DataSource::JSON;
     }
 
     public static function defaultCsvPath(): string
     {
-        return __DIR__ . '/data/' . DataSource::CSV;
+        return self::sourceDataDir() . '/' . DataSource::CSV;
     }
 
     public static function datasetMetaPath(): string
     {
-        return __DIR__ . '/data/.countriesRepository.meta.json';
+        return self::sourceDataDir() . '/.countriesRepository.meta.json';
     }
 
     public static function datasetShaPath(): string
     {
-        return __DIR__ . '/data/.countriesRepository.sha256';
+        return self::sourceDataDir() . '/.countriesRepository.sha256';
     }
 
     public static function datasetVersion(): string
@@ -199,5 +199,11 @@ final class WorldDatasetsFactory
 
             default => 'unknown',
         };
+    }
+
+
+    private static function sourceDataDir(): string
+    {
+        return dirname(__DIR__, 2) . '/data';
     }
 }
