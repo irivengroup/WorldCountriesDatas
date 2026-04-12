@@ -27,9 +27,9 @@ final class SqliteCountryRepository implements CountryRepositoryInterface
 
     private ?CountryCodeNormalizer $resolvedNormalizer = null;
 
-    private readonly SqliteCountryHydrator $hydrator;
-    private readonly SqliteCountryQueryBuilder $queryBuilder;
-    private readonly SqliteStatementExecutor $executor;
+    private SqliteCountryHydrator $hydrator;
+    private SqliteCountryQueryBuilder $queryBuilder;
+    private SqliteStatementExecutor $executor;
 
     public function __construct(
         private readonly PDO $pdo,
