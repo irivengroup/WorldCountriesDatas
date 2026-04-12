@@ -37,7 +37,7 @@ class WorldDatasets implements CountriesDataInterface, ReadonlyWorldDatasetsServ
     ) {
     }
 
-    /** @return array<array<string, mixed>> */
+    /** @return list<array<string, mixed>> */
     public function all(): array
     {
         return array_map(
