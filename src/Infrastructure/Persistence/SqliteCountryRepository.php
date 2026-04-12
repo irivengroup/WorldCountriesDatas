@@ -6,7 +6,7 @@ namespace Iriven\WorldDatasets\Infrastructure\Persistence;
 
 use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
 use Iriven\WorldDatasets\Domain\Country;
-use Iriven\WorldDatasets\Domain\CountryCodeNormalizer;
+use Iriven\WorldDatasets\Application\Support\CountryCodeNormalizer;
 use Iriven\WorldDatasets\Exception\RepositoryException;
 use Iriven\WorldDatasets\Infrastructure\Cache\CacheInterface;
 use PDO;
