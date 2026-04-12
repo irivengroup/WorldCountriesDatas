@@ -2,7 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Iriven\WorldDatasets;
+namespace Iriven\WorldDatasets\Infrastructure\Persistence;
+use Iriven\WorldDatasets\components\Country;
+use Iriven\WorldDatasets\components\CurrencyCollection;
+use Iriven\WorldDatasets\components\RegionCollection;
+use Iriven\WorldDatasets\components\WorldDatasets;
+use Iriven\WorldDatasets\components\WorldDatasets\PhoneCodeNormalizer;
+use Iriven\WorldDatasets\components\WorldDatasets\TldNormalizer;
+
 
 use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
 

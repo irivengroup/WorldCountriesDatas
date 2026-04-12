@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iriven\WorldDatasets;
+namespace Iriven\WorldDatasets\components;
 
 use Countable;
 use Generator;

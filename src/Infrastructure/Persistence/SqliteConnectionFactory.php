@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Infrastructure\Persistence;
+use Iriven\WorldDatasets\components\WorldDatasets;
+
 
 use Iriven\WorldDatasets\Exception\RepositoryException;
 use PDO;

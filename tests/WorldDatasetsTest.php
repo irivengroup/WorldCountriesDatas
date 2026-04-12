@@ -3,15 +3,18 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
+use Iriven\WorldDatasets\components\WorldDatasets;
+use Iriven\WorldDatasets\components\WorldDatasets\WorldDatasetsService;
 
-use Iriven\WorldDatasets\WorldDatasetsFactory;
-use Iriven\WorldDatasets\CountryCodeFormat;
-use Iriven\WorldDatasets\DatasetValidator;
+
+use Iriven\WorldDatasets\components\WorldDatasets\WorldDatasetsFactory;
+use Iriven\WorldDatasets\components\CountryCodeFormat;
+use Iriven\WorldDatasets\components\DatasetValidator;
 use PHPUnit\Framework\TestCase;
 
 final class WorldDatasetsTest extends TestCase
 {
-    private \Iriven\WorldDatasets\WorldDatasetsService $service;
+    private \Iriven\WorldDatasets\components\WorldDatasets\WorldDatasetsService $service;
 
     protected function setUp(): void
     {

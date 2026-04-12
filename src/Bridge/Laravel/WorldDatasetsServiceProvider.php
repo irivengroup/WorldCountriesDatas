@@ -3,10 +3,12 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Bridge\Laravel;
+use Iriven\WorldDatasets\components\WorldDatasets;
+
 
 use Illuminate\Support\ServiceProvider;
-use Iriven\WorldDatasets\WorldDatasetsFactory;
-use Iriven\WorldDatasets\WorldDatasetsService;
+use Iriven\WorldDatasets\components\WorldDatasets\WorldDatasetsFactory;
+use Iriven\WorldDatasets\components\WorldDatasets\WorldDatasetsService;
 
 final class WorldDatasetsServiceProvider extends ServiceProvider
 {

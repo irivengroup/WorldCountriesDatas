@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
+use Iriven\WorldDatasets\components\WorldDatasets;
 
-use Iriven\WorldDatasets\CsvCountryRepository;
+
+use Iriven\WorldDatasets\Infrastructure\Persistence\CsvCountryRepository;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

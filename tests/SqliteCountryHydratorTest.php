@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
+use Iriven\WorldDatasets\components\WorldDatasets;
+
 
 use Iriven\WorldDatasets\Infrastructure\Persistence\SqliteCountryHydrator;
 use PHPUnit\Framework\TestCase;

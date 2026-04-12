@@ -3,14 +3,16 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Contract;
+use Iriven\WorldDatasets\components\WorldDatasets;
+
 
 use Countable;
 use IteratorAggregate;
-use Iriven\WorldDatasets\CountriesCollection;
-use Iriven\WorldDatasets\CurrencyCollection;
-use Iriven\WorldDatasets\RegionCollection;
-use Iriven\WorldDatasets\Country;
-use Iriven\WorldDatasets\CountryCodeFormat;
+use Iriven\WorldDatasets\components\CountriesCollection;
+use Iriven\WorldDatasets\components\CurrencyCollection;
+use Iriven\WorldDatasets\components\RegionCollection;
+use Iriven\WorldDatasets\components\Country;
+use Iriven\WorldDatasets\components\CountryCodeFormat;
 
 /**
  * @extends IteratorAggregate<int, Country>

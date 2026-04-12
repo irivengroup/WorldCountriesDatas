@@ -2,7 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Iriven\WorldDatasets;
+namespace Iriven\WorldDatasets\components\CountriesCollection;
+use Iriven\WorldDatasets\components\CountriesCollection;
+use Iriven\WorldDatasets\components\Country;
+use Iriven\WorldDatasets\components\WorldDatasets;
+use Iriven\WorldDatasets\components\WorldDatasets\WorldDatasetsStats;
+
 
 final class CountriesCollectionAggregator
 {

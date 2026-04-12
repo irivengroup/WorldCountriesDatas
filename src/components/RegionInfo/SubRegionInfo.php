@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Iriven\WorldDatasets;
+namespace Iriven\WorldDatasets\components\RegionInfo;
+use Iriven\WorldDatasets\components\RegionInfo;
+use Iriven\WorldDatasets\components\WorldDatasets;
+
 
 use Iriven\WorldDatasets\Contract\Arrayable;
 

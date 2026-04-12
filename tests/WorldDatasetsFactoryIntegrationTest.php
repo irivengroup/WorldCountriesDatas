@@ -3,13 +3,14 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
+use Iriven\WorldDatasets\components\WorldDatasets;
 
-use Iriven\WorldDatasets\CsvCountryRepository;
+
+use Iriven\WorldDatasets\Infrastructure\Persistence\CsvCountryRepository;
 use Iriven\WorldDatasets\Infrastructure\Persistence\SqliteCountryRepository;
-use Iriven\WorldDatasets\JsonCountryRepository;
-use Iriven\WorldDatasets\Tests\Support\SqliteFixtureTrait;
-use Iriven\WorldDatasets\WorldDatasetsFactory;
-use Iriven\WorldDatasets\WorldDatasetsRuntimeConfig;
+use Iriven\WorldDatasets\Infrastructure\Persistence\JsonCountryRepository;
+use Iriven\WorldDatasets\components\WorldDatasets\WorldDatasetsFactory;
+use Iriven\WorldDatasets\components\WorldDatasets\WorldDatasetsRuntimeConfig;
 use PHPUnit\Framework\TestCase;
 
 final class WorldDatasetsFactoryIntegrationTest extends TestCase

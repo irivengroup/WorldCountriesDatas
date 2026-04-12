@@ -3,9 +3,10 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
+use Iriven\WorldDatasets\components\WorldDatasets;
 
-use Iriven\WorldDatasets\CountriesCollectionExporter;
-use Iriven\WorldDatasets\Tests\Support\CountryFactoryTrait;
+
+use Iriven\WorldDatasets\components\CountriesCollectionExporter;
 use PHPUnit\Framework\TestCase;
 
 final class CountriesCollectionExporterTest extends TestCase

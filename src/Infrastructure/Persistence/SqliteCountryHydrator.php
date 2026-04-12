@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Infrastructure\Persistence;
+use Iriven\WorldDatasets\components\WorldDatasets;
 
-use Iriven\WorldDatasets\Country;
+
+use Iriven\WorldDatasets\components\Country;
 
 final class SqliteCountryHydrator
 {

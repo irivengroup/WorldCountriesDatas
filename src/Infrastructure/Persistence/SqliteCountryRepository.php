@@ -3,10 +3,12 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Infrastructure\Persistence;
+use Iriven\WorldDatasets\components\WorldDatasets;
+
 
 use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
-use Iriven\WorldDatasets\Country;
-use Iriven\WorldDatasets\CountryCodeNormalizer;
+use Iriven\WorldDatasets\components\Country;
+use Iriven\WorldDatasets\components\CountryCodeNormalizer;
 use Iriven\WorldDatasets\Exception\RepositoryException;
 use Iriven\WorldDatasets\Infrastructure\Cache\CacheInterface;
 use PDO;

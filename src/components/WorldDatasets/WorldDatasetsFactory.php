@@ -2,7 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Iriven\WorldDatasets;
+namespace Iriven\WorldDatasets\components\WorldDatasets;
+use Iriven\WorldDatasets\DataSource;
+use Iriven\WorldDatasets\Infrastructure\Persistence\CsvCountryRepository;
+use Iriven\WorldDatasets\Infrastructure\Persistence\JsonCountryRepository;
+use Iriven\WorldDatasets\components\DatasetValidator;
+use Iriven\WorldDatasets\components\WorldDatasets;
+
 
 use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
 use Iriven\WorldDatasets\Contract\SimpleCacheInterface;

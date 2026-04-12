@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Contract;
+use Iriven\WorldDatasets\components\WorldDatasets;
+
 
 /**
  * Minimal PSR-16 compatible surface for optional runtime cache integration.

@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
+use Iriven\WorldDatasets\components\WorldDatasets;
 
-use Iriven\WorldDatasets\JsonCountryRepository;
+
+use Iriven\WorldDatasets\Infrastructure\Persistence\JsonCountryRepository;
 use PHPUnit\Framework\TestCase;
 
 final class JsonCountryRepositoryTest extends TestCase

@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests\Support;
+use Iriven\WorldDatasets\components\WorldDatasets;
+
 
 use PDO;
 

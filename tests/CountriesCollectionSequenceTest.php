@@ -3,10 +3,11 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
+use Iriven\WorldDatasets\components\WorldDatasets;
 
-use Iriven\WorldDatasets\CountriesCollectionSequence;
-use Iriven\WorldDatasets\CountryCodeFormat;
-use Iriven\WorldDatasets\Tests\Support\CountryFactoryTrait;
+
+use Iriven\WorldDatasets\components\CountriesCollectionSequence;
+use Iriven\WorldDatasets\components\CountryCodeFormat;
 use PHPUnit\Framework\TestCase;
 
 final class CountriesCollectionSequenceTest extends TestCase

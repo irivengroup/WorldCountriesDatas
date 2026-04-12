@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Iriven\WorldDatasets;
+namespace Iriven\WorldDatasets\Infrastructure\Persistence;
+use Iriven\WorldDatasets\components\Country;
+use Iriven\WorldDatasets\components\WorldDatasets;
+
 
 use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;
 use RuntimeException;

@@ -3,10 +3,11 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
+use Iriven\WorldDatasets\components\WorldDatasets;
+
 
 use Iriven\WorldDatasets\Infrastructure\Cache\ArrayCache;
 use Iriven\WorldDatasets\Infrastructure\Persistence\SqliteCountryRepository;
-use Iriven\WorldDatasets\Tests\Support\SqliteFixtureTrait;
 use PHPUnit\Framework\TestCase;
 
 final class SqliteCountryRepositoryIntegrationTest extends TestCase

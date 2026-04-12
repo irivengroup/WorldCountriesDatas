@@ -3,11 +3,12 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
+use Iriven\WorldDatasets\components\WorldDatasets;
 
-use Iriven\WorldDatasets\Country;
-use Iriven\WorldDatasets\DatasetValidator;
+
+use Iriven\WorldDatasets\components\Country;
+use Iriven\WorldDatasets\components\DatasetValidator;
 use Iriven\WorldDatasets\Exception\DatasetValidationException;
-use Iriven\WorldDatasets\Tests\Support\CountryFactoryTrait;
 use PHPUnit\Framework\TestCase;
 
 final class DatasetValidatorTest extends TestCase
