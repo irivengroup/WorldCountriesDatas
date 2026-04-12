@@ -7,9 +7,9 @@ namespace Iriven\WorldDatasets;
 final class DatasetValidationReport implements \JsonSerializable
 {
     /**
-     * @param list<array<string, mixed>> $duplicates
-     * @param list<array<string, mixed>> $invalidCodes
-     * @param list<array<string, mixed>> $warnings
+     * @param array<int, array<string, mixed>> $duplicates
+     * @param array<int, array<string, mixed>> $invalidCodes
+     * @param array<int, array<string, mixed>> $warnings
      */
     public function __construct(
         private readonly array $duplicates,
@@ -19,19 +19,19 @@ final class DatasetValidationReport implements \JsonSerializable
     ) {
     }
 
-    /** @return list<array<string, mixed>> */
+    /** @return array<int, array<string, mixed>> */
     public function duplicates(): array
     {
         return $this->duplicates;
     }
 
-    /** @return list<array<string, mixed>> */
+    /** @return array<int, array<string, mixed>> */
     public function invalidCodes(): array
     {
         return $this->invalidCodes;
     }
 
-    /** @return list<array<string, mixed>> */
+    /** @return array<int, array<string, mixed>> */
     public function warnings(): array
     {
         return $this->warnings;

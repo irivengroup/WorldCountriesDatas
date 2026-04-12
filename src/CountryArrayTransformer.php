@@ -27,7 +27,7 @@ final class CountryArrayTransformer
     }
 
     /**
-     * @return list<string>
+     * @return array<int, string>
      */
     public function toStorageArray(Country $country): array
     {

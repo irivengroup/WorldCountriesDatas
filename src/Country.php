@@ -13,7 +13,7 @@ final class Country implements Arrayable, \JsonSerializable
     private ?PhoneInfo $phoneObject = null;
     /** @var array<string, mixed>|null */
     private ?array $apiArray = null;
-    /** @var list<string>|null */
+    /** @var array<int, string>|null */
     private ?array $indexedArray = null;
 
     public function __construct(
@@ -118,7 +118,7 @@ final class Country implements Arrayable, \JsonSerializable
     }
 
     /**
-     * @return list<string>
+     * @return array<int, string>
      */
     public function toIndexedArray(): array
     {

@@ -32,11 +32,7 @@ final class DatasetValidator
     }
 
     /**
-     * @return array{
-     *     alpha2: array<string, string>,
-     *     alpha3: array<string, string>,
-     *     numeric: array<string, string>
-     * }
+     * @return array<string, array<string, string>>
      */
     private function createDuplicateIndexes(): array
     {

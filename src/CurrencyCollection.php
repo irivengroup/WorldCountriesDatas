@@ -10,24 +10,24 @@ use Iriven\WorldDatasets\Exporter\JsonExporter;
 
 final class CurrencyCollection implements Arrayable, \JsonSerializable
 {
-    /** @var list<CurrencyInfo>|null */
+    /** @var array<int, CurrencyInfo>|null */
     private ?array $cachedValues = null;
     /** @var array<string, string>|null */
     private ?array $cachedList = null;
     /** @var array<string, array<string, string>>|null */
     private ?array $cachedCountries = null;
-    /** @var list<array<string, mixed>>|null */
+    /** @var array<int, array<string, mixed>>|null */
     private ?array $cachedExportArray = null;
 
     /**
-     * @param list<Country> $countries
+     * @param array<int, Country> $countries
      */
     public function __construct(
         private readonly array $countries,
     ) {
     }
 
-    /** @return list<CurrencyInfo> */
+    /** @return array<int, CurrencyInfo> */
     public function values(): array
     {
         if ($this->cachedValues !== null) {
@@ -83,7 +83,7 @@ final class CurrencyCollection implements Arrayable, \JsonSerializable
         return $this->cachedCountries = $result;
     }
 
-    /** @return list<array<string, mixed>> */
+    /** @return array<int, array<string, mixed>> */
     public function exportArray(): array
     {
         if ($this->cachedExportArray !== null) {
@@ -118,8 +118,8 @@ final class CurrencyCollection implements Arrayable, \JsonSerializable
         (new CsvExporter())->exportFile($path, $this->exportArray());
     }
 
-    /** @return list<array<string, mixed>> */
+    /** @return array<int, array<string, mixed>> */
     public function toArray(): array { return $this->exportArray(); }
-    /** @return list<array<string, mixed>> */
+    /** @return array<int, array<string, mixed>> */
     public function jsonSerialize(): array { return $this->exportArray(); }
 }

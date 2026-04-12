@@ -10,24 +10,24 @@ use Iriven\WorldDatasets\Exporter\JsonExporter;
 
 final class RegionCollection implements Arrayable, \JsonSerializable
 {
-    /** @var list<RegionInfo>|null */
+    /** @var array<int, RegionInfo>|null */
     private ?array $cachedValues = null;
     /** @var array<string, string>|null */
     private ?array $cachedList = null;
     /** @var array<string, array<string, string>>|null */
     private ?array $cachedCountries = null;
-    /** @var list<array<string, mixed>>|null */
+    /** @var array<int, array<string, mixed>>|null */
     private ?array $cachedExportArray = null;
 
     /**
-     * @param list<Country> $countries
+     * @param array<int, Country> $countries
      */
     public function __construct(
         private readonly array $countries,
     ) {
     }
 
-    /** @return list<RegionInfo> */
+    /** @return array<int, RegionInfo> */
     public function values(): array
     {
         if ($this->cachedValues !== null) {
@@ -87,7 +87,7 @@ final class RegionCollection implements Arrayable, \JsonSerializable
         return $this->cachedCountries = $result;
     }
 
-    /** @return list<array<string, mixed>> */
+    /** @return array<int, array<string, mixed>> */
     public function exportArray(): array
     {
         if ($this->cachedExportArray !== null) {
@@ -122,8 +122,8 @@ final class RegionCollection implements Arrayable, \JsonSerializable
         (new CsvExporter())->exportFile($path, $this->exportArray());
     }
 
-    /** @return list<array<string, mixed>> */
+    /** @return array<int, array<string, mixed>> */
     public function toArray(): array { return $this->exportArray(); }
-    /** @return list<array<string, mixed>> */
+    /** @return array<int, array<string, mixed>> */
     public function jsonSerialize(): array { return $this->exportArray(); }
 }
