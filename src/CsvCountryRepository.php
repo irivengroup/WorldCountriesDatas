@@ -23,7 +23,7 @@ final class CsvCountryRepository implements CountryRepositoryInterface
         }
 
         $headers = fgetcsv($handle);
-        if (!is_array($headers)) {
+        if ($headers === false || $headers === []) {
             fclose($handle);
             throw new RuntimeException('Invalid CSV header.');
         }
