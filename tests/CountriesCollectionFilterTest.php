@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
-use Iriven\WorldDatasets\components\WorldDatasets;
+use Iriven\WorldDatasets\Application\WorldDatasets;
 
 
-use Iriven\WorldDatasets\components\CountriesCollectionFilter;
+use Iriven\WorldDatasets\Domain\CountriesCollectionFilter;
 use PHPUnit\Framework\TestCase;
 
 final class CountriesCollectionFilterTest extends TestCase

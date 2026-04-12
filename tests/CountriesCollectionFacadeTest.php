@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
-use Iriven\WorldDatasets\components\WorldDatasets;
+use Iriven\WorldDatasets\Application\WorldDatasets;
 
 
-use Iriven\WorldDatasets\components\CountriesCollection;
+use Iriven\WorldDatasets\Domain\CountriesCollection;
 use PHPUnit\Framework\TestCase;
 
 final class CountriesCollectionFacadeTest extends TestCase

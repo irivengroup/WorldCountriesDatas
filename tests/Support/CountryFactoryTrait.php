@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests\Support;
-use Iriven\WorldDatasets\components\WorldDatasets;
+use Iriven\WorldDatasets\Application\WorldDatasets;
 
 
-use Iriven\WorldDatasets\components\Country;
+use Iriven\WorldDatasets\Domain\Country;
 
 trait CountryFactoryTrait
 {

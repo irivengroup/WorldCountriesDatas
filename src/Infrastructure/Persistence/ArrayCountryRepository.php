@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Infrastructure\Persistence;
-use Iriven\WorldDatasets\components\Country;
-use Iriven\WorldDatasets\components\CurrencyCollection;
-use Iriven\WorldDatasets\components\RegionCollection;
-use Iriven\WorldDatasets\components\WorldDatasets;
-use Iriven\WorldDatasets\components\WorldDatasets\PhoneCodeNormalizer;
-use Iriven\WorldDatasets\components\WorldDatasets\TldNormalizer;
+use Iriven\WorldDatasets\Domain\Country;
+use Iriven\WorldDatasets\Domain\CurrencyCollection;
+use Iriven\WorldDatasets\Domain\RegionCollection;
+use Iriven\WorldDatasets\Application\WorldDatasets;
+use Iriven\WorldDatasets\Application\Support\PhoneCodeNormalizer;
+use Iriven\WorldDatasets\Application\Support\TldNormalizer;
 
 
 use Iriven\WorldDatasets\Contract\CountryRepositoryInterface;

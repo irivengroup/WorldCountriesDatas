@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
-use Iriven\WorldDatasets\components\WorldDatasets;
+use Iriven\WorldDatasets\Application\WorldDatasets;
 
 
-use Iriven\WorldDatasets\components\CountriesCollectionAggregator;
-use Iriven\WorldDatasets\components\CountryCodeFormat;
+use Iriven\WorldDatasets\Domain\CountriesCollectionAggregator;
+use Iriven\WorldDatasets\Domain\CountryCodeFormat;
 use PHPUnit\Framework\TestCase;
 
 final class CountriesCollectionAggregatorTest extends TestCase

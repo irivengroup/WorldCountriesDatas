@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Contract;
-use Iriven\WorldDatasets\components\WorldDatasets;
+use Iriven\WorldDatasets\Application\WorldDatasets;
 
 
-use Iriven\WorldDatasets\components\Country;
+use Iriven\WorldDatasets\Domain\Country;
 
 interface CountryRepositoryInterface
 {

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Exporter;
-use Iriven\WorldDatasets\components\WorldDatasets;
+use Iriven\WorldDatasets\Application\WorldDatasets;
 
 
 use Iriven\WorldDatasets\Exception\ExportException;

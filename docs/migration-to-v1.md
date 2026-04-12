@@ -28,7 +28,7 @@ retourne toujours une instance de `CountriesCollection`.
 ## Exemple
 
 ```php
-use Iriven\WorldDatasets\components\WorldDatasets\WorldDatasetsFactory;
+use Iriven\WorldDatasets\Application\Factory\WorldDatasetsFactory;
 
 $worldDatasets = WorldDatasetsFactory::make();
 $list = $worldDatasets->countries()->alpha2()->list();

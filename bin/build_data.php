@@ -3,9 +3,9 @@
 
 declare(strict_types=1);
 
-use Iriven\WorldDatasets\components\WorldDatasets\WorldDatasetsFactory;
+use Iriven\WorldDatasets\Application\Factory\WorldDatasetsFactory;
 use Iriven\WorldDatasets\DataSource;
-use Iriven\WorldDatasets\components\DatasetValidator;
+use Iriven\WorldDatasets\Domain\DatasetValidator;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
