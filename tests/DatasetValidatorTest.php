@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
 use Iriven\WorldDatasets\Tests\Support\CountryFactoryTrait;
+use Iriven\WorldDatasets\Domain\CountryInfoFactoryTrait;
 
 use Iriven\WorldDatasets\Domain\CountryInfo;
 use Iriven\WorldDatasets\Domain\DatasetValidator;
@@ -13,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 final class DatasetValidatorTest extends TestCase
 {
     use CountryFactoryTrait;
-
 
     public function testValidDatasetProducesValidReport(): void
     {

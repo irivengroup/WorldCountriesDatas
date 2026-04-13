@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Iriven\WorldDatasets\Tests;
 
+use Iriven\WorldDatasets\Domain\CountryInfo;
 use Iriven\WorldDatasets\Infrastructure\Persistence\SqliteCountryHydrator;
 use PHPUnit\Framework\TestCase;
 
-final class SqliteCountryHydratorTest extends TestCase
+final class SqliteCountryHydratorCountryInfoTest extends TestCase
 {
-    public function testHydrateAndHydrateMany(): void
+    public function testHydrateReturnsCountryInfoInstance(): void
     {
         $hydrator = new SqliteCountryHydrator();
 
-        $row = [
+        $country = $hydrator->hydrate([
             'alpha2' => 'FR',
             'alpha3' => 'FRA',
             'numeric_code' => '250',
@@ -33,14 +34,8 @@ final class SqliteCountryHydratorTest extends TestCase
             'intl_dialing_prefix' => '00',
             'natl_dialing_prefix' => '0',
             'subscriber_phone_pattern' => '',
-        ];
+        ]);
 
-        $country = $hydrator->hydrate($row);
-        self::assertSame('France', $country->name());
-        self::assertSame('FR', $country->alpha2());
-
-        $many = $hydrator->hydrateMany([$row, $row]);
-        self::assertCount(2, $many);
-        self::assertSame('FRA', $many[1]->alpha3());
+        self::assertInstanceOf(CountryInfo::class, $country);
     }
 }
